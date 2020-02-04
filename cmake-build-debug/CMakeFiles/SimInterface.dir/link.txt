@@ -1,2 +1,0 @@
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar qc libSimInterface.a  CMakeFiles/SimInterface.dir/src/library.cpp.o CMakeFiles/SimInterface.dir/src/StateSpace.cpp.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib libSimInterface.a
