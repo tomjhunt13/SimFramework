@@ -1,0 +1,16 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/Users/tom/Documents/University/Y4_S2/SimInterface/libs/Eigen/test/product_mmtr.cpp"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"BuildOfficial"
+		],
+		"name" : "product_mmtr_4"
+	}
+}

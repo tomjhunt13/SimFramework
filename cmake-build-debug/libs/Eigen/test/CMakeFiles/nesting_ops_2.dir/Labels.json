@@ -1,0 +1,16 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/Users/tom/Documents/University/Y4_S2/SimInterface/libs/Eigen/test/nesting_ops.cpp"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"BuildOfficial"
+		],
+		"name" : "nesting_ops_2"
+	}
+}

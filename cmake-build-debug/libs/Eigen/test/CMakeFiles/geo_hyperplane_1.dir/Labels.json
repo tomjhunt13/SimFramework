@@ -1,0 +1,16 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/Users/tom/Documents/University/Y4_S2/SimInterface/libs/Eigen/test/geo_hyperplane.cpp"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"BuildOfficial"
+		],
+		"name" : "geo_hyperplane_1"
+	}
+}
