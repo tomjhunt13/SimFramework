@@ -19,7 +19,7 @@ private:
     Signal<Eigen::VectorXf> m_InputSignal;
 
 public:
-    Sink(TimeManager& manager, Signal<Eigen::VectorXf> inputSignal) : Block(manager), m_InputSignal(inputSignal) {};
+    Sink(BlockManager& manager, Signal<Eigen::VectorXf> inputSignal) : Block(manager), m_InputSignal(inputSignal) {};
 
     void Update(float time) override;
 };

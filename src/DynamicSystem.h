@@ -8,13 +8,12 @@
 #include "Eigen/Dense"
 
 #include "Block.h"
-#include "TimeManager.h"
 
 
 class DynamicSystem : public Block {
 public:
 
-    DynamicSystem(TimeManager& manager) : Block(manager) {};
+    DynamicSystem(BlockManager& manager) : Block(manager) {};
 
     virtual Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) = 0;
 

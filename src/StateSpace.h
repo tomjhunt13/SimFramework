@@ -6,6 +6,7 @@
 
 #include "Eigen/Dense"
 
+#include "Block.h"
 #include "Signal.h"
 #include "StateSpace.h"
 #include "RK4.h"
@@ -42,7 +43,7 @@ private:
 public:
 
     // Constructor
-    StateSpace(TimeManager& manager, StateSpaceModel stateSpace, Eigen::VectorXf initialState, float initialTime) :
+    StateSpace(BlockManager& manager, StateSpaceModel stateSpace, Eigen::VectorXf initialState, float initialTime) :
             DynamicSystem(manager), m_StateSpace(stateSpace), m_x(initialState), m_t(initialTime) {};
 
 

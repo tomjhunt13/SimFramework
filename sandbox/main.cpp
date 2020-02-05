@@ -8,6 +8,8 @@
 
 int main() {
 
+    // Create block manager
+    BlockManager bm;
 
     // Define signals
     Eigen::VectorXf in(1);
@@ -47,7 +49,7 @@ int main() {
     // Instantiate system
     Eigen::VectorXf initialState(2);
     initialState << 0.5, 0;
-    StateSpace block(ss, initialState,  0.f);
+    StateSpace block(bm, ss, initialState,  0.f);
 
     // Test system
 //    std::cout << block.Gradient(0, initialState) << std::endl;
