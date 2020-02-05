@@ -12,7 +12,9 @@ void StateSpace::Read() {
 }
 
 void StateSpace::Write() {
-    this->m_StateSpace.outputSignal->Write(this->m_x);
+
+    Eigen::VectorXf y = this->m_StateSpace.C * this->m_x + this->m_StateSpace.D * this->m_u;
+    this->m_StateSpace.outputSignal->Write(y);
 
 }
 

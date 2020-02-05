@@ -9,7 +9,9 @@ include_directories(libs/Eigen)
 
 # SimInterface
 add_library(SimInterface src/StateSpace.cpp src/StateSpace.h src/RK4.h src/RK4.cpp src/DynamicSystem.h src/Signal.h src/Block.h src/DynamicSystem.cpp src/Sink.cpp src/Sink.h src/Block.cpp)
+include_directories(src)
 
 # Sandbox
-add_executable(Sandbox sandbox/main.cpp)
+add_executable(Sandbox sandbox/main.cpp include/SimInterface/SimInterface.h)
 target_link_libraries(Sandbox SimInterface)
+include_directories(include)

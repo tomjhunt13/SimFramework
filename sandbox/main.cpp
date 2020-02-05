@@ -1,8 +1,10 @@
 #include "Eigen/Dense"
 
-#include "../src/StateSpace.h"
-#include "../src/Sink.h"
-#include "../src/Signal.h"
+
+#include "SimInterface/SimInterface.h"
+//#include "../src/StateSpace.h"
+//#include "../src/Sink.h"
+//#include "../src/Signal.h"
 
 
 
@@ -34,8 +36,8 @@ int main() {
     Eigen::MatrixXf C(1, 2);
     C << 1, 0;
 
-    Eigen::MatrixXf D(2, 1);
-    D << 0, 0;
+    Eigen::MatrixXf D(1, 1);
+    D << 0;
 
     // Fill struct
     StateSpaceModel ss;
@@ -57,6 +59,8 @@ int main() {
 
     // Test system
     for (float t = 0; t <= 5; t += 0.2) {
+
+        // TODO: rather than step to t, step by dt
         bm.UpdateSystem(t);
     }
 
