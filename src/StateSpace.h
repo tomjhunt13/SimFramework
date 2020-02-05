@@ -2,41 +2,55 @@
 #define SIMINTERFACE_STATESPACE_H
 
 #include <iostream>
+#include <vector>
 
 #include "Eigen/Dense"
 
 #include "StateSpace.h"
 #include "RK4.h"
 
-class StateSpace : public SystemInterface {
+
+struct StateSpaceModel {
+
+    // Input output
+    std::vector<Signal*> inputSignal;
+    Signal* outputSignal;
+
+    // Integration parameters
+    float dt = 0.1;
+
+    // State space matrices
+    Eigen::MatrixXf A;
+    Eigen::MatrixXf B;
+    Eigen::MatrixXf C;
+    Eigen::MatrixXf D;
+};
+
+
+class StateSpace : public DynamicSystem {
 
 private:
 
-    // State space matrices
-    Eigen::MatrixXf* m_A;
-    Eigen::MatrixXf* m_B;
-    Eigen::MatrixXf* m_C;
-    Eigen::MatrixXf* m_D;
+    // Matrices
+    StateSpaceModel m_StateSpace;
 
     // State
-    Eigen::VectorXf* m_x;
-
-    // Input
-    Eigen::VectorXf* m_u;
+    Eigen::VectorXf m_x;
+    float m_t;
 
 public:
 
     // Constructor
-    StateSpace(Eigen::MatrixXf& A, Eigen::MatrixXf& B, Eigen::MatrixXf& C, Eigen::MatrixXf& D,
-                Eigen::VectorXf& initialState, Eigen::VectorXf& u) :
-            m_A((&A)), m_B(&B), m_C(&C), m_D(&D), m_x(&initialState), m_u(&u) {};
+    StateSpace(StateSpaceModel stateSpace, Eigen::VectorXf initialState, float initialTime) :
+            DynamicSystem(stateSpace.inputSignal, stateSpace.outputSignal), // Initialise parent
+            m_StateSpace(stateSpace), m_x(initialState), m_t(initialTime) {};
 
-    // Temporary evaluation of system
-    Eigen::VectorXf compute(Eigen::VectorXf u);
-
-    void Step(float t, float dt);
-
-    Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) override;
+//    // Temporary evaluation of system
+//    Eigen::VectorXf compute(Eigen::VectorXf u);
+//
+//    void Step(float t, float dt);
+//
+//    Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) override;
 
 };
 

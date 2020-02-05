@@ -2,7 +2,7 @@
 #define SIMINTERFACE_RK4_H
 
 #include "Eigen/Dense"
-#include "SystemInterface.h"
+#include "DynamicSystem.h"
 
 
 
@@ -10,7 +10,7 @@
 class RK4 {
 
 public:
-    static Eigen::VectorXf Step(SystemInterface& system, float t, Eigen::VectorXf& x);
+    static Eigen::VectorXf Step(DynamicSystem& system, float t, Eigen::VectorXf& x);
 
 };
 

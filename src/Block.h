@@ -9,9 +9,6 @@
 class Block {
 
 private:
-//    // Admin
-//    std::string m_Name;
-
     // Signals
     std::vector<Signal*> m_InputSignals;
     Signal* m_OutputSignal;
@@ -21,6 +18,7 @@ public:
     Block(std::vector<Signal*>& inputSignals, Signal* outputSignal) : m_InputSignals(inputSignals), m_OutputSignal(outputSignal) {};
 
 };
+
 
 
 #endif //SIMINTERFACE_BLOCK_H
