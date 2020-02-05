@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "Eigen/Dense"
 
 #include "../src/StateSpace.h"
@@ -24,11 +22,11 @@ int main() {
 
     // State space matrices
     float m = 10.f;
-    float k = 0.2;
+    float k = 10;
     float c = 0.01;
 
     Eigen::MatrixXf A(2, 2);
-    A << 0, 1.f, -k, -c;
+    A << 0, 1.f, -k / m, -(c / m);
 
     Eigen::MatrixXf B(2, 1);
     B << 0, 1 / m;
@@ -47,6 +45,7 @@ int main() {
     ss.B = B;
     ss.C = C;
     ss.D = D;
+    ss.dt = 0.001;
 
     // Instantiate system
     Eigen::VectorXf initialState(2);
