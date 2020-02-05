@@ -12,6 +12,9 @@ public:
     Block(BlockManager& manager);
 
 
+    virtual void Read() = 0;
+    virtual void Write() = 0;
+
     virtual void Update(float finalTime) = 0;
 };
 
@@ -23,6 +26,8 @@ private:
 
 public:
     void RegisterBlock(Block* block);
+
+    void UpdateSystem(float tMax);
 
 };
 

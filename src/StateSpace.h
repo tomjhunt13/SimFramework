@@ -38,6 +38,7 @@ private:
 
     // State
     Eigen::VectorXf m_x;
+    Eigen::VectorXf m_u;
     float m_t;
 
 public:
@@ -49,7 +50,10 @@ public:
 
     Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) override;
 
+    void Read() override;
     void Update(float finalTime) override;
+    void Write() override;
+
 
 
 };

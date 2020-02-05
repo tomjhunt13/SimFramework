@@ -3,7 +3,9 @@
 #include "Eigen/Dense"
 
 #include "../src/StateSpace.h"
+#include "../src/Sink.h"
 #include "../src/Signal.h"
+
 
 
 int main() {
@@ -21,7 +23,7 @@ int main() {
     Signal<Eigen::VectorXf> outputSignal(out);
 
     // State space matrices
-    float m = 1.f;
+    float m = 10.f;
     float k = 0.2;
     float c = 0.01;
 
@@ -48,13 +50,16 @@ int main() {
 
     // Instantiate system
     Eigen::VectorXf initialState(2);
-    initialState << 0.5, 0;
+    initialState << 0.05, 0;
     StateSpace block(bm, ss, initialState,  0.f);
 
-    // Test system
-//    std::cout << block.Gradient(0, initialState) << std::endl;
+    // Instantiate Sink
+    Sink sink(bm, &outputSignal);
 
-    block.Update(1.f);
+    // Test system
+    for (float t = 0; t <= 5; t += 0.2) {
+        bm.UpdateSystem(t);
+    }
 
     return 0;
 }

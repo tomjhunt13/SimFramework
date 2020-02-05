@@ -3,13 +3,18 @@
 
 Eigen::VectorXf StateSpace::Gradient(float t, Eigen::VectorXf x) {
 
-    // Read input
-    const Eigen::VectorXf u = this->m_StateSpace.inputSignal->Read();
-
-    return this->m_StateSpace.A * this->m_x + this->m_StateSpace.B * u;
+    return this->m_StateSpace.A * this->m_x + this->m_StateSpace.B * this->m_u;
 
 };
 
+void StateSpace::Read() {
+    this->m_u = this->m_StateSpace.inputSignal->Read();
+}
+
+void StateSpace::Write() {
+    this->m_StateSpace.outputSignal->Write(this->m_x);
+
+}
 
 void StateSpace::Update(float finalTime) {
 
@@ -27,7 +32,5 @@ void StateSpace::Update(float finalTime) {
 
     // Update signals and state
     this->m_t = finalTime;
-    this->m_StateSpace.outputSignal->Write(this->m_x);
-
 
 };

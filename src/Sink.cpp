@@ -2,6 +2,6 @@
 
 void Sink::Update(float time) {
 
-    std::cout << "t: " << time << ", x:  " <<  this->m_InputSignal.Read() << std::endl;
+    std::cout << "t: " << time << ", x:  " <<  this->m_InputSignal->Read() << std::endl;
 
 }

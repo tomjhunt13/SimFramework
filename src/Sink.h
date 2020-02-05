@@ -16,11 +16,13 @@
 class Sink : public Block {
 
 private:
-    Signal<Eigen::VectorXf> m_InputSignal;
+    Signal<Eigen::VectorXf>* m_InputSignal;
 
 public:
-    Sink(BlockManager& manager, Signal<Eigen::VectorXf> inputSignal) : Block(manager), m_InputSignal(inputSignal) {};
+    Sink(BlockManager& manager, Signal<Eigen::VectorXf>* inputSignal) : Block(manager), m_InputSignal(inputSignal) {};
 
+    void Read() override {};
+    void Write() override {};
     void Update(float time) override;
 };
 

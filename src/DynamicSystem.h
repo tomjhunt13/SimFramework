@@ -17,7 +17,6 @@ public:
 
     virtual Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) = 0;
 
-
     static std::vector<float> TimeSteps(float tMin, float tMax, float dt);
 };
 
