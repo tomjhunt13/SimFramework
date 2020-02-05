@@ -5,12 +5,13 @@
 #include "Block.h"
 
 
-class DynamicSystem : public Block {
+//class DynamicSystem : public Block {
+class DynamicSystem {
 public:
-    DynamicSystem(std::vector<Signal*>& inputSignals, Signal* outputSignal) : Block(inputSignals, outputSignal) {};
+//    DynamicSystem(std::vector<Signal*>& inputSignals, Signal* outputSignal) : Block(inputSignals, outputSignal) {};
 
-    virtual Eigen::VectorXf Gradient(float t, Eigen::VectorXf x);
-    virtual void Update(float finalTime);
+    virtual Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) = 0;
+    virtual void Update(float finalTime) = 0;
 };
 
 

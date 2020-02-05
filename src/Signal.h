@@ -5,23 +5,35 @@
 #ifndef SIMINTERFACE_SIGNAL_H
 #define SIMINTERFACE_SIGNAL_H
 
-
+/*
 // Parent Signal class to reference generic template class
-class Signal {};
+class Signal {
+
+public:
+
+    virtual void Write();
+
+//    void Test(something & output) {
+//        something = this->Read();
+//    }
+};
+*/
 
 
 // Templated signal to allow different signal types
 template <typename type>
-class SignalTyped : public Signal {
+class Signal {
 
 private:
     type m_Value;
 
 public:
-    SignalTyped();
+    Signal(type initialValue) : m_Value(initialValue) {};
 
     const type Read() const { return this->m_Value; };
 
+
+    // TODO: Dont want to instantiate new vector each time
     void Write(type& value) { this->m_Value = value; };
 };
 

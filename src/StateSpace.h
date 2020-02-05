@@ -6,6 +6,7 @@
 
 #include "Eigen/Dense"
 
+#include "Signal.h"
 #include "StateSpace.h"
 #include "RK4.h"
 
@@ -13,8 +14,8 @@
 struct StateSpaceModel {
 
     // Input output
-    std::vector<Signal*> inputSignal;
-    Signal* outputSignal;
+    Signal<Eigen::VectorXf>* inputSignal;
+    Signal<Eigen::VectorXf>* outputSignal;
 
     // Integration parameters
     float dt = 0.1;
@@ -42,15 +43,13 @@ public:
 
     // Constructor
     StateSpace(StateSpaceModel stateSpace, Eigen::VectorXf initialState, float initialTime) :
-            DynamicSystem(stateSpace.inputSignal, stateSpace.outputSignal), // Initialise parent
             m_StateSpace(stateSpace), m_x(initialState), m_t(initialTime) {};
 
-//    // Temporary evaluation of system
-//    Eigen::VectorXf compute(Eigen::VectorXf u);
-//
-//    void Step(float t, float dt);
-//
-//    Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) override;
+
+    Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) override;
+
+    void Update(float finalTime) override {};
+
 
 };
 
