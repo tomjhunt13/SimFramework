@@ -1,6 +1,0 @@
-#ifndef SIMINTERFACE_LIBRARY_H
-#define SIMINTERFACE_LIBRARY_H
-
-void hello();
-
-#endif //SIMINTERFACE_LIBRARY_H

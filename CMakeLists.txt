@@ -8,7 +8,7 @@ add_subdirectory(libs/Eigen)
 include_directories(libs/Eigen)
 
 # SimInterface
-add_library(SimInterface src/library.cpp src/library.h src/StateSpace.cpp src/StateSpace.h)
+add_library(SimInterface src/StateSpace.cpp src/StateSpace.h src/RK4.h src/RK4.cpp src/SystemInterface.h)
 
 # Sandbox
 add_executable(Sandbox sandbox/main.cpp)
