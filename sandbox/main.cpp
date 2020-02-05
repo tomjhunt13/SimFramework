@@ -47,7 +47,7 @@ int main() {
 
     // Instantiate system
     Eigen::VectorXf initialState(2);
-    initialState << 0, 0.5;
+    initialState << 0.5, 0;
     StateSpace block(ss, initialState,  0.f);
 
     // Test system

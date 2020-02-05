@@ -10,8 +10,7 @@
 class RK4 {
 
 public:
-    static Eigen::VectorXf Step(DynamicSystem& system, float t, Eigen::VectorXf& x);
-
+    static Eigen::VectorXf Step(DynamicSystem& system, float dt, float t, Eigen::VectorXf& x);
 };
 
 

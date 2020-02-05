@@ -4,8 +4,7 @@
 
 #include "RK4.h"
 
-Eigen::VectorXf RK4::Step(DynamicSystem& system, float t, Eigen::VectorXf& x) {
-    float dt = 0.1;
+Eigen::VectorXf RK4::Step(DynamicSystem& system, float dt, float t, Eigen::VectorXf& x) {
 
     Eigen::VectorXf k1 = system.Gradient(t, x);
     Eigen::VectorXf k2 = system.Gradient(t + dt / 2.f, x + k1 / 2.f);

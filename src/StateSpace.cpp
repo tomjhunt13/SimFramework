@@ -17,14 +17,20 @@ void StateSpace::Update(float finalTime) {
     std::vector<float> timesteps = DynamicSystem::TimeSteps(this->m_t, finalTime, this->m_StateSpace.dt);
 
     // Iterate over timesteps and step system
+    float t = this->m_t;
     for (int i = 0; i < timesteps.size(); i++) {
 
         // Step system
-        std::cout << timesteps[i] << std::endl;
+        this->m_x = RK4::Step(*this, timesteps[i], t, this->m_x);
+
+        std::cout << "t: " << t << ", x:  " <<  m_x << std::endl;
+
+        t += timesteps[i];
     }
 
     // Update signals and state
     this->m_t = finalTime;
+    this->m_StateSpace.outputSignal->Write(this->m_x);
 
 
 };
