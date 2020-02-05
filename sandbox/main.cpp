@@ -51,7 +51,9 @@ int main() {
     StateSpace block(ss, initialState,  0.f);
 
     // Test system
-    std::cout << block.Gradient(0, initialState) << std::endl;
+//    std::cout << block.Gradient(0, initialState) << std::endl;
+
+    block.Update(1.f);
 
     return 0;
 }

@@ -48,7 +48,7 @@ public:
 
     Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) override;
 
-    void Update(float finalTime) override {};
+    void Update(float finalTime) override;
 
 
 };
