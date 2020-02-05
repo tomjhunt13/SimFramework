@@ -5,8 +5,6 @@
 #include "DynamicSystem.h"
 
 
-
-
 class RK4 {
 
 public:

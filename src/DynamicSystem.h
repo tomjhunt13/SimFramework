@@ -6,16 +6,18 @@
 #include <cmath>
 
 #include "Eigen/Dense"
-//#include "Block.h"
+
+#include "Block.h"
+#include "TimeManager.h"
 
 
-//class DynamicSystem : public Block {
-class DynamicSystem {
+class DynamicSystem : public Block {
 public:
-//    DynamicSystem(std::vector<Signal*>& inputSignals, Signal* outputSignal) : Block(inputSignals, outputSignal) {};
+
+    DynamicSystem(TimeManager& manager) : Block(manager) {};
 
     virtual Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) = 0;
-    virtual void Update(float finalTime) = 0;
+
 
     static std::vector<float> TimeSteps(float tMin, float tMax, float dt);
 };

@@ -22,9 +22,6 @@ void StateSpace::Update(float finalTime) {
 
         // Step system
         this->m_x = RK4::Step(*this, timesteps[i], t, this->m_x);
-
-        std::cout << "t: " << t << ", x:  " <<  m_x << std::endl;
-
         t += timesteps[i];
     }
 

@@ -1,23 +1,5 @@
-//
-// Created by Thomas Hunt on 05/02/2020.
-//
-
 #ifndef SIMINTERFACE_SIGNAL_H
 #define SIMINTERFACE_SIGNAL_H
-
-/*
-// Parent Signal class to reference generic template class
-class Signal {
-
-public:
-
-    virtual void Write();
-
-//    void Test(something & output) {
-//        something = this->Read();
-//    }
-};
-*/
 
 
 // Templated signal to allow different signal types

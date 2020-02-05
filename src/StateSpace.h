@@ -42,8 +42,8 @@ private:
 public:
 
     // Constructor
-    StateSpace(StateSpaceModel stateSpace, Eigen::VectorXf initialState, float initialTime) :
-            m_StateSpace(stateSpace), m_x(initialState), m_t(initialTime) {};
+    StateSpace(TimeManager& manager, StateSpaceModel stateSpace, Eigen::VectorXf initialState, float initialTime) :
+            DynamicSystem(manager), m_StateSpace(stateSpace), m_x(initialState), m_t(initialTime) {};
 
 
     Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) override;

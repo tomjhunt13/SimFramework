@@ -3,7 +3,6 @@
 #include "Eigen/Dense"
 
 #include "../src/StateSpace.h"
-#include "../src/RK4.h"
 #include "../src/Signal.h"
 
 
@@ -12,9 +11,9 @@ int main() {
 
     // Define signals
     Eigen::VectorXf in(1);
-    in << 2;
-    Eigen::VectorXf out(1);
     in << 0;
+    Eigen::VectorXf out(1);
+    out << 0;
 
     Signal<Eigen::VectorXf> inputSignal(in);
     Signal<Eigen::VectorXf> outputSignal(out);
