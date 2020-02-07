@@ -7,6 +7,8 @@
 
 namespace SimInterface {
 
+    class Block;
+
     class SystemManager {
 
     public:

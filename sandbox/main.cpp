@@ -6,11 +6,9 @@
 #include "Block.h"
 #include "Signal.h"
 #include "StateSpace.h"
+#include "Sink.h"
 
-//#include "SimInterface/SimInterface.h"
-//#include "../src/StateSpace.h"
-//#include "../src/Sink.h"
-//#include "../src/Signal.h"
+
 
 
 
@@ -44,7 +42,7 @@ int main() {
     D << 0;
 
     // Fill struct
-    StateSpaceModel ss;
+    SimInterface::StateSpaceModel ss;
     ss.inputSignal = &inputSignal;
     ss.outputSignal = &outputSignal;
     ss.A = A;
@@ -56,16 +54,17 @@ int main() {
     // Instantiate system
     Eigen::VectorXf initialState(2);
     initialState << 0.05, 0;
-    StateSpace block(ss, initialState,  0.f);
+    SimInterface::StateSpace block(ss, initialState,  0.f);
 
     // Instantiate Sink
-    Sink sink(bm, &outputSignal);
+    SimInterface::Sink sink(&outputSignal);
 
     // Test system
+    SimInterface::SystemManager& systemManager = SimInterface::SystemManager::Get();
     for (float t = 0; t <= 5; t += 0.2) {
 
         // TODO: rather than step to t, step by dt
-        bm.UpdateSystem(t);
+        systemManager.UpdateSystem(t);
     }
 
     return 0;

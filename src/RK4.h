@@ -4,12 +4,15 @@
 #include "Eigen/Dense"
 #include "DynamicSystem.h"
 
+namespace SimInterface {
 
-class RK4 {
+    class RK4 {
 
-public:
-    static Eigen::VectorXf Step(DynamicSystem& system, float dt, float t, Eigen::VectorXf& x);
-};
+    public:
+        static Eigen::VectorXf Step(DynamicSystem &system, float dt, float t, Eigen::VectorXf &x);
+    };
+
+} // namespace SimInterface
 
 
 #endif //SIMINTERFACE_RK4_H

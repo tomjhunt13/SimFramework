@@ -13,18 +13,23 @@
 #include "Block.h"
 #include "Signal.h"
 
-class Sink : public Block {
+namespace SimInterface {
 
-private:
-    Signal<Eigen::VectorXf>* m_InputSignal;
+    class Sink : public Block {
 
-public:
-    Sink(BlockManager& manager, Signal<Eigen::VectorXf>* inputSignal) : Block(manager), m_InputSignal(inputSignal) {};
+    private:
+        Signal<Eigen::VectorXf> *m_InputSignal;
 
-    void Read() override {};
-    void Write() override {};
-    void Update(float time) override;
-};
+    public:
+        Sink(Signal<Eigen::VectorXf> *inputSignal) : m_InputSignal(inputSignal) {};
 
+        void Read() override {};
+
+        void Write() override {};
+
+        void Update(float time) override;
+    };
+
+} // namespace SimInterface
 
 #endif //SIMINTERFACE_SINK_H

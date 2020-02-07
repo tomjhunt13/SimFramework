@@ -13,9 +13,6 @@ namespace SimInterface {
 
     class DynamicSystem : public Block {
     public:
-
-        DynamicSystem() : Block() {};
-
         virtual Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) = 0;
 
     };
