@@ -2,33 +2,25 @@
 #define SIMINTERFACE_BLOCK_H
 
 #include <vector>
+
+#include "SystemManager.h"
 #include "Signal.h"
 
-class BlockManager;
 
-class Block {
-public:
+namespace SimInterface {
 
-    Block(BlockManager& manager);
+    class Block {
+    public:
+        Block();
 
-
-    virtual void Read() = 0;
-    virtual void Write() = 0;
-
-    virtual void Update(float finalTime) = 0;
-};
+        virtual void Read() = 0;
+        virtual void Write() = 0;
+        virtual void Update(float finalTime) = 0;
+    };
 
 
-class BlockManager {
+} // namespace SimInterface
 
-private:
-    std::vector<Block*> m_Blocks;
 
-public:
-    void RegisterBlock(Block* block);
-
-    void UpdateSystem(float tMax);
-
-};
 
 #endif //SIMINTERFACE_BLOCK_H

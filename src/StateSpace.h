@@ -6,56 +6,63 @@
 
 #include "Eigen/Dense"
 
+#include "Utilities.h"
+
 #include "Block.h"
 #include "Signal.h"
 #include "StateSpace.h"
 #include "RK4.h"
 
 
-struct StateSpaceModel {
+namespace SimInterface {
 
-    // Input output
-    Signal<Eigen::VectorXf>* inputSignal;
-    Signal<Eigen::VectorXf>* outputSignal;
+    struct StateSpaceModel {
 
-    // Integration parameters
-    float dt = 0.1;
+        // Input output
+        Signal<Eigen::VectorXf> *inputSignal;
+        Signal<Eigen::VectorXf> *outputSignal;
 
-    // State space matrices
-    Eigen::MatrixXf A;
-    Eigen::MatrixXf B;
-    Eigen::MatrixXf C;
-    Eigen::MatrixXf D;
-};
+        // Integration parameters
+        float dt = 0.1;
 
-
-class StateSpace : public DynamicSystem {
-
-private:
-
-    // Matrices
-    StateSpaceModel m_StateSpace;
-
-    // State
-    Eigen::VectorXf m_x;
-    Eigen::VectorXf m_u;
-    float m_t;
-
-public:
-
-    // Constructor
-    StateSpace(BlockManager& manager, StateSpaceModel stateSpace, Eigen::VectorXf initialState, float initialTime) :
-            DynamicSystem(manager), m_StateSpace(stateSpace), m_x(initialState), m_t(initialTime) {};
+        // State space matrices
+        Eigen::MatrixXf A;
+        Eigen::MatrixXf B;
+        Eigen::MatrixXf C;
+        Eigen::MatrixXf D;
+    };
 
 
-    Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) override;
+    class StateSpace : public DynamicSystem {
 
-    void Read() override;
-    void Update(float finalTime) override;
-    void Write() override;
+    private:
+
+        // Matrices
+        StateSpaceModel m_StateSpace;
+
+        // State
+        Eigen::VectorXf m_x;
+        Eigen::VectorXf m_u;
+        float m_t;
+
+    public:
+
+        // Constructor
+        StateSpace(BlockManager &manager, StateSpaceModel stateSpace, Eigen::VectorXf initialState, float initialTime) :
+                DynamicSystem(manager), m_StateSpace(stateSpace), m_x(initialState), m_t(initialTime) {};
 
 
+        Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) override;
 
-};
+        void Read() override;
+
+        void Update(float finalTime) override;
+
+        void Write() override;
+
+
+    };
+
+} // namespace SimInterface
 
 #endif //SIMINTERFACE_STATESPACE_H

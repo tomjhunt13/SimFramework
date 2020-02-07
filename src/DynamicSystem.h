@@ -9,16 +9,17 @@
 
 #include "Block.h"
 
+namespace SimInterface {
 
-class DynamicSystem : public Block {
-public:
+    class DynamicSystem : public Block {
+    public:
 
-    DynamicSystem(BlockManager& manager) : Block(manager) {};
+        DynamicSystem() : Block() {};
 
-    virtual Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) = 0;
+        virtual Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) = 0;
 
-    static std::vector<float> TimeSteps(float tMin, float tMax, float dt);
-};
+    };
 
+}
 
 #endif //SIMINTERFACE_DYNAMICSYSTEM_H

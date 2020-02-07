@@ -1,7 +1,13 @@
+#include <iostream>
+
 #include "Eigen/Dense"
 
+#include "SystemManager.h"
+#include "Block.h"
+#include "Signal.h"
+#include "StateSpace.h"
 
-#include "SimInterface/SimInterface.h"
+//#include "SimInterface/SimInterface.h"
 //#include "../src/StateSpace.h"
 //#include "../src/Sink.h"
 //#include "../src/Signal.h"
@@ -10,8 +16,6 @@
 
 int main() {
 
-    // Create block manager
-    BlockManager bm;
 
     // Define signals
     Eigen::VectorXf in(1);
@@ -52,7 +56,7 @@ int main() {
     // Instantiate system
     Eigen::VectorXf initialState(2);
     initialState << 0.05, 0;
-    StateSpace block(bm, ss, initialState,  0.f);
+    StateSpace block(ss, initialState,  0.f);
 
     // Instantiate Sink
     Sink sink(bm, &outputSignal);
