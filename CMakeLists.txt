@@ -8,11 +8,11 @@ add_subdirectory(libs/Eigen)
 include_directories(libs/Eigen)
 
 # SimInterface
-add_library(SimInterface src/StateSpace.cpp src/StateSpace.h src/RK4.h src/RK4.cpp src/DynamicSystem.h src/Signal.h src/Block.h src/DynamicSystem.cpp src/Sink.cpp src/Sink.h src/Block.cpp src/SystemManager.cpp src/SystemManager.h src/Utilities.h src/Utilities.cpp)
+add_library(SimInterface src/StateSpace.cpp src/StateSpace.h src/RK4.h src/RK4.cpp src/DynamicSystem.h src/Signal.h src/Block.h src/Sink.cpp src/Sink.h src/Block.cpp src/SystemManager.cpp src/SystemManager.h src/Utilities.h src/Utilities.cpp)
 include_directories(src)
 
 # Sandbox
-add_executable(Sandbox sandbox/main.cpp include/SimInterface/SimInterface.h)
+add_executable(Sandbox sandbox/main.cpp)
 target_link_libraries(Sandbox SimInterface)
 include_directories(include)
 

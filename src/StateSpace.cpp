@@ -31,7 +31,7 @@ namespace SimInterface {
         for (int i = 0; i < timesteps.size(); i++) {
 
             // Step system
-            this->m_x = RK4::Step(*this, timesteps[i], t, this->m_x);
+            this->m_x = RK4::Step<Eigen::VectorXf>(*this, timesteps[i], t, this->m_x);
             t += timesteps[i];
         }
 

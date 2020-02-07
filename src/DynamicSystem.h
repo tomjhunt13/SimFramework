@@ -2,8 +2,6 @@
 #define SIMINTERFACE_DYNAMICSYSTEM_H
 
 
-#include <vector>
-#include <cmath>
 
 #include "Eigen/Dense"
 
@@ -13,6 +11,7 @@ namespace SimInterface {
 
     class DynamicSystem : public Block {
     public:
+
         virtual Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) = 0;
 
     };

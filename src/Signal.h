@@ -2,22 +2,26 @@
 #define SIMINTERFACE_SIGNAL_H
 
 
+namespace SimInterface {
+
 // Templated signal to allow different signal types
-template <typename type>
-class Signal {
+    template<typename type>
+    class Signal {
 
-private:
-    type m_Value;
+    private:
+        type m_Value;
 
-public:
-    Signal(type initialValue) : m_Value(initialValue) {};
+    public:
+        Signal(type initialValue) : m_Value(initialValue) {};
 
-    const type Read() const { return this->m_Value; };
+        const type Read() const { return this->m_Value; };
 
 
-    // TODO: Dont want to instantiate new vector each time
-    void Write(type& value) { this->m_Value = value; };
-};
+        // TODO: Dont want to instantiate new vector each time
+        void Write(type &value) { this->m_Value = value; };
+    };
+
+} // namespace SimInterface
 
 
 #endif //SIMINTERFACE_SIGNAL_H
