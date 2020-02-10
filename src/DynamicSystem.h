@@ -2,18 +2,12 @@
 #define SIMINTERFACE_DYNAMICSYSTEM_H
 
 
-
-#include "Eigen/Dense"
-
-#include "Block.h"
-
 namespace SimInterface {
 
-    class DynamicSystem : public Block {
+    template <typename GradientType>
+    class DynamicSystem {
     public:
-
-        virtual Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) = 0;
-
+        virtual GradientType Gradient(float t, GradientType x) = 0;
     };
 
 }
