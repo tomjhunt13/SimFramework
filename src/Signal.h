@@ -18,7 +18,7 @@ namespace SimInterface {
 
 
         // TODO: Dont want to instantiate new vector each time
-        void Write(type &value) { this->m_Value = value; };
+        void Write(type value) { this->m_Value = value; };
     };
 
 } // namespace SimInterface

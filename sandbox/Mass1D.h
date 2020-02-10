@@ -39,7 +39,6 @@ public:
     // Dynamic system functions
     std::vector<float> Gradient(float t, std::vector<float> x) override;
 
-
 };
 
 

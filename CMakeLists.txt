@@ -12,7 +12,7 @@ add_library(SimInterface STATIC src/StateSpace.cpp src/StateSpace.h src/DynamicS
 include_directories(src)
 
 # Sandbox
-add_executable(Sandbox sandbox/main.cpp sandbox/Mass1D.cpp sandbox/Mass1D.h)
+add_executable(Sandbox sandbox/main.cpp sandbox/Mass1D.cpp sandbox/Mass1D.h sandbox/SpringDamper1D.cpp sandbox/SpringDamper1D.h)
 target_link_libraries(Sandbox SimInterface)
 include_directories(include)
 
