@@ -1,12 +1,17 @@
 #include <iostream>
 
-#include "Eigen/Dense"
+#include <vector>
 
-#include "SystemManager.h"
-#include "Block.h"
+#include "SpringDamper1D.h"
+#include "Mass1D.h"
+#include "ConstantBlock.h"
+#include "OutputBlock.h"
+
+//#include "SystemManager.h"
+//#include "Block.h"
 #include "Signal.h"
-#include "StateSpace.h"
-#include "Sink.h"
+//#include "StateSpace.h"
+//#include "Sink.h"
 
 
 
@@ -14,56 +19,22 @@
 
 int main() {
 
+    // Create Signals
+    SimInterface::Signal<std::vector<float>> signal1({0.f, 0.f}); // ConstantBlock States
+    SimInterface::Signal<std::vector<float>> signal2({0.f, 0.f}); // Mass1D States
+    SimInterface::Signal<float> signal3({0.f});                   // SpringDamper Force
 
-    // Define signals
-    Eigen::VectorXf in(1);
-    in << 0;
-    Eigen::VectorXf out(1);
-    out << 0;
+    // Create blocks
+    SimInterface::ConstantBlock <std::vector<float>> cnstblk (signal1, {0.f, 0.f});
+    SpringDamper1D sd(signal1, signal2, signal3);
+    Mass1D mass (signal3, signal2);
+    OutputBlock out(signal2);
 
-    Signal<Eigen::VectorXf> inputSignal(in);
-    Signal<Eigen::VectorXf> outputSignal(out);
-
-    // State space matrices
-    float m = 10.f;
-    float k = 10;
-    float c = 0.01;
-
-    Eigen::MatrixXf A(2, 2);
-    A << 0, 1.f, -k / m, -(c / m);
-
-    Eigen::MatrixXf B(2, 1);
-    B << 0, 1 / m;
-
-    Eigen::MatrixXf C(1, 2);
-    C << 1, 0;
-
-    Eigen::MatrixXf D(1, 1);
-    D << 0;
-
-    // Fill struct
-    SimInterface::StateSpaceModel ss;
-    ss.inputSignal = &inputSignal;
-    ss.outputSignal = &outputSignal;
-    ss.A = A;
-    ss.B = B;
-    ss.C = C;
-    ss.D = D;
-    ss.dt = 0.001;
-
-    // Instantiate system
-    Eigen::VectorXf initialState(2);
-    initialState << 0.05, 0;
-    SimInterface::StateSpace block(ss, initialState,  0.f);
-
-    // Instantiate Sink
-    SimInterface::Sink sink(&outputSignal);
 
     // Test system
     SimInterface::SystemManager& systemManager = SimInterface::SystemManager::Get();
     for (float t = 0; t <= 5; t += 0.2) {
 
-        // TODO: rather than step to t, step by dt
         systemManager.UpdateSystem(t);
     }
 
