@@ -2,16 +2,18 @@
 
 
 
-OutputBlock::OutputBlock(SimInterface::Signal<std::vector<float>>& massStates) : massStates(&massStates) {};
+OutputBlock::OutputBlock(SimInterface::Signal<Eigen::Vector2f>& massStates, SimInterface::Signal<float>& force)
+                : massStates(&massStates), force(&force) {};
 
 
 void OutputBlock::Read()
 {
-    this->value = this->massStates->Read();
+    this->states = this->massStates->Read();
+    this->forceVal = this->force->Read();
 };
 
 void OutputBlock::Update(float t)
 {
-    std::cout << "Time: " << t << ", States: " << this->value[0] << ", " << this->value[1] << std::endl;
+    std::cout << "Time: " << t << ", States: " << this->states << ", Force: " << this->forceVal << std::endl;
 };
 

@@ -1,8 +1,10 @@
 #include "SpringDamper1D.h"
 
+#include <iostream>
+
 SpringDamper1D::SpringDamper1D(
-        SimInterface::Signal<std::vector<float>>& inputConnection1,
-        SimInterface::Signal<std::vector<float>>& inputConnection2,
+        SimInterface::Signal<Eigen::Vector2f>& inputConnection1,
+        SimInterface::Signal<Eigen::Vector2f>& inputConnection2,
         SimInterface::Signal<float>& outputForce)
         : inputConnection1(&inputConnection1), inputConnection2(&inputConnection2), outputForce(&outputForce)
 {
@@ -14,6 +16,9 @@ void SpringDamper1D::Read()
 {
     this->connection1 = this->inputConnection1->Read();
     this->connection2 = this->inputConnection2->Read();
+
+    std::cout << this->connection2 << std::endl;
+
 };
 
 void SpringDamper1D::Write()

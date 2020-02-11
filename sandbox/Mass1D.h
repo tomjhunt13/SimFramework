@@ -1,7 +1,9 @@
 #ifndef SIMINTERFACE_MASS1D_H
 #define SIMINTERFACE_MASS1D_H
 
-#include <vector>
+//#include <vector>
+
+#include "Eigen/Dense"
 
 #include "../src/Block.h"
 #include "../src/Signal.h"
@@ -10,13 +12,13 @@
 
 
 
-class Mass1D : public SimInterface::Block, public SimInterface::DynamicSystem<std::vector<float>> {
+class Mass1D : public SimInterface::Block, public SimInterface::DynamicSystem<Eigen::Vector2f> {
 
 private:
 
     // Signals
     SimInterface::Signal<float>* inputSpringForce = nullptr;
-    SimInterface::Signal<std::vector<float>>* outputStates = nullptr;
+    SimInterface::Signal<Eigen::Vector2f>* outputStates = nullptr;
 
     // Physical Properties
     float mass = 1;
@@ -24,12 +26,12 @@ private:
     // States;
     float u = 0;
     float t_n = 0;
-    std::vector<float> states = {0, 0};
+    Eigen::Vector2f states = {0, 0};
 
 
 public:
 
-    Mass1D(SimInterface::Signal<float>& inputSpringForce, SimInterface::Signal<std::vector<float>> & outputStates);
+    Mass1D(SimInterface::Signal<float>& inputSpringForce, SimInterface::Signal<Eigen::Vector2f> & outputStates);
 
     // Block functions
     void Read() override;
@@ -37,7 +39,7 @@ public:
     void Update(float t) override;
 
     // Dynamic system functions
-    std::vector<float> Gradient(float t, std::vector<float> x) override;
+    Eigen::Vector2f Gradient(float t, Eigen::Vector2f x) override;
 
 };
 

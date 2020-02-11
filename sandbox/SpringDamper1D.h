@@ -1,7 +1,7 @@
 #ifndef SIMINTERFACE_SPRINGDAMPER1D_H
 #define SIMINTERFACE_SPRINGDAMPER1D_H
 
-#include <vector>
+#include "Eigen/Dense"
 
 #include "../src/Block.h"
 #include "../src/Signal.h"
@@ -11,24 +11,24 @@ class SpringDamper1D : public SimInterface::Block {
 private:
 
     // Signals
-    SimInterface::Signal<std::vector<float>>* inputConnection1 = nullptr;
-    SimInterface::Signal<std::vector<float>>* inputConnection2 = nullptr;
+    SimInterface::Signal<Eigen::Vector2f>* inputConnection1 = nullptr;
+    SimInterface::Signal<Eigen::Vector2f>* inputConnection2 = nullptr;
     SimInterface::Signal<float>* outputForce = nullptr;
 
     // Physical Properties
-    float k = 1;
-    float c = 0.25;
+    float k = 10.f;
+    float c = 15.f;
 
     // States
-    std::vector<float> connection1;
-    std::vector<float> connection2;
-    float force;
+    Eigen::Vector2f connection1;
+    Eigen::Vector2f connection2;
+    float force = 2.f;
 
 
 public:
 
-    SpringDamper1D(SimInterface::Signal<std::vector<float>>& inputConnection1,
-                   SimInterface::Signal<std::vector<float>>& inputConnection2,
+    SpringDamper1D(SimInterface::Signal<Eigen::Vector2f>& inputConnection1,
+                   SimInterface::Signal<Eigen::Vector2f>& inputConnection2,
                    SimInterface::Signal<float>& outputForce);
 
     // Block functions

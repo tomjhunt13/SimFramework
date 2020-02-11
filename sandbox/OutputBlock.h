@@ -2,7 +2,8 @@
 #define SIMINTERFACE_OUTPUTBLOCK_H
 
 #include <iostream>
-#include <vector>
+
+#include "Eigen/Dense"
 
 #include "../src/Block.h"
 #include "../src/Signal.h"
@@ -11,11 +12,14 @@ class OutputBlock : public SimInterface::Block {
 
 private:
 
-    SimInterface::Signal<std::vector<float>>* massStates;
-    std::vector<float> value;
+    SimInterface::Signal<Eigen::Vector2f>* massStates;
+    SimInterface::Signal<float>* force;
+
+    Eigen::Vector2f states;
+    float forceVal;
 
 public:
-    OutputBlock(SimInterface::Signal<std::vector<float>>& massStates);
+    OutputBlock(SimInterface::Signal<Eigen::Vector2f>& massStates, SimInterface::Signal<float>& force);
 
     // Block functions
     void Read() override;
