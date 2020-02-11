@@ -37,7 +37,7 @@ int main() {
 
     // Test system
     SimInterface::SystemManager& systemManager = SimInterface::SystemManager::Get();
-    for (float t = 0; t <= 5; t += 0.2) {
+    for (float t = 0; t <= 5; t += 0.01) {
 
 //        signal2.Write({1, 2});
 

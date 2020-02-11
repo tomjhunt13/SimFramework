@@ -26,7 +26,7 @@ private:
     // States;
     float u = 0;
     float t_n = 0;
-    Eigen::Vector2f states = {0, 0};
+    Eigen::Vector2f states;
 
 
 public:
