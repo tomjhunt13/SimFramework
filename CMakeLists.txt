@@ -8,7 +8,7 @@ add_subdirectory(libs/Eigen)
 include_directories(libs/Eigen)
 
 # SimFramework
-add_library(SimFramework STATIC src/DynamicSystem.h src/Signal.h src/Block.h src/Block.cpp src/SystemManager.cpp src/SystemManager.h src/Utilities.h src/Utilities.cpp src/ForwardEuler.h src/ConstantBlock.h src/SummingJunction.h)
+add_library(SimFramework STATIC src/DynamicSystem.h src/Signal.h src/Block.h src/Block.cpp src/SystemManager.cpp src/SystemManager.h src/Utilities.h src/Utilities.cpp src/ForwardEuler.h src/ConstantBlock.h src/SummingJunction.h src/Framework.h src/Framework.cpp)
 include_directories(src)
 
 # Sandbox
