@@ -1,7 +1,7 @@
 #include "StateSpace.h"
 
 
-namespace SimInterface {
+namespace SimFramework {
     Eigen::VectorXf StateSpace::Gradient(float t, Eigen::VectorXf x) {
 
         return this->m_StateSpace.A * this->m_x + this->m_StateSpace.B * this->m_u;
@@ -31,7 +31,7 @@ namespace SimInterface {
         for (int i = 0; i < timesteps.size(); i++) {
 
             // Step system
-            this->m_x = RK4::Step<Eigen::VectorXf>(*this, timesteps[i], t, this->m_x);
+//            this->m_x = RK4::Step<Eigen::VectorXf>(*this, timesteps[i], t, this->m_x);
             t += timesteps[i];
         }
 
@@ -39,4 +39,4 @@ namespace SimInterface {
         this->m_t = finalTime;
 
     };
-} // namespace SimInterface
+} // namespace SimFramework

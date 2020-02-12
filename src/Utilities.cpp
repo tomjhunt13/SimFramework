@@ -1,6 +1,6 @@
 #include "Utilities.h"
 
-namespace SimInterface {
+namespace SimFramework {
     std::vector<float> TimeSteps(float tMin, float tMax, float dt) {
 
         float tRange = tMax - tMin;
@@ -24,4 +24,4 @@ namespace SimInterface {
         return timesteps;
     };
 
-} // namespace SimInterface
+} // namespace SimFramework

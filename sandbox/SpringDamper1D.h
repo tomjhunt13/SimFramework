@@ -6,30 +6,30 @@
 #include "../src/Block.h"
 #include "../src/Signal.h"
 
-class SpringDamper1D : public SimInterface::Block {
+class SpringDamper1D : public SimFramework::Block {
 
 private:
 
     // Signals
-    SimInterface::Signal<Eigen::Vector2f>* inputConnection1 = nullptr;
-    SimInterface::Signal<Eigen::Vector2f>* inputConnection2 = nullptr;
-    SimInterface::Signal<float>* outputForce = nullptr;
+    SimFramework::Signal<Eigen::Vector2f>* inputConnection1 = nullptr;
+    SimFramework::Signal<Eigen::Vector2f>* inputConnection2 = nullptr;
+    SimFramework::Signal<float>* outputForce = nullptr;
 
     // Physical Properties
-    float k = 10.f;
-    float c = 15.f;
+    float k = 1.f;
+    float c = 0.f;
 
     // States
     Eigen::Vector2f connection1;
     Eigen::Vector2f connection2;
-    float force = 2.f;
+    float force = 0.f;
 
 
 public:
 
-    SpringDamper1D(SimInterface::Signal<Eigen::Vector2f>& inputConnection1,
-                   SimInterface::Signal<Eigen::Vector2f>& inputConnection2,
-                   SimInterface::Signal<float>& outputForce);
+    SpringDamper1D(SimFramework::Signal<Eigen::Vector2f>& inputConnection1,
+                   SimFramework::Signal<Eigen::Vector2f>& inputConnection2,
+                   SimFramework::Signal<float>& outputForce);
 
     // Block functions
     void Read() override;

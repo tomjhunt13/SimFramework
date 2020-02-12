@@ -5,7 +5,7 @@
 
 #include "DynamicSystem.h"
 
-namespace SimInterface {
+namespace SimFramework {
 
     class ForwardEuler {
     public:
@@ -23,7 +23,7 @@ namespace SimInterface {
         return x_n + dt * system.Gradient(t_n, x_n);
     }
 
-}; // namespace SimInterface
+}; // namespace SimFramework
 
 
 #endif //SIMINTERFACE_FORWARDEULER_H

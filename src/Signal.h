@@ -2,7 +2,7 @@
 #define SIMINTERFACE_SIGNAL_H
 
 
-namespace SimInterface {
+namespace SimFramework {
 
 // Templated signal to allow different signal types
     template<typename type>
@@ -21,7 +21,7 @@ namespace SimInterface {
         void Write(type value) { this->m_Value = value; };
     };
 
-} // namespace SimInterface
+} // namespace SimFramework
 
 
 #endif //SIMINTERFACE_SIGNAL_H

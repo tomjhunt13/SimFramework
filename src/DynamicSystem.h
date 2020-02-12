@@ -2,7 +2,7 @@
 #define SIMINTERFACE_DYNAMICSYSTEM_H
 
 
-namespace SimInterface {
+namespace SimFramework {
 
     template <typename GradientType>
     class DynamicSystem {

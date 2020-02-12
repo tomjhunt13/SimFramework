@@ -4,7 +4,7 @@
 #include "Block.h"
 #include "Signal.h"
 
-namespace SimInterface {
+namespace SimFramework {
 
     template <typename dataType>
     class ConstantBlock :public Block {
@@ -27,7 +27,7 @@ namespace SimInterface {
 
     };
 
-}; // namespace SimInterface
+}; // namespace SimFramework
 
 
 #endif //SIMINTERFACE_CONSTANTBLOCK_H

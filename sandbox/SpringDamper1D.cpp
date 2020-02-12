@@ -1,9 +1,9 @@
 #include "SpringDamper1D.h"
 
 SpringDamper1D::SpringDamper1D(
-        SimInterface::Signal<Eigen::Vector2f>& inputConnection1,
-        SimInterface::Signal<Eigen::Vector2f>& inputConnection2,
-        SimInterface::Signal<float>& outputForce)
+        SimFramework::Signal<Eigen::Vector2f>& inputConnection1,
+        SimFramework::Signal<Eigen::Vector2f>& inputConnection2,
+        SimFramework::Signal<float>& outputForce)
         : inputConnection1(&inputConnection1), inputConnection2(&inputConnection2), outputForce(&outputForce)
 {
 //    this->Write();

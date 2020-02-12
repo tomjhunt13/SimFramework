@@ -1,9 +1,9 @@
 #include "Block.h"
 
-namespace SimInterface {
+namespace SimFramework {
 
     Block::Block() {
         SystemManager::RegisterBlock(this);
     }
 
-} // namespace SimInterface
+} // namespace SimFramework

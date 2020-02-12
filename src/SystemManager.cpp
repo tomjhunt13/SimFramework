@@ -1,7 +1,7 @@
 #include "SystemManager.h"
 
 
-namespace SimInterface {
+namespace SimFramework {
 
     SystemManager & SystemManager::Get()
     {
@@ -39,4 +39,4 @@ namespace SimInterface {
         }
     }
 
-} // namespace SimInterface
+} // namespace SimFramework

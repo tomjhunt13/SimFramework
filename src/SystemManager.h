@@ -5,7 +5,7 @@
 #include <vector>
 #include "Block.h"
 
-namespace SimInterface {
+namespace SimFramework {
 
     class Block;
 
@@ -31,6 +31,6 @@ namespace SimInterface {
     };
 
 
-} // namespace SimInterface
+} // namespace SimFramework
 
 #endif //SIMINTERFACE_SYSTEMMANAGER_H

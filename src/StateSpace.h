@@ -11,10 +11,10 @@
 #include "Block.h"
 #include "Signal.h"
 #include "StateSpace.h"
-#include "RK4.h"
 
 
-namespace SimInterface {
+
+namespace SimFramework {
 
     struct StateSpaceModel {
 
@@ -62,6 +62,6 @@ namespace SimInterface {
 
     };
 
-} // namespace SimInterface
+} // namespace SimFramework
 
 #endif //SIMINTERFACE_STATESPACE_H

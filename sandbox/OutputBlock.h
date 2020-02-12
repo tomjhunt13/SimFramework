@@ -8,18 +8,18 @@
 #include "../src/Block.h"
 #include "../src/Signal.h"
 
-class OutputBlock : public SimInterface::Block {
+class OutputBlock : public SimFramework::Block {
 
 private:
 
-    SimInterface::Signal<Eigen::Vector2f>* massStates;
-    SimInterface::Signal<float>* force;
+    SimFramework::Signal<Eigen::Vector2f>* massStates;
+    SimFramework::Signal<float>* force;
 
     Eigen::Vector2f states;
     float forceVal;
 
 public:
-    OutputBlock(SimInterface::Signal<Eigen::Vector2f>& massStates, SimInterface::Signal<float>& force);
+    OutputBlock(SimFramework::Signal<Eigen::Vector2f>& massStates, SimFramework::Signal<float>& force);
 
     // Block functions
     void Read() override;

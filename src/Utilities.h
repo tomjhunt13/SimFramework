@@ -4,10 +4,10 @@
 #include <vector>
 #include <cmath>
 
-namespace SimInterface {
+namespace SimFramework {
 
     std::vector<float> TimeSteps(float tMin, float tMax, float dt);
 
-} // namespace SimInterface
+} // namespace SimFramework
 
 #endif //SIMINTERFACE_UTILITIES_H

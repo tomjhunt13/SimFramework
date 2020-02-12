@@ -7,7 +7,7 @@
 #include "Signal.h"
 
 
-namespace SimInterface {
+namespace SimFramework {
 
     class Block {
     public:
@@ -23,7 +23,7 @@ namespace SimInterface {
     };
 
 
-} // namespace SimInterface
+} // namespace SimFramework
 
 
 

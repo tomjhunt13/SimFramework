@@ -2,7 +2,7 @@
 
 
 
-OutputBlock::OutputBlock(SimInterface::Signal<Eigen::Vector2f>& massStates, SimInterface::Signal<float>& force)
+OutputBlock::OutputBlock(SimFramework::Signal<Eigen::Vector2f>& massStates, SimFramework::Signal<float>& force)
                 : massStates(&massStates), force(&force) {};
 
 

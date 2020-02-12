@@ -12,13 +12,13 @@
 
 
 
-class Mass1D : public SimInterface::Block, public SimInterface::DynamicSystem<Eigen::Vector2f> {
+class Mass1D : public SimFramework::Block, public SimFramework::DynamicSystem<Eigen::Vector2f> {
 
 private:
 
     // Signals
-    SimInterface::Signal<float>* inputSpringForce = nullptr;
-    SimInterface::Signal<Eigen::Vector2f>* outputStates = nullptr;
+    SimFramework::Signal<float>* inputSpringForce = nullptr;
+    SimFramework::Signal<Eigen::Vector2f>* outputStates = nullptr;
 
     // Physical Properties
     float mass = 1;
@@ -31,7 +31,7 @@ private:
 
 public:
 
-    Mass1D(SimInterface::Signal<float>& inputSpringForce, SimInterface::Signal<Eigen::Vector2f> & outputStates);
+    Mass1D(SimFramework::Signal<float>& inputSpringForce, SimFramework::Signal<Eigen::Vector2f> & outputStates);
 
     // Block functions
     void Read() override;
