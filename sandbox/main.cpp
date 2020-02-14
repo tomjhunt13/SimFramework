@@ -29,14 +29,19 @@ int main() {
     pfunc q1("a");
 
 
+
+
     // First graph
-    pfunc p1("1");
     pfunc p2("2");
+    pfunc p7("7");
     pfunc p3("3");
+    pfunc q3("c");
     pfunc p4("4");
     pfunc p5("5");
+    pfunc q2("b");
     pfunc p6("6");
-    pfunc p7("7");
+    pfunc p1("1");
+
 
     SimFramework::Signal s13(&p1);
     SimFramework::Signal s23(&p2);

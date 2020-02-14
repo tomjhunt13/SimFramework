@@ -41,8 +41,7 @@ namespace SimFramework {
         e_BlockType BlockType() { return this->m_BlockType; };
 
         // Signal Registration
-        void RegisterInputSignal(Signal& inputSignal, std::string name = "sig");
-        void RegisterOutputSignal(Signal& inputSignal, std::string name);
+        void RegisterInputSignal(Signal& inputSignal);
 
         // List of blocks driving input signals
         std::vector<Block*> InputBlocks();
@@ -55,14 +54,8 @@ namespace SimFramework {
     private:
 
         e_BlockType m_BlockType;
-
-        std::map<std::string, Signal*> m_InputSignals;
-        std::map<std::string, Signal*> m_OutputSignals;
-
-        std::vector<std::string> m_InputSignalNames;
-        std::vector<Signal*> m_OutputSignalNames;
+        std::vector<Signal*> m_InputSignals;
     };
-
 
 
 

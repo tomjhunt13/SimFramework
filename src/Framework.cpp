@@ -1,7 +1,6 @@
 #include "Framework.h"
 
 
-
 namespace SimFramework {
 
     //----------------- Blocks
@@ -10,25 +9,19 @@ namespace SimFramework {
         SystemManager::RegisterBlock(this);
     };
 
-    void Block::RegisterInputSignal(Signal& inputSignal, std::string name)
+    void Block::RegisterInputSignal(Signal& inputSignal)
     {
-        this->m_InputSignals.insert({name, &inputSignal});
-        this->m_InputSignalNames.push_back(name);
+        this->m_InputSignals.push_back(&inputSignal);
     };
 
-    void Block::RegisterOutputSignal(Signal& inputSignal, std::string name)
-    {
-        this->m_InputSignals.insert({name, &inputSignal});
-        this->m_InputSignalNames.push_back(name);
-    };
 
     std::vector<Block*> Block::InputBlocks()
     {
         std::vector<Block*> outputList;
 
-        for (auto i : this->m_InputSignalNames)
+        for (auto i : this->m_InputSignals)
         {
-            outputList.push_back(this->m_InputSignals[i]->InputBlock());
+            outputList.push_back(i->InputBlock());
         }
 
         return outputList;
@@ -119,6 +112,7 @@ namespace SimFramework {
         std::vector<Block*> orderedList;
         for (Block* func : this->m_Functions)
         {
+
             if (blockMap[func].root) {
 
                 // Depth first traversal from root
