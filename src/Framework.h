@@ -17,11 +17,14 @@ namespace SimFramework {
     class Signal
     {
     public:
-        explicit Signal(Block* inputBlock, std::string name = "Signal") : m_InputBlock(inputBlock), m_Name(name) {};
+//        Signal() {};
+        Signal(std::string name = "Signal") : m_Name(name) {};
 
         Eigen::VectorXf Read() const { return this->m_Value; };
         void Write(Eigen::VectorXf value) { this->m_Value = value; };
-        Block* InputBlock() { return m_InputBlock; };
+
+        Block* GetInputBlock() { return m_InputBlock; };
+        void SetInputBlock(Block* inputBlock) { this->m_InputBlock = inputBlock; };
 
     private:
         Eigen::VectorXf m_Value;
@@ -40,9 +43,6 @@ namespace SimFramework {
 
         e_BlockType BlockType() { return this->m_BlockType; };
 
-        // Signal Registration
-        void RegisterInputSignal(Signal& inputSignal);
-
         // List of blocks driving input signals
         std::vector<Block*> InputBlocks();
 
@@ -51,20 +51,35 @@ namespace SimFramework {
         virtual void Update(float t_np1) = 0;
         virtual void Write() = 0;
 
+    protected:
+
+        // Signal Registration
+        void RegisterInputSignal(Signal& inputSignal);
+        void RegisterOutputSignal(Signal& outputSignal);
+
     private:
 
         e_BlockType m_BlockType;
         std::vector<Signal*> m_InputSignals;
+        std::vector<Signal*> m_OutputSignals;
     };
+
+    class DynamicSystem : public Block {
+    public:
+        DynamicSystem() : Block(e_BlockType::DynamicSystem) {};
+    };
+
+    class Function : public Block {
+    public:
+        Function() : Block(e_BlockType::Function) {};
+    };
+
+
 
 
 
     //----------------- SystemManager
-    struct FunctionTree {
-        Block* functionBlock;
-        std::vector<FunctionTree*> children;
-        bool root = true;
-    };
+
 
     class SystemManager {
 
@@ -82,7 +97,7 @@ namespace SimFramework {
         void ConstructSystem();
 
         // Solution phase
-        static void UpdateSystem(float tMax);
+        static void UpdateSystem(float t_np1);
 
     private:
 

@@ -12,6 +12,13 @@ namespace SimFramework {
     void Block::RegisterInputSignal(Signal& inputSignal)
     {
         this->m_InputSignals.push_back(&inputSignal);
+
+    };
+
+    void Block::RegisterOutputSignal(Signal& outputSignal)
+    {
+        outputSignal.SetInputBlock(this);
+        this->m_OutputSignals.push_back(&outputSignal);
     };
 
 
@@ -21,7 +28,7 @@ namespace SimFramework {
 
         for (auto i : this->m_InputSignals)
         {
-            outputList.push_back(i->InputBlock());
+            outputList.push_back(i->GetInputBlock());
         }
 
         return outputList;
@@ -32,6 +39,12 @@ namespace SimFramework {
 
 
     //----------------- SystemManager
+    struct FunctionTree {
+        Block* functionBlock;
+        std::vector<FunctionTree*> children;
+        bool root = true;
+    };
+
     SystemManager & SystemManager::Get()
     {
         // Instantiate new SystemManager if one doesn't exist
@@ -128,35 +141,47 @@ namespace SimFramework {
     };
 
 
-    void SystemManager::UpdateSystem(float tMax)
+    void ReadBlocks(std::vector<Block*>& blocks)
+    {
+        // Read inputs
+        for (auto i: blocks)
+        {
+            i->Read();
+        }
+    }
+
+    void UpdateBlocks(std::vector<Block*>& blocks, float t_np1)
+    {
+        // Update
+        for (auto i: blocks) {
+            i->Update(t_np1);
+        }
+    }
+
+    void WriteBlocks(std::vector<Block*>& blocks)
+    {
+        // Write outputs
+        for (auto i: blocks)
+        {
+            i->Write();
+        }
+    }
+
+    void SystemManager::UpdateSystem(float t_np1)
     {
 
         SystemManager& sys = SystemManager::Get();
 
-        for (Block* func : sys.m_Functions)
-        {
-            func->Update(tMax);
-        }
+        std::map<int, std::vector<Block*>*> updateOrder;
+        updateOrder.insert({0, &sys.m_Sources});
+        updateOrder.insert({1, &sys.m_DynamicSystems});
+        updateOrder.insert({2, &sys.m_Functions});
+        updateOrder.insert({3, &sys.m_Sinks});
 
-//        SystemManager& systemManager = SystemManager::Get();
-//
-//        // Read inputs
-//        for (auto i: systemManager.m_Blocks)
-//        {
-//            i->Read();
-//        }
-//
-//        // Update
-//        for (auto i: systemManager.m_Blocks)
-//        {
-//            i->Update(tMax);
-//        }
-//
-//        // Write outputs
-//        for (auto i: systemManager.m_Blocks)
-//        {
-//            i->Write();
-//        }
+        // Read, Update, Write
+        for (int i = 0; i < 4; i++) {ReadBlocks(*updateOrder[i]); };
+        for (int i = 0; i < 4; i++) {UpdateBlocks(*updateOrder[i], t_np1); };
+        for (int i = 0; i < 4; i++) {WriteBlocks(*updateOrder[i]); };
     }
 
 } // namespace SimFramework
