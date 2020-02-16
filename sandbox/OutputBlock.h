@@ -4,27 +4,19 @@
 #include <iostream>
 
 #include "Eigen/Dense"
+#include "Framework.h"
 
-#include "../src/Block.h"
-#include "../src/Signal.h"
 
-class OutputBlock : public SimFramework::Block {
 
-private:
-
-    SimFramework::Signal<Eigen::Vector2f>* massStates;
-    SimFramework::Signal<float>* force;
-
-    Eigen::Vector2f states;
-    float forceVal;
+class OutputBlock : public SimFramework::Sink {
 
 public:
-    OutputBlock(SimFramework::Signal<Eigen::Vector2f>& massStates, SimFramework::Signal<float>& force);
+    OutputBlock(SimFramework::Signal* massStates, SimFramework::Signal* force);
 
     // Block functions
-    void Read() override;
-    void Update(float t) override;
-    void Write() override {};
+    void Update(float t_np1) override;
+
+private:
 
 };
 

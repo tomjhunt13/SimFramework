@@ -34,7 +34,7 @@ namespace SimFramework {
 
 
     //----------------- Blocks
-    enum e_BlockType { Source, DynamicSystem, Function, Sink};
+    enum e_BlockType { eSource, eDynamicSystem, eFunction, eSink};
 
     class Block
     {
@@ -47,15 +47,20 @@ namespace SimFramework {
         std::vector<Block*> InputBlocks();
 
         // Block API
-        virtual void Read() = 0;
         virtual void Update(float t_np1) = 0;
-        virtual void Write() = 0;
+
+        //
+        void Read();
+        void Write();
 
     protected:
 
         // Signal Registration
-        void RegisterInputSignal(Signal& inputSignal);
-        void RegisterOutputSignal(Signal& outputSignal);
+        void RegisterInputSignal(Signal* inputSignal);
+        void RegisterOutputSignal(Signal* outputSignal);
+
+        std::vector<Eigen::VectorXf> m_InputCopy;
+        Eigen::VectorXf m_OutputCopy;
 
     private:
 
@@ -64,16 +69,36 @@ namespace SimFramework {
         std::vector<Signal*> m_OutputSignals;
     };
 
+    class Source : public Block {
+    public:
+        Source() : Block(e_BlockType::eSource) {};
+
+    protected:
+        float t_n;
+    };
+
     class DynamicSystem : public Block {
     public:
-        DynamicSystem() : Block(e_BlockType::DynamicSystem) {};
+        DynamicSystem() : Block(e_BlockType::eDynamicSystem) {};
+
+        virtual Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) = 0;
+
+    protected:
+        float t_n;
     };
 
     class Function : public Block {
     public:
-        Function() : Block(e_BlockType::Function) {};
+        Function() : Block(e_BlockType::eFunction) {};
     };
 
+    class Sink : public Block {
+    public:
+        Sink() : Block(e_BlockType::eSink) {};
+
+    protected:
+        float t_n;
+    };
 
 
 
@@ -112,6 +137,12 @@ namespace SimFramework {
 
         // Constructor hidden to maintain singleton pattern
         SystemManager() = default;
+    };
+
+
+    class ForwardEuler {
+    public:
+        static Eigen::VectorXf Step(DynamicSystem & block, float dt, float t, Eigen::VectorXf &x_n);
     };
 
 } // namespace SimFramework

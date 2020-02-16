@@ -9,16 +9,16 @@ namespace SimFramework {
         SystemManager::RegisterBlock(this);
     };
 
-    void Block::RegisterInputSignal(Signal& inputSignal)
+    void Block::RegisterInputSignal(Signal* inputSignal)
     {
-        this->m_InputSignals.push_back(&inputSignal);
+        this->m_InputSignals.push_back(inputSignal);
 
     };
 
-    void Block::RegisterOutputSignal(Signal& outputSignal)
+    void Block::RegisterOutputSignal(Signal* outputSignal)
     {
-        outputSignal.SetInputBlock(this);
-        this->m_OutputSignals.push_back(&outputSignal);
+        outputSignal->SetInputBlock(this);
+        this->m_OutputSignals.push_back(outputSignal);
     };
 
 
@@ -34,8 +34,21 @@ namespace SimFramework {
         return outputList;
     };
 
+    void  Block::Read()
+    {
+        for (int i=0; i < this->m_InputSignals.size(); i++)
+        {
+            this->m_InputCopy[i] = this->m_InputSignals[i]->Read();
+        }
+    }
 
-
+    void  Block::Write()
+    {
+        for (int i=0; i < this->m_InputSignals.size(); i++)
+        {
+            this->m_OutputSignals[i]->Write(this->m_InputCopy[i]);
+        }
+    }
 
 
     //----------------- SystemManager
@@ -56,10 +69,10 @@ namespace SimFramework {
     {
         switch (block->BlockType())
         {
-            case Source : SystemManager::Get().m_Sources.push_back(block);
-            case DynamicSystem : SystemManager::Get().m_DynamicSystems.push_back(block);
-            case Function : SystemManager::Get().m_Functions.push_back(block);
-            case Sink : SystemManager::Get().m_Sinks.push_back(block);
+            case e_BlockType::eSource : SystemManager::Get().m_Sources.push_back(block);
+            case e_BlockType::eDynamicSystem : SystemManager::Get().m_DynamicSystems.push_back(block);
+            case e_BlockType::eFunction : SystemManager::Get().m_Functions.push_back(block);
+            case e_BlockType::eSink : SystemManager::Get().m_Sinks.push_back(block);
         }
     };
 
@@ -113,7 +126,7 @@ namespace SimFramework {
         {
             for (Block* b : func->InputBlocks())
             {
-                if (b->BlockType() == Function)
+                if (b->BlockType() == e_BlockType ::eFunction)
                 {
                     blockMap[func].children.push_back(&blockMap[b]);
                     blockMap[b].root = false;
@@ -182,6 +195,12 @@ namespace SimFramework {
         for (int i = 0; i < 4; i++) {ReadBlocks(*updateOrder[i]); };
         for (int i = 0; i < 4; i++) {UpdateBlocks(*updateOrder[i], t_np1); };
         for (int i = 0; i < 4; i++) {WriteBlocks(*updateOrder[i]); };
+    }
+
+
+    Eigen::VectorXf ForwardEuler::Step(DynamicSystem &system, float dt, float t_n, Eigen::VectorXf& x_n)
+    {
+        return x_n + dt * system.Gradient(t_n, x_n);
     }
 
 } // namespace SimFramework

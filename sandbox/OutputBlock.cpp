@@ -2,18 +2,18 @@
 
 
 
-OutputBlock::OutputBlock(SimFramework::Signal<Eigen::Vector2f>& massStates, SimFramework::Signal<float>& force)
-                : massStates(&massStates), force(&force) {};
-
-
-void OutputBlock::Read()
+OutputBlock::OutputBlock(SimFramework::Signal* massStates, SimFramework::Signal* force)
 {
-    this->states = this->massStates->Read();
-    this->forceVal = this->force->Read();
-};
+    this->RegisterInputSignal(massStates);
+    this->RegisterInputSignal(force);
+
+    this->m_InputCopy.resize(2);
+}
+
+
 
 void OutputBlock::Update(float t)
 {
-    std::cout << "Time: " << t << ", States: " << this->states << ", Force: " << this->forceVal << std::endl;
+    std::cout << "Time: " << t << ", States: " << this->m_InputCopy[0] << ", Force: " << this->m_InputCopy[1] << std::endl;
 };
 

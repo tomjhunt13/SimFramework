@@ -8,9 +8,9 @@ add_subdirectory(libs/Eigen)
 include_directories(libs/Eigen)
 
 # SimFramework
-add_library(SimFramework STATIC src/Framework.h src/Framework.cpp)
+add_library(SimFramework STATIC src/Framework.h src/Framework.cpp src/Components.h src/Components.cpp)
 include_directories(src)
 
 # Sandbox
-add_executable(Sandbox sandbox/main.cpp)
+add_executable(Sandbox sandbox/main.cpp sandbox/SpringDamper1D.cpp sandbox/SpringDamper1D.h sandbox/Mass1D.cpp sandbox/Mass1D.h sandbox/OutputBlock.h sandbox/OutputBlock.cpp)
 target_link_libraries(Sandbox SimFramework)

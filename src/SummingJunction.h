@@ -3,8 +3,7 @@
 
 #include <vector>
 
-#include "Block.h"
-#include "Signal.h"
+
 
 namespace SimFramework {
 
