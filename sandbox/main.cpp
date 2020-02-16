@@ -17,7 +17,10 @@ int main() {
     SimFramework::Signal signal3; // SpringDamper Force
 
     // Create blocks
-    SimFramework::ConstantBlock cnstblk (&signal1, {0.f, 0.f});
+    Eigen::VectorXf a (2, 1);
+    a(0) = 0.f;
+    a(1) = 0.f;
+    SimFramework::ConstantBlock cnstblk (&signal1, a);
     SpringDamper1D sd(&signal1, &signal2, &signal3);
     Mass1D mass (&signal3, &signal2);
     OutputBlock out(&signal2, &signal3);

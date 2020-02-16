@@ -7,6 +7,11 @@ Mass1D::Mass1D(SimFramework::Signal* inputSpringForce, SimFramework::Signal* out
 
     // Set size of input and output copies
     this->m_InputCopy.resize(1);
+
+    Eigen::VectorXf a(2);
+    a(0) = 0.1f;
+            a(1) = 0.f;
+    this->m_InputCopy[0] = a;
 };
 
 
@@ -25,6 +30,8 @@ void Mass1D::Update(float t_np1)
 
 Eigen::VectorXf Mass1D::Gradient(float t, Eigen::VectorXf x)
 {
-    Eigen::Vector2f output = {x[1], (-1.f / this->mass) * this->m_InputCopy[0]};
+    Eigen::VectorXf output(2);
+    output(0) = x(1);
+    output(1) = (-1.f / this->mass) * this->m_InputCopy[0](0);
     return output;
 };
