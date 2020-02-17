@@ -14,18 +14,22 @@
 int main() {
 
     SimFramework::Signal<Eigen::Vector2f> signal1; // ConstantBlock States
-    SimFramework::Signal<Eigen::Vector2f> signal2; // Mass1D States
-    SimFramework::Signal<float> signal3; // SpringDamper Force
+    SimFramework::Signal<float> signal2; // SpringDamper Force
+    SimFramework::Signal<float> signal3; // Const Additional Force
+    SimFramework::Signal<float> signal4; // Sum of forces
+    SimFramework::Signal<Eigen::Vector2f> signal5; // Mass1D States
 
     // Create blocks
-    SimFramework::ConstantBlock<Eigen::Vector2f> constBlock (&signal1, {0.f, 0.f});
-    SpringDamper1D spring(&signal1, &signal2, &signal3);
-    Mass1D mass (&signal3, &signal2, {0.1, 0.f});
-    OutputBlock out(&signal1, &signal3);
+    SimFramework::ConstantBlock<Eigen::Vector2f> connection1 (&signal1, {0.f, 0.f});
+    SimFramework::ConstantBlock<float> constForce (&signal3, 1.5f);
+    SpringDamper1D spring(&signal1, &signal5, &signal2);
+    SimFramework::SummingJunction<float> sum({&signal2, &signal3}, &signal4, {1.f, 2.f});
+    Mass1D mass (&signal4, &signal5, {0.1, 0.f});
+    OutputBlock out(&signal5, &signal4);
 
     // Construct system
     SimFramework::SystemManager& systemManager = SimFramework::SystemManager::Get();
-    systemManager.RegisterBlocks({&constBlock, &mass, &spring, &out});
+    systemManager.RegisterBlocks({&connection1, &constForce, &mass, &spring, &sum, &out});
 
 
     // Iterate

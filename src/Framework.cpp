@@ -34,19 +34,21 @@ namespace SimFramework {
         for (auto i: systemManager.m_Blocks)
         {
             i->Read();
-        }
-
-        // Update
-        for (auto i: systemManager.m_Blocks)
-        {
             i->Update(t_np1);
-        }
-
-        // Write outputs
-        for (auto i: systemManager.m_Blocks)
-        {
             i->Write();
         }
+
+//        // Update
+//        for (auto i: systemManager.m_Blocks)
+//        {
+//
+//        }
+//
+//        // Write outputs
+//        for (auto i: systemManager.m_Blocks)
+//        {
+//
+//        }
     };
 
 } // namespace SimFramework

@@ -53,7 +53,7 @@ namespace SimFramework {
         {
             SignalType outputValue;
 
-            for (int i = 0; i < this->m_nInputs; i++)
+            for (int i = 0; i < this->m_InputSignals.size(); i++)
             {
                 outputValue += this->m_Weights[i] * this->m_InputCopies[i];
             }

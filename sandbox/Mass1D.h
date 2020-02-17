@@ -32,7 +32,7 @@ private:
     float t_n = 0;
 
     // Physical Properties
-    float mass = 1;
+    float mass = 2.f;
 };
 
 

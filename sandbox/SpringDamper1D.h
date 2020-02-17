@@ -30,7 +30,7 @@ private:
     float m_OutCopy;
 
     // Physical Properties
-    float k = 1.f;
+    float k = 8.f;
     float c = 0.f;
 
 };
