@@ -19,7 +19,12 @@ void SpringDamper1D::Write()
     this->m_OutputForce->Write(this->m_OutCopy);
 };
 
-void SpringDamper1D::Update(float t)
+void SpringDamper1D::Update(float t_np1)
 {
-    this->m_OutCopy = this->k * (this->m_In2Copy[0] - this->m_In1Copy[0]) + this->c * (this->m_In2Copy[1] - this->m_In1Copy[1]);
+    this->m_OutCopy = this->k * (this->m_In1Copy[0] - this->m_In2Copy[0]) + this->c * (this->m_In1Copy[1] - this->m_In2Copy[1]);
 };
+
+void SpringDamper1D::Init(float t_0)
+{
+//    this->m_OutputForce->Write(0);
+}

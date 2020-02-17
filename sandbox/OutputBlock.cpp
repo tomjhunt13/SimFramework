@@ -11,6 +11,10 @@ void OutputBlock::Read()
     this->m_ForceCopy = this->m_Force->Read();
 }
 
+void OutputBlock::Init(float t_0)
+{
+    this->t_n = t_0;
+}
 
 void OutputBlock::Update(float t_np1)
 {

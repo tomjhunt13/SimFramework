@@ -1,6 +1,7 @@
 #ifndef SIMINTERFACE_CONSTANTBLOCK_H
 #define SIMINTERFACE_CONSTANTBLOCK_H
 
+#include <vector>
 #include "Eigen/Dense"
 #include "Framework.h"
 
@@ -10,15 +11,24 @@ namespace SimFramework {
     template <typename SignalType>
     class ConstantBlock : public Block {
     public:
-        ConstantBlock(Signal<SignalType>* outputSignal, SignalType value)
-        {
-            outputSignal->Write(value);
-        };
+        ConstantBlock(Signal<SignalType>* outputSignal, SignalType value) : m_OutputSignal(outputSignal), m_Value(value) {};
 
         // Block API
         void Read() override {};
-        void Write() override {};
+        void Write() override
+        {
+            this->m_OutputSignal->Write(this->m_Value);
+        };
         void Update(float t_np1) override {};
+
+        void Init(float t_0) override
+        {
+            this->Write();
+        };
+
+    private:
+        Signal<SignalType>* m_OutputSignal;
+        SignalType m_Value;
     };
 
 
@@ -51,15 +61,31 @@ namespace SimFramework {
 
         void Update(float t_np1) override
         {
-            SignalType outputValue;
+            std::vector<SignalType> weightedValues;
 
             for (int i = 0; i < this->m_InputSignals.size(); i++)
             {
-                outputValue += this->m_Weights[i] * this->m_InputCopies[i];
+                weightedValues.push_back(this->m_Weights[i] * this->m_InputCopies[i]);
             }
 
-            this->m_OutputCopy = outputValue;
+            if (!this->m_InputSignals.empty())
+            {
+                SignalType outputValue =  weightedValues[0];
 
+                for (int i = 1; i < this->m_InputSignals.size(); i++)
+                {
+                    outputValue += weightedValues[i];
+                };
+
+                this->m_OutputCopy = outputValue;
+            }
+
+        };
+
+        void Init(float t_0) override
+        {
+//            SignalType tempVal;
+//            this->m_OutputSignal->Write(tempVal);
         };
 
     private:

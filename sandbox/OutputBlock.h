@@ -17,6 +17,7 @@ public:
     void Read() override;
     void Write() override {};
     void Update(float t_np1) override;
+    void Init(float t_0) override;
 
 private:
 

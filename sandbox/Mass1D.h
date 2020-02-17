@@ -16,6 +16,7 @@ public:
     void Read() override;
     void Write() override;
     void Update(float t_np1) override;
+    void Init(float t_0) override;
 
     // Dynamic system functions
     Eigen::Vector2f Gradient(float t, Eigen::Vector2f x) override;
@@ -27,8 +28,9 @@ private:
     SimFramework::Signal<Eigen::Vector2f>* m_OutputStates;
 
     // Internal copies
-    float m_InputCopy;
+    Eigen::Vector2f m_InitStates;
     Eigen::Vector2f m_States;
+    float m_InputCopy;
     float t_n = 0;
 
     // Physical Properties

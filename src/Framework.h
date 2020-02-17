@@ -34,6 +34,7 @@ namespace SimFramework {
         virtual void Read() = 0;
         virtual void Write() = 0;
         virtual void Update(float t_np1) = 0;
+        virtual void Init(float t_0) = 0;
     };
 
 
@@ -65,14 +66,22 @@ namespace SimFramework {
 
         static SystemManager& Get();
 
-        static void RegisterBlocks(std::vector<Block*> blocks);
+        void RegisterBlocks(std::vector<Block*> sources, std::vector<Block*> dynamicSystems,
+                                   std::vector<Block*> functions, std::vector<Block*> sinks);
+
+        void Initialise(float t_0);
 
         // Solution phase
-        static void UpdateSystem(float t_np1);
+        void UpdateSystem(float t_np1);
 
     private:
 
-        std::vector<Block*> m_Blocks;
+        void UpdateFunctions(float t_np1);
+
+        std::vector<Block*> m_Sources;
+        std::vector<Block*> m_DynamicSystems;
+        std::vector<Block*> m_Functions;
+        std::vector<Block*> m_Sinks;
 
         // Constructor hidden to maintain singleton pattern
         SystemManager() = default;

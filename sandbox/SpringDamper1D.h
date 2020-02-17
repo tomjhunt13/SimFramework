@@ -16,6 +16,7 @@ public:
     void Read() override;
     void Write() override;
     void Update(float t_np1) override;
+    void Init(float t_0) override;
 
 private:
 
@@ -31,7 +32,7 @@ private:
 
     // Physical Properties
     float k = 8.f;
-    float c = 0.f;
+    float c = 1.f;
 
 };
 
