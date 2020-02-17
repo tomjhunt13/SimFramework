@@ -7,32 +7,73 @@
 namespace SimFramework {
 
     //-------------------- Constant
-    class ConstantBlock : public Source {
-
+    template <typename SignalType>
+    class ConstantBlock : public Block {
     public:
-        ConstantBlock(Signal* outputSignal, Eigen::VectorXf value);
-        void Update(float t_np1) override { this->t_n = t_np1; }
+        ConstantBlock(Signal<SignalType>* outputSignal, SignalType value)
+        {
+            outputSignal->Write(value);
+        };
 
-    private:
-        Eigen::VectorXf m_Value;
+        // Block API
+        void Read() override {};
+        void Write() override {};
+        void Update(float t_np1) override {};
     };
 
 
     //------------------------ Summing Junction
-    class SummingJunction : public Function {
+    template <typename SignalType>
+    class SummingJunction : public Block {
     public:
-        SummingJunction(std::vector<Signal*> inputSignals,
-                        Signal* outputSignal,
-                        std::vector<float> weights);
+        SummingJunction(
+                std::vector<Signal<SignalType>*> inputSignals,
+                Signal<SignalType>* outputSignal,
+                std::vector<float> weights)
+                : m_InputSignals(inputSignals), m_OutputSignal(outputSignal), m_Weights(weights)
+        {
+            this->m_InputCopies.reserve(inputSignals.size());
+        };
 
-        void Update(float t) override;
+        // Block API
+        void Read() override
+        {
+            for (int i = 0; i < this->m_InputSignals.size(); i++)
+            {
+                this->m_InputCopies[i] = m_InputSignals[i]->Read();
+            }
+        };
+
+        void Write() override
+        {
+            this->m_OutputSignal->Write(this->m_OutputCopy);
+        };
+
+        void Update(float t_np1) override
+        {
+            SignalType outputValue;
+
+            for (int i = 0; i < this->m_nInputs; i++)
+            {
+                outputValue += this->m_Weights[i] * this->m_InputCopies[i];
+            }
+
+            this->m_OutputCopy = outputValue;
+
+        };
 
     private:
 
+        // Signals
+        std::vector<Signal<SignalType>*> m_InputSignals;
+        Signal<SignalType>* m_OutputSignal;
+
+        // Internal copies
+        std::vector<SignalType> m_InputCopies;
+        SignalType m_OutputCopy;
+
         // Parameters
         std::vector<float> m_Weights;
-        int m_nInputs;
-
     };
 
 }; // namespace SimFramework

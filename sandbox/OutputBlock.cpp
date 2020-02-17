@@ -1,19 +1,20 @@
 #include "OutputBlock.h"
 
+OutputBlock::OutputBlock(
+        SimFramework::Signal<Eigen::Vector2f>* massStates,
+        SimFramework::Signal<float>* force)
+        : m_MassStates(massStates), m_Force(force) {};
 
-
-OutputBlock::OutputBlock(SimFramework::Signal* massStates, SimFramework::Signal* force)
+void OutputBlock::Read()
 {
-    this->RegisterInputSignal(massStates);
-    this->RegisterInputSignal(force);
-
-    this->m_InputCopy.resize(2);
+    this->m_StatesCopy = this->m_MassStates->Read();
+    this->m_ForceCopy = this->m_Force->Read();
 }
-
 
 
 void OutputBlock::Update(float t_np1)
 {
-    std::cout << "Time: " << t_np1 << ", States: " << this->m_InputCopy[0] << ", Force: " << this->m_InputCopy[1] << std::endl;
+    std::cout << "Time: " << this->t_n << ", States: " << this->m_StatesCopy << ", Force: " << this->m_ForceCopy << std::endl;
+    this->t_n =  t_np1;
 };
 

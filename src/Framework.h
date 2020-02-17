@@ -9,99 +9,49 @@
 
 namespace SimFramework {
 
-    // Forward Declarations
-    class Block;
-
 
     //----------------- Signal
+    template <typename SignalType>
     class Signal
     {
     public:
-//        Signal() {};
         Signal(std::string name = "Signal") : m_Name(name) {};
 
-        Eigen::VectorXf Read() const { return this->m_Value; };
-        void Write(Eigen::VectorXf value) { this->m_Value = value; };
-
-        Block* GetInputBlock() { return m_InputBlock; };
-        void SetInputBlock(Block* inputBlock) { this->m_InputBlock = inputBlock; };
+        SignalType Read() const { return this->m_Value; };
+        void Write(SignalType value) { this->m_Value = value; };
 
     private:
-        Eigen::VectorXf m_Value;
-        Block* m_InputBlock;
+        SignalType m_Value;
         std::string m_Name;
     };
 
 
-    //----------------- Blocks
-    enum e_BlockType { eSource, eDynamicSystem, eFunction, eSink};
-
+    //----------------- Block
     class Block
     {
     public:
-        Block(e_BlockType blockType);
-
-        e_BlockType BlockType() { return this->m_BlockType; };
-
-        // List of blocks driving input signals
-        std::vector<Block*> InputBlocks();
-
         // Block API
+        virtual void Read() = 0;
+        virtual void Write() = 0;
         virtual void Update(float t_np1) = 0;
-
-        //
-        void Read();
-        void Write();
-
-    protected:
-
-        // Signal Registration
-        void RegisterInputSignal(Signal* inputSignal);
-        void RegisterOutputSignal(Signal* outputSignal);
-
-        std::vector<Eigen::VectorXf> m_InputCopy;
-        Eigen::VectorXf m_OutputCopy;
-
-    private:
-
-        e_BlockType m_BlockType;
-        std::vector<Signal*> m_InputSignals;
-        std::vector<Signal*> m_OutputSignals;
     };
 
-    class Source : public Block {
+
+    //-------- Dynamic system and integration
+    template <typename GradientType>
+    class DynamicSystem {
     public:
-        Source() : Block(e_BlockType::eSource) {};
-
-    protected:
-        float t_n;
+        virtual GradientType Gradient(float t, GradientType x) = 0;
     };
 
-    class DynamicSystem : public Block {
+    class ForwardEuler {
     public:
-        DynamicSystem() : Block(e_BlockType::eDynamicSystem) {};
-
-        virtual Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) = 0;
-
-    protected:
-        float t_n;
+        template<typename GradientType>
+        static GradientType Step(DynamicSystem<GradientType> & block, float dt, float t_n, GradientType &x_n)
+        {
+            return x_n + dt * block.Gradient(t_n, x_n);
+        };
     };
-
-    class Function : public Block {
-    public:
-        Function() : Block(e_BlockType::eFunction) {};
-    };
-
-    class Sink : public Block {
-    public:
-        Sink() : Block(e_BlockType::eSink) {};
-
-    protected:
-        float t_n;
-    };
-
-
-
 
     //----------------- SystemManager
 
@@ -115,35 +65,21 @@ namespace SimFramework {
 
         static SystemManager& Get();
 
-        // Construction phase
-        static void RegisterBlock(Block* block);
-
-        // Initialisation phase
-        void ConstructSystem();
+        static void RegisterBlocks(std::vector<Block*> blocks);
 
         // Solution phase
         static void UpdateSystem(float t_np1);
 
     private:
 
-        // Helper methods
-        void OrderFunctions();
-
-        // Reference to blocks in system
-        std::vector<Block*> m_Sources;
-        std::vector<Block*> m_DynamicSystems;
-        std::vector<Block*> m_Functions;
-        std::vector<Block*> m_Sinks;
+        std::vector<Block*> m_Blocks;
 
         // Constructor hidden to maintain singleton pattern
         SystemManager() = default;
     };
 
 
-    class ForwardEuler {
-    public:
-        static Eigen::VectorXf Step(DynamicSystem & block, float dt, float t, Eigen::VectorXf &x_n);
-    };
+
 
 } // namespace SimFramework
 

@@ -1,19 +1,21 @@
 #include "Mass1D.h"
 
-Mass1D::Mass1D(SimFramework::Signal* inputSpringForce, SimFramework::Signal* outputStates)
+Mass1D::Mass1D(
+        SimFramework::Signal<float>* inputSpringForce,
+        SimFramework::Signal<Eigen::Vector2f>* outputStates,
+        Eigen::Vector2f initialStates)
+        : m_InputSpringForce(inputSpringForce), m_OutputStates(outputStates), m_States(initialStates) {};
+
+
+void Mass1D::Read()
 {
-    this->RegisterInputSignal(inputSpringForce);
-    this->RegisterOutputSignal(outputStates);
-
-    // Set size of input and output copies
-    this->m_InputCopy.resize(1);
-
-    Eigen::VectorXf a(2);
-    a(0) = 0.1f;
-            a(1) = 0.f;
-    this->m_InputCopy[0] = a;
+    this->m_InputCopy = this->m_InputSpringForce->Read();
 };
 
+void Mass1D::Write()
+{
+    this->m_OutputStates->Write(this->m_States);
+};
 
 void Mass1D::Update(float t_np1)
 {
@@ -21,17 +23,14 @@ void Mass1D::Update(float t_np1)
     // Get dt
     float dt = t_np1 - this->t_n;
 
-    Eigen::VectorXf x_np1 = SimFramework::ForwardEuler::Step(*this, dt, this->t_n, this->m_OutputCopy);
+    Eigen::Vector2f x_np1 = SimFramework::ForwardEuler::Step(*this, dt, this->t_n, this->m_States);
 
-    this->m_OutputCopy = x_np1;
+    this->m_States = x_np1;
     this->t_n = t_np1;
 
 };
 
-Eigen::VectorXf Mass1D::Gradient(float t, Eigen::VectorXf x)
+Eigen::Vector2f Mass1D::Gradient(float t, Eigen::Vector2f x)
 {
-    Eigen::VectorXf output(2);
-    output(0) = x(1);
-    output(1) = (-1.f / this->mass) * this->m_InputCopy[0](0);
-    return output;
+    return {x[1], (-1.f / this->mass) * this->m_InputCopy};
 };

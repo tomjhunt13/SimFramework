@@ -1,19 +1,25 @@
 #include "SpringDamper1D.h"
 
 SpringDamper1D::SpringDamper1D(
-        SimFramework::Signal* inputConnection1,
-        SimFramework::Signal* inputConnection2,
-        SimFramework::Signal* outputForce)
-{
-    this->RegisterInputSignal(inputConnection1);
-    this->RegisterInputSignal(inputConnection2);
-    this->RegisterOutputSignal(outputForce);
+        SimFramework::Signal<Eigen::Vector2f>* inputConnection1,
+        SimFramework::Signal<Eigen::Vector2f>* inputConnection2,
+        SimFramework::Signal<float>* outputForce)
+        : m_InputConnection1(inputConnection1), m_InputConnection2(inputConnection2), m_OutputForce(outputForce)
+{};
 
-    // Set size of input and output copies
-    this->m_InputCopy.resize(2);
-}
+
+void SpringDamper1D::Read()
+{
+    this->m_In1Copy = this->m_InputConnection1->Read();
+    this->m_In2Copy = this->m_InputConnection2->Read();
+};
+
+void SpringDamper1D::Write()
+{
+    this->m_OutputForce->Write(this->m_OutCopy);
+};
 
 void SpringDamper1D::Update(float t)
 {
-    this->m_OutputCopy[0] = this->k * (this->m_InputCopy[1][0] - this->m_InputCopy[0][0]) + this->c * (this->m_InputCopy[1][1] - this->m_InputCopy[0][1]);
+    this->m_OutCopy = this->k * (this->m_In2Copy[0] - this->m_In1Copy[0]) + this->c * (this->m_In2Copy[1] - this->m_In1Copy[1]);
 };

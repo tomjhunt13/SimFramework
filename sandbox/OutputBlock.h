@@ -8,14 +8,28 @@
 
 
 
-class OutputBlock : public SimFramework::Sink {
+class OutputBlock : public SimFramework::Block {
 
 public:
-    OutputBlock(SimFramework::Signal* massStates, SimFramework::Signal* force);
+    OutputBlock(SimFramework::Signal<Eigen::Vector2f>* massStates, SimFramework::Signal<float>* force);
 
     // Block functions
+    void Read() override;
+    void Write() override {};
     void Update(float t_np1) override;
 
+private:
+
+    // Signals
+    SimFramework::Signal<Eigen::Vector2f>* m_MassStates;
+    SimFramework::Signal<float>* m_Force;
+
+    // Copies
+    Eigen::Vector2f m_StatesCopy;
+    float m_ForceCopy;
+
+
+    float t_n = 0;
 };
 
 
