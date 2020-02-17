@@ -16,8 +16,6 @@ public:
     // Block functions
     void Update(float t_np1) override;
 
-private:
-
 };
 
 

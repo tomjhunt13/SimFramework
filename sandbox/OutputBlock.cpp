@@ -12,8 +12,8 @@ OutputBlock::OutputBlock(SimFramework::Signal* massStates, SimFramework::Signal*
 
 
 
-void OutputBlock::Update(float t)
+void OutputBlock::Update(float t_np1)
 {
-    std::cout << "Time: " << t << ", States: " << this->m_InputCopy[0] << ", Force: " << this->m_InputCopy[1] << std::endl;
+    std::cout << "Time: " << t_np1 << ", States: " << this->m_InputCopy[0] << ", Force: " << this->m_InputCopy[1] << std::endl;
 };
 

@@ -46,7 +46,7 @@ namespace SimFramework {
     {
         for (int i=0; i < this->m_InputSignals.size(); i++)
         {
-            this->m_OutputSignals[i]->Write(this->m_InputCopy[i]);
+            this->m_OutputSignals[i]->Write(this->m_OutputCopy);
         }
     }
 
@@ -69,10 +69,21 @@ namespace SimFramework {
     {
         switch (block->BlockType())
         {
-            case e_BlockType::eSource : SystemManager::Get().m_Sources.push_back(block);
-            case e_BlockType::eDynamicSystem : SystemManager::Get().m_DynamicSystems.push_back(block);
-            case e_BlockType::eFunction : SystemManager::Get().m_Functions.push_back(block);
-            case e_BlockType::eSink : SystemManager::Get().m_Sinks.push_back(block);
+            case e_BlockType::eSource :
+                SystemManager::Get().m_Sources.push_back(block);
+                break;
+
+            case e_BlockType::eDynamicSystem :
+                SystemManager::Get().m_DynamicSystems.push_back(block);
+                break;
+
+            case e_BlockType::eFunction :
+                SystemManager::Get().m_Functions.push_back(block);
+                break;
+
+            case e_BlockType::eSink :
+                SystemManager::Get().m_Sinks.push_back(block);
+                break;
         }
     };
 
@@ -154,27 +165,27 @@ namespace SimFramework {
     };
 
 
-    void ReadBlocks(std::vector<Block*>& blocks)
+    void ReadBlocks(std::vector<Block*>* blocks)
     {
         // Read inputs
-        for (auto i: blocks)
+        for (Block* i: *blocks)
         {
             i->Read();
         }
     }
 
-    void UpdateBlocks(std::vector<Block*>& blocks, float t_np1)
+    void UpdateBlocks(std::vector<Block*>* blocks, float t_np1)
     {
         // Update
-        for (auto i: blocks) {
+        for (Block* i: *blocks) {
             i->Update(t_np1);
         }
     }
 
-    void WriteBlocks(std::vector<Block*>& blocks)
+    void WriteBlocks(std::vector<Block*>* blocks)
     {
         // Write outputs
-        for (auto i: blocks)
+        for (Block* i: *blocks)
         {
             i->Write();
         }
@@ -192,9 +203,9 @@ namespace SimFramework {
         updateOrder.insert({3, &sys.m_Sinks});
 
         // Read, Update, Write
-        for (int i = 0; i < 4; i++) {ReadBlocks(*updateOrder[i]); };
-        for (int i = 0; i < 4; i++) {UpdateBlocks(*updateOrder[i], t_np1); };
-        for (int i = 0; i < 4; i++) {WriteBlocks(*updateOrder[i]); };
+        for (int i = 0; i < 4; i++) {ReadBlocks(updateOrder[i]); };
+        for (int i = 0; i < 4; i++) {UpdateBlocks(updateOrder[i], t_np1); };
+        for (int i = 0; i < 4; i++) {WriteBlocks(updateOrder[i]); };
     }
 
 
