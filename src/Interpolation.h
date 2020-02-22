@@ -1,0 +1,10 @@
+#ifndef SIMFRAMEWORK_INTERPOLATION_H
+#define SIMFRAMEWORK_INTERPOLATION_H
+
+
+class Interpolation {
+
+};
+
+
+#endif //SIMFRAMEWORK_INTERPOLATION_H

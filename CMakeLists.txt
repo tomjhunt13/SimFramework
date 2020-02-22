@@ -8,7 +8,7 @@ add_subdirectory(libs/Eigen)
 include_directories(libs/Eigen)
 
 # SimFramework
-add_library(SimFramework STATIC src/Framework.h src/Framework.cpp src/Components.h src/Components.cpp)
+add_library(SimFramework STATIC src/Framework.h src/Framework.cpp src/Components.h src/Components.cpp src/Interpolation.cpp src/Interpolation.h)
 include_directories(src)
 
 # Sandbox
