@@ -7,6 +7,10 @@ set(CMAKE_CXX_STANDARD 14)
 add_subdirectory(libs/Eigen)
 include_directories(libs/Eigen)
 
+# json
+add_subdirectory(libs/json)
+include_directories(libs/json/single_include)
+
 # SimFramework
 add_library(SimFramework STATIC src/Framework.h src/Framework.cpp src/Components.h src/Components.cpp src/Interpolation.cpp src/Interpolation.h)
 include_directories(src)
