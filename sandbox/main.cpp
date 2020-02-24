@@ -4,32 +4,11 @@
 
 #include "nlohmann/json.hpp"
 
+#include "../src/Framework.h"
 #include "../src/Interpolation.h"
 
 
-class Engine
-{
-public:
-    Engine(std::string engineJSON)
-    {
-        // Read file to fill m_EngineData
-        std::ifstream fileObject;
-        fileObject.open (engineJSON);
-        nlohmann::json js = nlohmann::json::parse(fileObject);
-        std::vector<float> speed = js["speed"];
-        std::vector<float> throttle = js["throttle"];
-        std::vector<std::vector<float>> torque = js["torque"];
 
-        this->m_EngineData.x = speed;
-        this->m_EngineData.y = throttle;
-        this->m_EngineData.z = torque;
-
-        fileObject.close();
-    }
-
-private:
-    Table2D m_EngineData;
-};
 
 
 

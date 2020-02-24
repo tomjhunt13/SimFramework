@@ -16,5 +16,5 @@ add_library(SimFramework STATIC src/Framework.h src/Framework.cpp src/Components
 include_directories(src)
 
 # Sandbox
-add_executable(Sandbox sandbox/main.cpp sandbox/SpringDamper1D.cpp sandbox/SpringDamper1D.h sandbox/Mass1D.cpp sandbox/Mass1D.h sandbox/OutputBlock.h sandbox/OutputBlock.cpp)
+add_executable(Sandbox sandbox/main.cpp sandbox/SpringDamper1D.cpp sandbox/SpringDamper1D.h sandbox/Mass1D.cpp sandbox/Mass1D.h sandbox/OutputBlock.h sandbox/OutputBlock.cpp sandbox/Engine.cpp sandbox/Engine.h)
 target_link_libraries(Sandbox SimFramework)
