@@ -5,7 +5,8 @@
 #include "nlohmann/json.hpp"
 
 #include "../src/Framework.h"
-#include "../src/Interpolation.h"
+
+#include "Engine.h"
 
 
 
@@ -14,9 +15,22 @@
 
 int main() {
 
+    SimFramework::Signal<float> speed;
+    SimFramework::Signal<float> throttle;
+    SimFramework::Signal<float> torque;
+
+    speed.Write(20);
+    throttle.Write(50);
+
     std::string jsonFilePath = "/Users/tom/Documents/University/Y4_S2/Data/engineExample.json";
 
-    Engine eng(jsonFilePath);
+    Engine eng(&speed, &throttle, &torque, jsonFilePath);
+
+    eng.Read();
+    eng.Update(1);
+    eng.Write();
+
+    std::cout << torque.Read() << std::endl;
 
     return 0;
 
