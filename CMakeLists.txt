@@ -4,8 +4,8 @@ project(SimFramework)
 set(CMAKE_CXX_STANDARD 14)
 
 # Eigen
-add_subdirectory(libs/Eigen)
-include_directories(libs/Eigen)
+add_subdirectory(libs/eigen)
+include_directories(libs/eigen)
 
 # json
 add_subdirectory(libs/json)
