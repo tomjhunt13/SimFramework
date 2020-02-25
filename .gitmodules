@@ -1,5 +1,5 @@
 [submodule "ThirdParty/json"]
-	path = ThirdPaty/json
+	path = ThirdParty/json
 	url = https://github.com/nlohmann/json.git
 [submodule "ThirdParty/eigen"]
 	path = ThirdParty/eigen
