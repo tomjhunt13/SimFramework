@@ -37,7 +37,7 @@ void Engine::Write()
 
 void Engine::Update(float t_np1)
 {
-    this->m_Torque = SimFramework::InterpTable2D(this->m_EngineData, this->m_Speed, this->m_Throttle);
+    this->m_Torque = SimFramework::InterpTable3D(this->m_EngineData, {this->m_Speed, this->m_Throttle});
 };
 
 void Engine::Init(float t_0) {}

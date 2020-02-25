@@ -3,16 +3,16 @@
 namespace SimFramework {
 
 
-    InsertionResult1D Insertion1D(std::vector<float> &sortedArray, float element) {
+    std::vector<int> Internal::NearestIndices(std::vector<float> &sortedArray, float x) {
+        // Implementation uses a modified binary search algorithm
         int low = 0;
         int high = sortedArray.size() - 1;
-
         int searchIndex;
 
         while (high - low != 1) {
             searchIndex = (low + high) / 2;
 
-            if (sortedArray[searchIndex] > element) {
+            if (sortedArray[searchIndex] > x) {
                 high = searchIndex;
             } else {
                 low = searchIndex;
@@ -24,31 +24,33 @@ namespace SimFramework {
 
 
 
-    float LinearInterp(float x, float x1, float x2, float y1, float y2)
+    float LinearInterp(float x, Coord2D P1, Coord2D P2)
     {
-        return y1 + ((x - x1) / (x2 - x1)) * (y2 - y1);
+        return P1.y + ((x - P1.x) / (P2.x - P1.x)) * (P2.y - P1.y);
     };
 
-    float BilinearInterp(float x, float y, coord2D x1y1, coord2D x1y2, coord2D x2y1, coord2D x2y2) {
+    float BilinearInterp(Coord2D x, Coord3D P11, Coord3D P21, Coord3D P12, Coord3D P22)
+    {
 
-        // Interpolate to find f(x1, y), f(x2, y)
-        float f1 = LinearInterp(y, x1y1.y, x1y2.y, x1y1.z, x1y2.z);
-        float f2 = LinearInterp(y, x2y1.y, x2y2.y, x2y1.z, x2y2.z);
+        // Interpolate in x direction: f1 - P11, P12, f2 - P2, P22
+        float f1 = LinearInterp(x.x, {P11.x, P11.z}, {P12.x, P12.z});
+        float f2 = LinearInterp(x.x, {P21.x, P21.z}, {P22.x, P22.z});
 
-        return LinearInterp(x, x1y1.x, x2y2.x, f1, f2);
+        // Interpolate results in y direction
+        return LinearInterp(x.y, {P11.y, f1}, {P21.y, f2});
     }
 
-    float InterpTable2D(Table2D &table, float x, float y) {
+    float InterpTable3D(Table3D& table, Coord2D x) {
         // Get indices
-        InsertionResult1D xIndices = Insertion1D(table.x, x);
-        InsertionResult1D yIndices = Insertion1D(table.y, y);
+        std::vector<int> i = Internal::NearestIndices(table.x, x.x);
+        std::vector<int> j = Internal::NearestIndices(table.y, x.y);
 
-        coord2D x1y1 = {table.x[xIndices.x1], table.y[yIndices.x1], table.z[yIndices.x1][xIndices.x1]};
-        coord2D x1y2 = {table.x[xIndices.x1], table.y[yIndices.x2], table.z[yIndices.x2][xIndices.x1]};
-        coord2D x2y1 = {table.x[xIndices.x2], table.y[yIndices.x1], table.z[yIndices.x1][xIndices.x2]};
-        coord2D x2y2 = {table.x[xIndices.x2], table.y[yIndices.x2], table.z[yIndices.x2][xIndices.x2]};
+        Coord3D P11 = {table.x[i[0]], table.y[j[0]], table.z[j[0]][i[0]]};
+        Coord3D P12 = {table.x[i[1]], table.y[j[0]], table.z[j[0]][i[1]]};
+        Coord3D P21 = {table.x[i[0]], table.y[j[1]], table.z[j[1]][i[0]]};
+        Coord3D P22 = {table.x[i[1]], table.y[j[1]], table.z[j[1]][i[1]]};
 
-        return BilinearInterp(x, y, x1y1, x1y2, x2y1, x2y2);
+        return BilinearInterp(x, P11, P21, P12, P22);
     }
 
-} // namespace Framework
+} // namespace SimFramework

@@ -27,7 +27,7 @@ private:
     float m_Throttle;
     float m_Torque;
 
-    SimFramework::Table2D m_EngineData;
+    SimFramework::Table3D m_EngineData;
 };
 
 
