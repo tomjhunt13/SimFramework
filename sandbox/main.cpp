@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-
+#include "Eigen/Dense"
 
 #include "Vehicle.h"
 

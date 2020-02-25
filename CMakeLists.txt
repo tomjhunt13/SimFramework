@@ -4,12 +4,12 @@ project(Framework)
 set(CMAKE_CXX_STANDARD 14)
 
 # Eigen
-add_subdirectory(libs/eigen)
-include_directories(libs/eigen)
+add_subdirectory(ThirdParty/eigen)
+include_directories(ThirdParty/eigen)
 
 # json
-add_subdirectory(libs/json)
-include_directories(libs/json/single_include)
+add_subdirectory(ThirdParty/json)
+include_directories(ThirdParty/json/single_include)
 
 # Framework
 add_library(Framework STATIC Framework/Framework.h Framework/Framework.cpp Framework/Components.h Framework/Components.cpp Framework/Interpolation.h)
