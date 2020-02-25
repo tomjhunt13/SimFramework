@@ -6,6 +6,9 @@
 
 namespace SimFramework {
 
+    float RadiansPerSecondToRPM(float radiansPerSecond);
+    float RPMToRadiansPerSecond(float RPM);
+
     std::vector<float> TimeSteps(float tMin, float tMax, float dt);
 
 } // namespace Framework

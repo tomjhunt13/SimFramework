@@ -9,6 +9,7 @@
 #include "Mass1D.h"
 #include "Engine.h"
 #include "OutputBlock.h"
+#include "Clutch.h"
 
 class Mask : public SimFramework::Block
 {

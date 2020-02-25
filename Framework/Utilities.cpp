@@ -1,6 +1,17 @@
 #include "Utilities.h"
 
 namespace SimFramework {
+
+    float RadiansPerSecondToRPM(float radiansPerSecond)
+    {
+        return radiansPerSecond * 9.54929658551;
+    };
+
+    float RPMToRadiansPerSecond(float RPM)
+    {
+        return RPM * 0.10471975512;
+    };
+
     std::vector<float> TimeSteps(float tMin, float tMax, float dt) {
 
         float tRange = tMax - tMin;
