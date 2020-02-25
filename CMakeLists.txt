@@ -3,7 +3,7 @@ project(Framework)
 
 set(CMAKE_CXX_STANDARD 14)
 
-# Eigen
+# eigen
 add_subdirectory(ThirdParty/eigen)
 include_directories(ThirdParty/eigen)
 
@@ -11,8 +11,12 @@ include_directories(ThirdParty/eigen)
 add_subdirectory(ThirdParty/json)
 include_directories(ThirdParty/json/single_include)
 
+# googletest
+add_subdirectory(ThirdParty/googletest)
+include_directories(ThirdParty/googletest/googletest/include)
+
 # Framework
-add_library(Framework STATIC Framework/Framework.h Framework/Framework.cpp Framework/Components.h Framework/Components.cpp Framework/Interpolation.h)
+add_library(Framework STATIC Framework/Framework.h Framework/Framework.cpp Framework/Components.h Framework/Components.cpp Framework/Interpolation.h Framework/Interpolation.cpp Test/test_Interpolation.cpp)
 include_directories(Framework)
 
 # Vehicle
@@ -23,3 +27,7 @@ include_directories(Vehicle)
 # Sandbox
 add_executable(Sandbox sandbox/main.cpp)
 target_link_libraries(Sandbox Framework Vehicle)
+
+# Tests
+add_executable(Tests Test/test_Interpolation.cpp)
+target_link_libraries(Tests gtest gtest_main Framework Vehicle)

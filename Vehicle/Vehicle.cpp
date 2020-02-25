@@ -17,7 +17,13 @@ namespace Vehicle {
 
     struct VehicleComponents
     {
+        // Signals
+        SimFramework::Signal<float>* ThrottlePosition;
+        SimFramework::Signal<float>* EngineSpeed;
+        SimFramework::Signal<float>* EngineTorque;
+
         // Engine
+//        Vehicle::En
 
 
         testStruct ts;

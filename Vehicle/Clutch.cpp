@@ -7,7 +7,7 @@ namespace Vehicle {
 
     Clutch::Clutch(SimFramework::Signal<float> *innerSpeed, SimFramework::Signal<float> *outerSpeed,
                    SimFramework::Signal<float> *transmittedTorque) :
-                   m_InnerSpeed(innerSpeed), m_OuterSpeed(outerSpeed), m_OutputTorque(m_OutputTorque) {};
+                   m_InnerSpeed(innerSpeed), m_OuterSpeed(outerSpeed), m_OutputTorque(transmittedTorque) {};
 
     void Clutch::Read()
     {
