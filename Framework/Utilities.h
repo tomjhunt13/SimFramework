@@ -8,6 +8,6 @@ namespace SimFramework {
 
     std::vector<float> TimeSteps(float tMin, float tMax, float dt);
 
-} // namespace SimFramework
+} // namespace Framework
 
 #endif //SIMINTERFACE_UTILITIES_H

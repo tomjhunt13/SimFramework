@@ -102,7 +102,7 @@ namespace SimFramework {
         std::vector<float> m_Weights;
     };
 
-}; // namespace SimFramework
+}; // namespace Framework
 
 
 #endif //SIMINTERFACE_CONSTANTBLOCK_H

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(SimFramework)
+project(Framework)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -11,10 +11,15 @@ include_directories(libs/eigen)
 add_subdirectory(libs/json)
 include_directories(libs/json/single_include)
 
-# SimFramework
-add_library(SimFramework STATIC src/Framework.h src/Framework.cpp src/Components.h src/Components.cpp src/Interpolation.cpp src/Interpolation.h)
-include_directories(src)
+# Framework
+add_library(Framework STATIC Framework/Framework.h Framework/Framework.cpp Framework/Components.h Framework/Components.cpp Framework/Interpolation.h)
+include_directories(Framework)
+
+# Vehicle
+add_library(Vehicle STATIC Vehicle/SpringDamper1D.cpp Vehicle/SpringDamper1D.h Vehicle/Mass1D.cpp Vehicle/Mass1D.h Vehicle/OutputBlock.h Vehicle/OutputBlock.cpp Vehicle/Engine.cpp Vehicle/Engine.h)
+target_link_libraries(Vehicle Framework)
+include_directories(Vehicle)
 
 # Sandbox
-add_executable(Sandbox sandbox/main.cpp sandbox/SpringDamper1D.cpp sandbox/SpringDamper1D.h sandbox/Mass1D.cpp sandbox/Mass1D.h sandbox/OutputBlock.h sandbox/OutputBlock.cpp sandbox/Engine.cpp sandbox/Engine.h)
-target_link_libraries(Sandbox SimFramework)
+add_executable(Sandbox sandbox/main.cpp)
+target_link_libraries(Sandbox Framework Vehicle)

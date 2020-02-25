@@ -24,4 +24,4 @@ namespace SimFramework {
         return timesteps;
     };
 
-} // namespace SimFramework
+} // namespace Framework

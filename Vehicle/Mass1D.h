@@ -2,7 +2,7 @@
 #define SIMINTERFACE_MASS1D_H
 
 #include "Eigen/Dense"
-#include "../src/Framework.h"
+#include "Framework.h"
 
 
 

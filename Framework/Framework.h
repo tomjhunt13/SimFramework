@@ -30,6 +30,8 @@ namespace SimFramework {
     class Block
     {
     public:
+        virtual ~Block() {};
+
         // Block API
         virtual void Read() = 0;
         virtual void Write() = 0;
@@ -90,6 +92,6 @@ namespace SimFramework {
 
 
 
-} // namespace SimFramework
+} // namespace Framework
 
 #endif //SIMFRAMEWORK_FRAMEWORK_H

@@ -107,4 +107,4 @@ namespace SimFramework {
         this->UpdateFunctions(t_np1);
     };
 
-} // namespace SimFramework
+} // namespace Framework

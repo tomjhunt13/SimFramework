@@ -16,7 +16,7 @@ namespace SimFramework {
         int x2;
     };
 
-    InsertionResult1D Insertion1D(std::vector<float> &sortedArray, float element) {
+    static InsertionResult1D Insertion1D(std::vector<float> &sortedArray, float element) {
         int low = 0;
         int high = sortedArray.size() - 1;
 
@@ -41,11 +41,11 @@ namespace SimFramework {
     };
 
 
-    float LinearInterp(float x, float x1, float x2, float y1, float y2) {
+    static float LinearInterp(float x, float x1, float x2, float y1, float y2) {
         return y1 + ((x - x1) / (x2 - x1)) * (y2 - y1);
     }
 
-    float BilinearInterp(float x, float y, coord2D x1y1, coord2D x1y2, coord2D x2y1, coord2D x2y2) {
+    static float BilinearInterp(float x, float y, coord2D x1y1, coord2D x1y2, coord2D x2y1, coord2D x2y2) {
 
         // Interpolate to find f(x1, y), f(x2, y)
         float f1 = LinearInterp(y, x1y1.y, x1y2.y, x1y1.z, x1y2.z);
@@ -55,7 +55,7 @@ namespace SimFramework {
     }
 
 
-    float InterpTable2D(Table2D &table, float x, float y) {
+    static float InterpTable2D(Table2D &table, float x, float y) {
         // Get indices
         InsertionResult1D xIndices = Insertion1D(table.x, x);
         InsertionResult1D yIndices = Insertion1D(table.y, y);
@@ -68,6 +68,6 @@ namespace SimFramework {
         return BilinearInterp(x, y, x1y1, x1y2, x2y1, x2y2);
     }
 
-} // namespace SimFramework
+} // namespace Framework
 
 #endif //SIMFRAMEWORK_INTERPOLATION_H
