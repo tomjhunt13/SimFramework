@@ -16,7 +16,7 @@ add_library(Framework STATIC Framework/Framework.h Framework/Framework.cpp Frame
 include_directories(Framework)
 
 # Vehicle
-add_library(Vehicle STATIC Vehicle/SpringDamper1D.cpp Vehicle/SpringDamper1D.h Vehicle/Mass1D.cpp Vehicle/Mass1D.h Vehicle/OutputBlock.h Vehicle/OutputBlock.cpp Vehicle/Engine.cpp Vehicle/Engine.h Vehicle/Clutch.cpp Vehicle/Clutch.h)
+add_library(Vehicle STATIC Vehicle/SpringDamper1D.cpp Vehicle/SpringDamper1D.h Vehicle/Mass1D.cpp Vehicle/Mass1D.h Vehicle/OutputBlock.h Vehicle/OutputBlock.cpp Vehicle/Engine.cpp Vehicle/Engine.h Vehicle/Clutch.cpp Vehicle/Clutch.h Vehicle/Vehicle.cpp Vehicle/Vehicle.h)
 target_link_libraries(Vehicle Framework)
 include_directories(Vehicle)
 
