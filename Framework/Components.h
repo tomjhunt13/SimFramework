@@ -2,8 +2,8 @@
 #define SIMINTERFACE_CONSTANTBLOCK_H
 
 #include <vector>
-#include "Eigen/Dense"
 #include "Framework.h"
+#include "Interpolation.h"
 
 namespace SimFramework {
 
@@ -102,7 +102,34 @@ namespace SimFramework {
         std::vector<float> m_Weights;
     };
 
-}; // namespace Framework
+
+    class LookupTable2D : public Block
+    {
+    public:
+        LookupTable2D(Table3D& table, Signal<float>* x, Signal<float>* y, Signal<float>* out);
+
+        // Block API
+        void Read() override;
+        void Write() override;
+        void Update(float t_np1) override;
+        void Init(float t_0) override;
+
+    private:
+        // Table
+        Table3D m_Table;
+
+        // Signals
+        Signal<float>* m_X;
+        Signal<float>* m_Y;
+        Signal<float>* m_Out;
+
+        // Copies
+        float m_XCopy;
+        float m_YCopy;
+        float m_OutCopy;
+    };
+
+}; // namespace SimFramework
 
 
 #endif //SIMINTERFACE_CONSTANTBLOCK_H

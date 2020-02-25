@@ -2,15 +2,21 @@
 #define SIMINTERFACE_UTILITIES_H
 
 #include <vector>
-#include <cmath>
+#include <string>
+
+#include "Interpolation.h"
 
 namespace SimFramework {
 
+
+    // Unit conversions
     float RadiansPerSecondToRPM(float radiansPerSecond);
     float RPMToRadiansPerSecond(float RPM);
 
+    Table3D ReadTableJSON(std::string JSONFilePath, std::string xName, std::string yName, std::string zName);
+
     std::vector<float> TimeSteps(float tMin, float tMax, float dt);
 
-} // namespace Framework
+} // namespace SimFramework
 
 #endif //SIMINTERFACE_UTILITIES_H
