@@ -174,6 +174,66 @@ namespace SimFramework {
         float m_OutCopy;
     };
 
+
+    template <typename valueType>
+    class Input : public Block
+    {
+    public:
+        Input(Signal<valueType>* outSignal, valueType initialValue) : m_Signal(outSignal), m_SignalCopy(initialValue) {};
+
+        void WriteValue(valueType value)
+        {
+            this->m_SignalCopy = value;
+        };
+
+        // Block API
+        void Read() override {};
+
+        void Write() override
+        {
+            this->m_Signal->Write(this->m_SignalCopy);
+        };
+
+        void Update(float t_np1) override {};
+
+        void Init(float t_0) override
+        {
+            this-Write();
+        };
+
+    private:
+        Signal<valueType>* m_Signal;
+        valueType m_SignalCopy;
+    };
+
+
+    template <typename valueType>
+    class Output : public Block
+    {
+    public:
+        Output(Signal<valueType>* inSignal, valueType initialValue) : m_Signal(inSignal), m_SignalCopy(initialValue) {};
+
+        valueType ReadValue()
+        {
+            return this->m_SignalCopy;
+        };
+
+        // Block API
+        void Read() override
+        {
+            this->m_SignalCopy = this->m_Signal->Read();
+        };
+
+        void Write() override {};
+
+        void Update(float t_np1) override {};
+
+        void Init(float t_0) override {};
+
+    private:
+        Signal<valueType>* m_Signal;
+        valueType m_SignalCopy;
+    };
 }; // namespace SimFramework
 
 
