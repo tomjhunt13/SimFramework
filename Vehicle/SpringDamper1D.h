@@ -4,37 +4,43 @@
 #include "Eigen/Dense"
 #include "Framework.h"
 
-class SpringDamper1D : public SimFramework::Block {
+namespace Vehicle {
 
-public:
+    class SpringDamper1D : public SimFramework::Block {
 
-    SpringDamper1D(SimFramework::Signal<Eigen::Vector2f>* inputConnection1,
-                   SimFramework::Signal<Eigen::Vector2f>* inputConnection2,
-                   SimFramework::Signal<float>* outputForce);
+    public:
 
-    // Block functions
-    void Read() override;
-    void Write() override;
-    void Update(float t_np1) override;
-    void Init(float t_0) override;
+        SpringDamper1D(SimFramework::Signal<Eigen::Vector2f>* inputConnection1,
+                       SimFramework::Signal<Eigen::Vector2f>* inputConnection2,
+                       SimFramework::Signal<float>* outputForce);
 
-private:
+        // Block functions
+        void Read() override;
 
-    // Signals
-    SimFramework::Signal<Eigen::Vector2f>* m_InputConnection1;
-    SimFramework::Signal<Eigen::Vector2f>* m_InputConnection2;
-    SimFramework::Signal<float>* m_OutputForce;
+        void Write() override;
 
-    // Copies
-    Eigen::Vector2f m_In1Copy;
-    Eigen::Vector2f m_In2Copy;
-    float m_OutCopy;
+        void Update(float t_np1) override;
 
-    // Physical Properties
-    float k = 8.f;
-    float c = 1.f;
+        void Init(float t_0) override;
 
-};
+    private:
 
+        // Signals
+        SimFramework::Signal<Eigen::Vector2f> *m_InputConnection1;
+        SimFramework::Signal<Eigen::Vector2f> *m_InputConnection2;
+        SimFramework::Signal<float> *m_OutputForce;
+
+        // Copies
+        Eigen::Vector2f m_In1Copy;
+        Eigen::Vector2f m_In2Copy;
+        float m_OutCopy;
+
+        // Physical Properties
+        float k = 8.f;
+        float c = 1.f;
+
+    };
+
+} // namespace Vehicle
 
 #endif //SIMINTERFACE_SPRINGDAMPER1D_H

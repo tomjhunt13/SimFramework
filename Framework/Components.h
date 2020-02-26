@@ -82,11 +82,7 @@ namespace SimFramework {
 
         };
 
-        void Init(float t_0) override
-        {
-//            SignalType tempVal;
-//            this->m_OutputSignal->Write(tempVal);
-        };
+        void Init(float t_0) override {};
 
     private:
 
@@ -100,6 +96,55 @@ namespace SimFramework {
 
         // Parameters
         std::vector<float> m_Weights;
+    };
+
+    template <typename inputType, typename outputType>
+    class Mask : public Block
+    {
+    public:
+
+        Mask(Signal<inputType>* inputSignal, std::vector<Signal<outputType>*> maskedSignals, std::vector<int> maskIndices)
+                : m_InputSignal(inputSignal), m_MaskedSignals(maskedSignals), m_MaskIndices(maskIndices)
+            {
+                this->m_OutputCopies.resize(maskedSignals.size());
+            };
+
+        // Block API
+        void Read() override
+        {
+            this->m_InputCopy = this->m_InputSignal->Read();
+        };
+
+        void Write() override
+        {
+            for (int i = 0; i < this->m_MaskedSignals.size(); i++)
+            {
+                this->m_MaskedSignals[i]->Write(this->m_OutputCopies[i]);
+            }
+        };
+
+        void Update(float t_np1) override
+        {
+            for (int i = 0; i < this->m_MaskIndices.size(); i++)
+            {
+                this->m_OutputCopies[i] = this->m_InputCopy[this->m_MaskIndices[i]];
+            }
+        };
+
+        void Init(float t_0) override {};
+
+    private:
+        // Signals
+        Signal<inputType>* m_InputSignal;
+        std::vector<Signal<outputType>*> m_MaskedSignals;
+
+        // Copies
+        inputType m_InputCopy;
+        std::vector<outputType> m_OutputCopies;
+
+        // Parameters
+        std::vector<int> m_MaskIndices;
+
     };
 
 

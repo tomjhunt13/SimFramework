@@ -40,16 +40,6 @@ namespace SimFramework {
             i->Init(t_0);
         }
 
-//        for (auto i: this->m_Functions)
-//        {
-//            i->Init(t_0);
-//        }
-
-//        for (auto i: this->m_Sinks)
-//        {
-//            i->Init(t_0);
-//        }
-
         this->UpdateFunctions(t_0);
     }
 
