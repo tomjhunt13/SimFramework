@@ -50,9 +50,23 @@ namespace SimFramework {
     class ForwardEuler {
     public:
         template<typename GradientType>
-        static GradientType Step(DynamicSystem<GradientType> & block, float dt, float t_n, GradientType &x_n)
+        static GradientType Step(DynamicSystem<GradientType>* block, float dt, float t_n, GradientType x_n)
         {
-            return x_n + dt * block.Gradient(t_n, x_n);
+            return x_n + dt * block->Gradient(t_n, x_n);
+        };
+    };
+
+    class RK4 {
+    public:
+        template<typename GradientType>
+        static GradientType Step(DynamicSystem<GradientType>* block, float dt, float t_n, GradientType x_n)
+        {
+            GradientType k1 = dt * block->Gradient(t_n, x_n);
+            GradientType k2 = dt * block->Gradient(t_n + dt / 2.f, x_n + k1 / 2.f);
+            GradientType k3 = dt * block->Gradient(t_n + dt / 2.f, x_n + k2 / 2.f);
+            GradientType k4 = dt * block->Gradient(t_n + dt, x_n + k3);
+
+            return x_n + (1.f / 6.f) * (k1 + 2 * k2 + 2 * k3 + k4);
         };
     };
 

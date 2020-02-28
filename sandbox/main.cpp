@@ -48,7 +48,7 @@ int main() {
     systemManager.Initialise(0.f);
 
     // Iterate
-    for (float t = 0; t <= 50; t += 0.01) {
+    for (float t = 0; t <= 1; t += 0.01) {
         systemManager.UpdateSystem(t);
     }
 

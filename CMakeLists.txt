@@ -29,5 +29,5 @@ add_executable(Sandbox sandbox/main.cpp)
 target_link_libraries(Sandbox Framework Vehicle)
 
 # Tests
-add_executable(Tests Test/test_Interpolation.cpp)
+add_executable(Tests Test/test_Interpolation.cpp Test/test_Integration.cpp)
 target_link_libraries(Tests gtest gtest_main Framework Vehicle)

@@ -22,7 +22,7 @@ namespace Vehicle {
         // Get dt
         float dt = t_np1 - this->t_n;
 
-        Eigen::Vector2f x_np1 = SimFramework::ForwardEuler::Step(*this, dt, this->t_n, this->m_States);
+        Eigen::Vector2f x_np1 = SimFramework::RK4::Step<Eigen::Vector2f>(this, dt, this->t_n, this->m_States);
 
         this->m_States = x_np1;
         this->t_n = t_np1;
