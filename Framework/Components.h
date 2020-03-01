@@ -2,6 +2,7 @@
 #define SIMINTERFACE_CONSTANTBLOCK_H
 
 #include <vector>
+#include "Eigen/Dense"
 #include "Framework.h"
 #include "Interpolation.h"
 
@@ -233,6 +234,77 @@ namespace SimFramework {
     private:
         Signal<valueType>* m_Signal;
         valueType m_SignalCopy;
+    };
+
+
+    // TODO: Dimensions should be in template, state vector length j, input vector length i, output vector length  k
+    //          Matrices are of size: A (j, j), B (j, i), C (k, j), D (k, i)
+    template <typename InputType, typename OutputType>
+    class StateSpace : public Block, public DynamicSystem<Eigen::VectorXf> {
+    public:
+        StateSpace(Signal<InputType>* inputSignal, Signal<OutputType>* outputSignal,
+                   Eigen::MatrixXf A, Eigen::MatrixXf B, Eigen::MatrixXf C, Eigen::MatrixXf D,
+                   Eigen::VectorXf initialValue)
+                   : m_InputSignal(inputSignal), m_OutputSignal(outputSignal),
+                     m_InitialValue(initialValue), m_States(initialValue),
+                     m_A(A), m_B(B), m_C(C), m_D(D) {};
+
+
+        // Block API
+        void Read() override
+        {
+            this->m_InputCopy = this->m_InputSignal->Read();
+        };
+
+        void Write() override
+        {
+            // Output equation
+            this->m_OutputSignal->Write(this->m_C * this->m_States + this->m_D * this->m_InputCopy);
+        };
+
+        void Update(float t_np1) override
+        {
+            // Get dt
+            float dt = t_np1 - this->t_n;
+
+            Eigen::VectorXf x_np1 = SimFramework::RK4::Step<Eigen::VectorXf>(this, dt, this->t_n, this->m_States);
+
+            this->m_States = x_np1;
+            this->t_n = t_np1;
+
+        };
+
+        void Init(float t_0) override
+        {
+            this->t_n = t_0;
+            this->m_States = this->m_InitialValue;
+            this->m_OutputSignal->Write(this->m_States);
+        };
+
+        // Dynamic system functions
+        Eigen::VectorXf Gradient(float t, Eigen::VectorXf x) override
+        {
+            return this->m_A * this->m_States + this->m_B * this->m_InputCopy;
+        };
+
+    private:
+
+        // Signals
+        Signal<InputType>* m_InputSignal;
+        Signal<OutputType>* m_OutputSignal;
+
+        // Work copies
+        float t_n;
+        Eigen::VectorXf m_InitialValue;
+        Eigen::VectorXf m_States;
+        InputType m_InputCopy;
+//        Eigen::VectorXf m_OutputCopy;
+
+        // State space matrices
+        Eigen::MatrixXf m_A;
+        Eigen::MatrixXf m_B;
+        Eigen::MatrixXf m_C;
+        Eigen::MatrixXf m_D;
     };
 }; // namespace SimFramework
 
