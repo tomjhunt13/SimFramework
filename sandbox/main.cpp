@@ -9,8 +9,6 @@
 #include "Components.h"
 #include "Utilities.h"
 
-
-#include "Inertia1D.h"
 #include "OutputBlock.h"
 #include "Clutch.h"
 
@@ -59,7 +57,6 @@ int main() {
 
     SimFramework::StateSpace<float, Eigen::Vector2f, 1, 2, 2> mass(&summedLoad, &massStates, A, B, C, D, initialValues);
 
-//    Vehicle::Inertia1D mass(&summedLoad, &massStates, {0, 300}, massValue);
     SimFramework::Mask<Eigen::Vector2f, float> mask(&massStates, {&engInSpeed, &enginePos}, {1, 0});
     OutputBlock out(&massStates, &summedLoad);
 

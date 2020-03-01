@@ -6,8 +6,6 @@
 
 #include "Framework.h"
 #include "Components.h"
-
-#include "Inertia1D.h"
 #include "Clutch.h"
 
 

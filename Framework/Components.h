@@ -176,6 +176,50 @@ namespace SimFramework {
     };
 
 
+    template <typename InputType, typename GainType=float>
+    class Gain : public Block
+    {
+    public:
+        Gain(Signal<InputType>* inputSignal, Signal<InputType>* outputSignal, GainType gain)
+                : m_InputSignal(inputSignal), m_OutputSignal(outputSignal), m_Gain(gain) {};
+
+        // Block API
+        void Read() override
+        {
+            this->m_InputCopy = this->m_InputSignal->Read();
+        };
+
+        void Write() override
+        {
+            this->m_OutputSignal->Write(this->m_OutputCopy);
+        };
+
+        void Update(float t_np1) override
+        {
+            this->m_OutputCopy = this->m_Gain * this->m_InputCopy;
+        };
+
+        void Init(float t_0) override
+        {
+            this-Write();
+        };
+
+    private:
+
+        // Signals
+        Signal<InputType>* m_InputSignal;
+        Signal<InputType>* m_OutputSignal;
+
+        // Copies
+        InputType m_InputCopy;
+        InputType m_OutputCopy;
+
+        // Parameters
+        GainType m_Gain;
+    };
+
+
+
     template <typename valueType>
     class Input : public Block
     {
@@ -298,7 +342,6 @@ namespace SimFramework {
         Eigen::VectorXf m_InitialValue;
         Eigen::VectorXf m_States;
         InputType m_InputCopy;
-//        Eigen::VectorXf m_OutputCopy;
 
         // State space matrices
         Eigen::Matrix<float, StateLength, StateLength> m_A;
@@ -306,6 +349,10 @@ namespace SimFramework {
         Eigen::Matrix<float, OutputLength, StateLength> m_C;
         Eigen::Matrix<float, OutputLength, InputLength> m_D;
     };
+
+
+
+
 }; // namespace SimFramework
 
 
