@@ -2,7 +2,7 @@
 #define SIMINTERFACE_SPRINGDAMPER1D_H
 
 #include "Eigen/Dense"
-#include "Framework.h"
+#include "SimFramework/Framework.h"
 
 namespace Vehicle {
 

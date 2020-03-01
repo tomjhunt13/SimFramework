@@ -1,10 +1,12 @@
 #ifndef FRAMEWORK_CLUTCH_H
 #define FRAMEWORK_CLUTCH_H
 
-#include "Framework.h"
+#include "SimFramework/Framework.h"
 
 namespace Vehicle {
 
+
+    // TODO: Clutch could be an externally defined function block
     class Clutch : public SimFramework::Block {
     public:
 

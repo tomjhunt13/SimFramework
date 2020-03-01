@@ -1,6 +1,6 @@
-#include "Clutch.h"
+#include "Vehicle/Clutch.h"
 
-#include "Utilities.h"
+#include "SimFramework/Utilities.h"
 
 
 namespace Vehicle {

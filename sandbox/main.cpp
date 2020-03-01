@@ -3,14 +3,15 @@
 #include <fstream>
 #include "Eigen/Dense"
 
-#include "Vehicle.h"
 
-#include "Framework.h"
-#include "Components.h"
-#include "Utilities.h"
 
-#include "OutputBlock.h"
-#include "Clutch.h"
+#include "SimFramework/Framework.h"
+#include "SimFramework/Components.h"
+#include "SimFramework/Utilities.h"
+
+#include "Vehicle/Vehicle.h"
+#include "Vehicle/OutputBlock.h"
+#include "Vehicle/Clutch.h"
 
 
 

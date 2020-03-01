@@ -1,7 +1,7 @@
 #ifndef FRAMEWORK_VEHICLE_H
 #define FRAMEWORK_VEHICLE_H
 
-#include "Framework.h"
+#include "SimFramework/Framework.h"
 
 
 namespace Vehicle {

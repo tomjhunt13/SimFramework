@@ -1,4 +1,4 @@
-#include "Interpolation.h"
+#include "SimFramework/Interpolation.h"
 
 namespace SimFramework {
 

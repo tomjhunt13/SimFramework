@@ -1,12 +1,12 @@
-#include "Vehicle.h"
+#include "Vehicle/Vehicle.h"
 
 #include <iostream>
 #include <string>
 
 
-#include "Framework.h"
-#include "Components.h"
-#include "Clutch.h"
+#include "SimFramework/Framework.h"
+#include "SimFramework/Components.h"
+#include "Vehicle/Clutch.h"
 
 
 
