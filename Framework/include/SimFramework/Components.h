@@ -243,7 +243,7 @@ namespace SimFramework {
 
         void Init(float t_0) override
         {
-            this-Write();
+            this->Write();
         };
 
     private:

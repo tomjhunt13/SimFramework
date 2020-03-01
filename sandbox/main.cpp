@@ -23,6 +23,12 @@ int main() {
 
     SimFramework::Table3D engineTable = SimFramework::ReadTableJSON(jsonFilePath, "speed", "throttle", "torque");
 
+    SimFramework::Signal<float> m_InputForce;
+
+    SimFramework::Input<float>* m_InputBlock = new SimFramework::Input<float>(&m_InputForce, 0.f);
+
+    delete m_InputBlock;
+
     // Signals
     SimFramework::Signal<float> enginePos;
     SimFramework::Signal<float> engInSpeed;
