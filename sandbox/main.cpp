@@ -40,34 +40,26 @@ int main() {
     SimFramework::LookupTable2D eng(engineTable, &engInSpeed, &throttle, &engOutTorque);
 
     float massValue = 0.1;
-    Eigen::MatrixXf A(2, 2);
-    A(0, 0) = 0.f;
-    A(0, 1) = 1.f;
-    A(1, 0) = 0.f;
-    A(1, 1) = 0.f;
 
-    Eigen::MatrixXf B(2, 1);
-    B(0, 0) = 0.f;
-    B(1, 0) = 1.f / massValue;
+    Eigen::Matrix<float, 2, 2> A;
+    A << 0.f, 1.f, 0.f, 0.f;
 
-    Eigen::MatrixXf C(2, 2);
-    C(0, 0) = 1.f;
-    C(0, 1) = 0.f;
-    C(1, 0) = 0.f;
-    C(1, 1) = 1.f;
+    Eigen::Matrix<float, 2, 1> B = {0.f, 1.f / massValue};
 
-    Eigen::MatrixXf D(2, 1);
-    D(0, 0) = 0.f;
-    D(1, 0) = 0.f;
+    Eigen::Matrix<float, 2, 2> C;
+    C << 1.f, 0.f, 0.f, 1.f;
+
+    Eigen::Matrix<float, 2, 1> D = {0.f, 0.f};
 
     Eigen::Vector2f initialValues(2);
     initialValues(0) = 0.f;
     initialValues(1) = 300.f;
 
+    std::cout << "A: " << A << ", B: " << B << ", C: " << C << ",  D: " << D << std::endl;
 
-    SimFramework::StateSpace<float, Eigen::Vector2f> mass(&summedLoad, &massStates, A, B, C, D, initialValues);
+    SimFramework::StateSpace<float, Eigen::Vector2f, 1, 2, 2> mass(&summedLoad, &massStates, A, B, C, D, initialValues);
 
-//    Vehicle::Inertia1D mass(&summedLoad, &massStates, {0, 300});
+//    Vehicle::Inertia1D mass(&summedLoad, &massStates, {0, 300}, massValue);
     SimFramework::Mask<Eigen::Vector2f, float> mask(&massStates, {&engInSpeed, &enginePos}, {1, 0});
     OutputBlock out(&massStates, &summedLoad);
 

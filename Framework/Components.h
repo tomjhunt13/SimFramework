@@ -236,14 +236,14 @@ namespace SimFramework {
         valueType m_SignalCopy;
     };
 
-
-    // TODO: Dimensions should be in template, state vector length j, input vector length i, output vector length  k
-    //          Matrices are of size: A (j, j), B (j, i), C (k, j), D (k, i)
-    template <typename InputType, typename OutputType>
+    template <typename InputType, typename OutputType, int InputLength, int StateLength, int OutputLength>
     class StateSpace : public Block, public DynamicSystem<Eigen::VectorXf> {
     public:
         StateSpace(Signal<InputType>* inputSignal, Signal<OutputType>* outputSignal,
-                   Eigen::MatrixXf A, Eigen::MatrixXf B, Eigen::MatrixXf C, Eigen::MatrixXf D,
+                   Eigen::Matrix<float, StateLength, StateLength> A,
+                   Eigen::Matrix<float, StateLength, InputLength> B,
+                   Eigen::Matrix<float, OutputLength, StateLength> C,
+                   Eigen::Matrix<float, OutputLength, InputLength> D,
                    Eigen::VectorXf initialValue)
                    : m_InputSignal(inputSignal), m_OutputSignal(outputSignal),
                      m_InitialValue(initialValue), m_States(initialValue),
@@ -301,10 +301,10 @@ namespace SimFramework {
 //        Eigen::VectorXf m_OutputCopy;
 
         // State space matrices
-        Eigen::MatrixXf m_A;
-        Eigen::MatrixXf m_B;
-        Eigen::MatrixXf m_C;
-        Eigen::MatrixXf m_D;
+        Eigen::Matrix<float, StateLength, StateLength> m_A;
+        Eigen::Matrix<float, StateLength, InputLength> m_B;
+        Eigen::Matrix<float, OutputLength, StateLength> m_C;
+        Eigen::Matrix<float, OutputLength, InputLength> m_D;
     };
 }; // namespace SimFramework
 
