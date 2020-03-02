@@ -12,9 +12,15 @@ namespace SimFramework {
     template <typename SignalType>
     class ConstantBlock : public Block {
     public:
-        ConstantBlock(Signal<SignalType>* outputSignal, SignalType value) : m_OutputSignal(outputSignal), m_Value(value) {};
+//        ConstantBlock() : m_OutputSignal(outputSignal), m_Value(value) {};
 
         // Block API
+        void Configure(Signal<SignalType>* outputSignal, SignalType value)
+        {
+            this->m_OutputSignal = outputSignal;
+            this->m_Value = value;
+        }
+
         void Read() override {};
         void Write() override
         {
@@ -37,14 +43,18 @@ namespace SimFramework {
     template <typename SignalType>
     class SummingJunction : public Block {
     public:
-        SummingJunction(
-                std::vector<Signal<SignalType>*> inputSignals,
-                Signal<SignalType>* outputSignal,
-                std::vector<float> weights)
-                : m_InputSignals(inputSignals), m_OutputSignal(outputSignal), m_Weights(weights)
+//        SummingJunction()
+
+        void Configure(std::vector<Signal<SignalType>*> inputSignals,
+                       Signal<SignalType>* outputSignal,
+                       std::vector<float> weights)
         {
-            this->m_InputCopies.reserve(inputSignals.size());
-        };
+            this->m_InputSignals = inputSignals;
+            this->m_OutputSignal = outputSignal;
+            this->m_Weights = weights;
+
+            this->m_InputCopies.resize(inputSignals.size());
+        }
 
         // Block API
         void Read() override
@@ -224,7 +234,13 @@ namespace SimFramework {
     class Input : public Block
     {
     public:
-        Input(Signal<valueType>* outSignal, valueType initialValue) : m_Signal(outSignal), m_SignalCopy(initialValue) {};
+//        Input() : m_Signal(outSignal), m_SignalCopy(initialValue) {};
+
+        void Configure(Signal<valueType>* outSignal, valueType initialValue)
+        {
+            this->m_Signal(outSignal);
+            this->m_SignalCopy(initialValue);
+        }
 
         void WriteValue(valueType value)
         {
@@ -256,7 +272,13 @@ namespace SimFramework {
     class Output : public Block
     {
     public:
-        Output(Signal<valueType>* inSignal, valueType initialValue) : m_Signal(inSignal), m_SignalCopy(initialValue) {};
+//        Output() : m_Signal(inSignal), m_SignalCopy(initialValue) {};
+
+        void Configure(Signal<valueType>* inSignal, valueType initialValue)
+        {
+            this->m_Signal = inSignal;
+            this->m_SignalCopy = initialValue;
+        }
 
         valueType ReadValue()
         {
