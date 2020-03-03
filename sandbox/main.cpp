@@ -13,6 +13,61 @@
 #include "Vehicle/OutputBlock.h"
 #include "Vehicle/Clutch.h"
 
+class DemoModel : public SimFramework::Model
+{
+
+public:
+    DemoModel();
+
+
+    const SimFramework::Input<float>& InputBlock();
+    const SimFramework::Output<float>& OutputBlock();
+
+
+private:
+
+// Signals
+    SimFramework::Signal<float> m_InputForce;
+    SimFramework::Signal<float> m_SpringForce;
+    SimFramework::Signal<float> m_DamperForce;
+    SimFramework::Signal<float> m_SummedForce;
+
+    SimFramework::Input<float> m_Input;
+    SimFramework::ConstantBlock<float> m_ConstSpring;
+    SimFramework::ConstantBlock<float> m_ConstDamper;
+    SimFramework::SummingJunction<float> m_SumForces;
+    SimFramework::Output<float> m_OutputBlock;
+
+};
+
+DemoModel::DemoModel()
+{
+    // Configure blocks
+    this->m_Input.Configure(&(this->m_InputForce), 0.1);
+    this->m_ConstSpring.Configure(&(this->m_SpringForce), 1.5);
+    this->m_ConstDamper.Configure(&(this->m_DamperForce), 2.5);
+    this->m_SumForces.Configure({&(this->m_InputForce), &(this->m_SpringForce), &(this->m_DamperForce)}, &(this->m_SummedForce), {1.f, 1.f, 1.f});
+    this->m_OutputBlock.Configure(&m_SummedForce, 0.f);
+
+    // Construct system
+    this->RegisterBlocks(
+            {&(this->m_Input), &(this->m_ConstSpring), &(this->m_ConstDamper)},
+            {},
+            {&(this->m_SumForces)},
+            {&(this->m_OutputBlock)});
+}
+
+
+const SimFramework::Input<float>& DemoModel::InputBlock()
+{
+    return this->m_Input;
+};
+
+const SimFramework::Output<float>& DemoModel::OutputBlock()
+{
+    return this->m_OutputBlock;
+};
+
 
 class ExampleSystem : public SimFramework::Model
 {

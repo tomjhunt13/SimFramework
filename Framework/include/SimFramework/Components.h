@@ -241,8 +241,8 @@ namespace SimFramework {
     public:
         void Configure(Signal<valueType>* outSignal, valueType initialValue)
         {
-            this->m_Signal(outSignal);
-            this->m_SignalCopy(initialValue);
+            this->m_Signal = outSignal;
+            this->m_SignalCopy = initialValue;
         }
 
         void WriteValue(valueType value)
