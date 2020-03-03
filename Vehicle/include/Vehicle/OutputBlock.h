@@ -11,7 +11,7 @@
 class OutputBlock : public SimFramework::Block {
 
 public:
-    OutputBlock(SimFramework::Signal<Eigen::Vector2f>* massStates, SimFramework::Signal<float>* force);
+    void Configure(SimFramework::Signal<Eigen::Vector2f>* massStates, SimFramework::Signal<float>* force);
 
     // Block functions
     void Read() override;

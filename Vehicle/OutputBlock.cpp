@@ -1,9 +1,12 @@
 #include "Vehicle/OutputBlock.h"
 
-OutputBlock::OutputBlock(
+void OutputBlock::Configure(
         SimFramework::Signal<Eigen::Vector2f>* massStates,
         SimFramework::Signal<float>* force)
-        : m_MassStates(massStates), m_Force(force) {};
+{
+    this->m_MassStates = massStates;
+    this->m_Force = force;
+}
 
 void OutputBlock::Read()
 {

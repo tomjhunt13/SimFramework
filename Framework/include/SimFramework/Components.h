@@ -12,7 +12,6 @@ namespace SimFramework {
     template <typename SignalType>
     class ConstantBlock : public Block {
     public:
-//        ConstantBlock() : m_OutputSignal(outputSignal), m_Value(value) {};
 
         // Block API
         void Configure(Signal<SignalType>* outputSignal, SignalType value)
@@ -43,7 +42,6 @@ namespace SimFramework {
     template <typename SignalType>
     class SummingJunction : public Block {
     public:
-//        SummingJunction()
 
         void Configure(std::vector<Signal<SignalType>*> inputSignals,
                        Signal<SignalType>* outputSignal,
@@ -114,11 +112,13 @@ namespace SimFramework {
     {
     public:
 
-        Mask(Signal<inputType>* inputSignal, std::vector<Signal<outputType>*> maskedSignals, std::vector<int> maskIndices)
-                : m_InputSignal(inputSignal), m_MaskedSignals(maskedSignals), m_MaskIndices(maskIndices)
-            {
-                this->m_OutputCopies.resize(maskedSignals.size());
-            };
+        void Configure(Signal<inputType>* inputSignal, std::vector<Signal<outputType>*> maskedSignals, std::vector<int> maskIndices)
+        {
+            this->m_InputSignal = inputSignal;
+            this->m_MaskedSignals = maskedSignals;
+            this->m_MaskIndices = maskIndices;
+            this->m_OutputCopies.resize(maskedSignals.size());
+        };
 
         // Block API
         void Read() override
@@ -162,7 +162,7 @@ namespace SimFramework {
     class LookupTable2D : public Block
     {
     public:
-        LookupTable2D(Table3D& table, Signal<float>* x, Signal<float>* y, Signal<float>* out);
+        void Configure(Table3D& table, Signal<float>* x, Signal<float>* y, Signal<float>* out);
 
         // Block API
         void Read() override;
@@ -190,8 +190,13 @@ namespace SimFramework {
     class Gain : public Block
     {
     public:
-        Gain(Signal<InputType>* inputSignal, Signal<InputType>* outputSignal, GainType gain)
-                : m_InputSignal(inputSignal), m_OutputSignal(outputSignal), m_Gain(gain) {};
+
+        void Configure(Signal<InputType>* inputSignal, Signal<InputType>* outputSignal, GainType gain)
+        {
+            this->m_InputSignal = inputSignal;
+            this->m_OutputSignal = outputSignal;
+            this->m_Gain = gain;
+        };
 
         // Block API
         void Read() override
@@ -234,8 +239,6 @@ namespace SimFramework {
     class Input : public Block
     {
     public:
-//        Input() : m_Signal(outSignal), m_SignalCopy(initialValue) {};
-
         void Configure(Signal<valueType>* outSignal, valueType initialValue)
         {
             this->m_Signal(outSignal);
@@ -272,8 +275,6 @@ namespace SimFramework {
     class Output : public Block
     {
     public:
-//        Output() : m_Signal(inSignal), m_SignalCopy(initialValue) {};
-
         void Configure(Signal<valueType>* inSignal, valueType initialValue)
         {
             this->m_Signal = inSignal;
@@ -305,16 +306,23 @@ namespace SimFramework {
     template <typename InputType, typename OutputType, int InputLength, int StateLength, int OutputLength>
     class StateSpace : public Block, public DynamicSystem<Eigen::VectorXf> {
     public:
-        StateSpace(Signal<InputType>* inputSignal, Signal<OutputType>* outputSignal,
-                   Eigen::Matrix<float, StateLength, StateLength> A,
-                   Eigen::Matrix<float, StateLength, InputLength> B,
-                   Eigen::Matrix<float, OutputLength, StateLength> C,
-                   Eigen::Matrix<float, OutputLength, InputLength> D,
-                   Eigen::VectorXf initialValue)
-                   : m_InputSignal(inputSignal), m_OutputSignal(outputSignal),
-                     m_InitialValue(initialValue), m_States(initialValue),
-                     m_A(A), m_B(B), m_C(C), m_D(D) {};
+        void Configure(Signal<InputType>* inputSignal, Signal<OutputType>* outputSignal,
+                       Eigen::Matrix<float, StateLength, StateLength> A,
+                       Eigen::Matrix<float, StateLength, InputLength> B,
+                       Eigen::Matrix<float, OutputLength, StateLength> C,
+                       Eigen::Matrix<float, OutputLength, InputLength> D,
+                       Eigen::VectorXf initialValue)
+       {
+            this->m_InputSignal = inputSignal;
+            this->m_OutputSignal = outputSignal;
+            this->m_InitialValue = initialValue;
+            this->m_States = initialValue;
 
+            this->m_A = A;
+            this->m_B = B;
+            this->m_C = C;
+            this->m_D = D;
+        }
 
         // Block API
         void Read() override
