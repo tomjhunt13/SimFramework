@@ -70,40 +70,27 @@ namespace SimFramework {
         };
     };
 
-    //----------------- SystemManager
 
 
-    class SystemManager {
+
+    class Model {
 
     public:
 
-        // Copy constructor deleted according to singleton design pattern
-        SystemManager(SystemManager &systemManager) = delete;
+        void Initialise(float t_0);
+        void Update(float t_np1);
 
-        static SystemManager& Get();
-
+    protected:
         void RegisterBlocks(std::vector<Block*> sources, std::vector<Block*> dynamicSystems,
                                    std::vector<Block*> functions, std::vector<Block*> sinks);
 
-        void Initialise(float t_0);
-
-        // Solution phase
-        void UpdateSystem(float t_np1);
-
     private:
-
         void UpdateFunctions(float t_np1);
-
         std::vector<Block*> m_Sources;
         std::vector<Block*> m_DynamicSystems;
         std::vector<Block*> m_Functions;
         std::vector<Block*> m_Sinks;
-
-        // Constructor hidden to maintain singleton pattern
-        SystemManager() = default;
     };
-
-
 
 
 } // namespace Framework

@@ -14,7 +14,7 @@
 #include "Vehicle/Clutch.h"
 
 
-class ExampleSystem
+class ExampleSystem : public SimFramework::Model
 {
 public:
     ExampleSystem()
@@ -43,21 +43,13 @@ public:
         this->m_Out.Configure(&(this->m_MassStates), &(this->m_SummedLoad));
 
         // Construct system
-        SimFramework::SystemManager& systemManager = SimFramework::SystemManager::Get();
-        systemManager.RegisterBlocks(
+        this->RegisterBlocks(
                 {&(this->m_ThrottleBlock), &(this->m_Load)},
                 {&(this->m_Mass)},
                 {&(this->m_Mask), &(this->m_Eng), &(this->m_SummingJunction)},
                 {&(this->m_Out)});
-        systemManager.Initialise(0.f);
     }
 
-
-    void Update(float t_np1)
-    {
-        SimFramework::SystemManager& systemManager = SimFramework::SystemManager::Get();
-        systemManager.UpdateSystem(t_np1);
-    }
 
 private:
 
@@ -86,6 +78,7 @@ private:
 int main() {
 
     ExampleSystem sys;
+    sys.Initialise(0);
 
     for (float t = 0; t <= 1; t += 0.01) {
         sys.Update(t);
