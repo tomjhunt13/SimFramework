@@ -77,6 +77,8 @@ private:
 
 int main() {
 
+    int a = sizeof(SimFramework::Block*);
+
     ExampleSystem sys;
     sys.Initialise(0);
 
