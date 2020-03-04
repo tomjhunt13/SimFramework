@@ -27,6 +27,7 @@ namespace SimFramework {
 
 
     //----------------- Block
+    // TODO: consider making block API protected
     class Block
     {
     public:

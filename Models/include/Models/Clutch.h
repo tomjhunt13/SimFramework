@@ -39,7 +39,7 @@ namespace Vehicle {
         float m_OutputTorqueCopy;
     };
 
-}; // namespace Vehicle
+}; // namespace Models
 
 
 #endif //FRAMEWORK_CLUTCH_H

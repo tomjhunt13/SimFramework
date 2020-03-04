@@ -16,11 +16,11 @@ namespace Vehicle {
 //     *
 //     */
 //
-//    class Vehicle {
+//    class Models {
 //
 //    public:
-//        Vehicle();
-//        ~Vehicle();
+//        Models();
+//        ~Models();
 //
 //        void Print();
 //
@@ -35,7 +35,7 @@ namespace Vehicle {
 //
 //    };
 
-} // namespace Vehicle
+} // namespace Models
 
 
 

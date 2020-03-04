@@ -186,12 +186,12 @@ namespace SimFramework {
     };
 
 
-    template <typename InputType, typename GainType=float>
+    template <typename InputType, typename ReturnType, typename GainType=float>
     class Gain : public Block
     {
     public:
 
-        void Configure(Signal<InputType>* inputSignal, Signal<InputType>* outputSignal, GainType gain)
+        void Configure(Signal<InputType>* inputSignal, Signal<ReturnType>* outputSignal, GainType gain)
         {
             this->m_InputSignal = inputSignal;
             this->m_OutputSignal = outputSignal;
@@ -216,18 +216,18 @@ namespace SimFramework {
 
         void Init(float t_0) override
         {
-            this-Write();
+//            this-Write();
         };
 
     private:
 
         // Signals
         Signal<InputType>* m_InputSignal;
-        Signal<InputType>* m_OutputSignal;
+        Signal<ReturnType>* m_OutputSignal;
 
         // Copies
         InputType m_InputCopy;
-        InputType m_OutputCopy;
+        ReturnType m_OutputCopy;
 
         // Parameters
         GainType m_Gain;
