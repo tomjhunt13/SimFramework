@@ -1,4 +1,4 @@
-#include "Models/MassSpringDamper1D.h"
+#include "SimModels/MassSpringDamper1D.h"
 
 
 namespace Models {
@@ -58,4 +58,4 @@ namespace Models {
         return &(this->m_VelocityOutputBlock);
     };
 
-}; // namespace Models
+}; // namespace SimModels

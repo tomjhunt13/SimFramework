@@ -45,7 +45,7 @@ namespace Models {
         SimFramework::Output<float> m_VelocityOutputBlock;
     };
 
-}; // namespace Models
+}; // namespace SimModels
 
 
 #endif //FRAMEWORK_MASSSPRINGDAMPER1D_H

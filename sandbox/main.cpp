@@ -2,7 +2,7 @@
 #include <fstream>
 
 #include "SimFramework/Components.h"
-#include "Models/MassSpringDamper1D.h"
+#include "SimModels/MassSpringDamper1D.h"
 
 
 int main() {
