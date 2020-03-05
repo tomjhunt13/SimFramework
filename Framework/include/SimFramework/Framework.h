@@ -78,6 +78,8 @@ namespace SimFramework {
 
     public:
 
+        Model(float dtMax=0.1) : m_dtMax(dtMax) {}
+
         void Initialise(float t_0);
         void Update(float t_np1);
 
@@ -91,6 +93,9 @@ namespace SimFramework {
         std::vector<Block*> m_DynamicSystems;
         std::vector<Block*> m_Functions;
         std::vector<Block*> m_Sinks;
+
+        float m_dtMax;
+        float m_t_n;
     };
 
 

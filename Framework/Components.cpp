@@ -22,7 +22,7 @@ namespace SimFramework {
         this->m_Out->Write(m_OutCopy);
     };
 
-    void LookupTable2D::Update(float t_np1)
+    void LookupTable2D::Update(float dt)
     {
         this->m_OutCopy = InterpTable3D(this->m_Table, {this->m_XCopy, this->m_YCopy});
     };

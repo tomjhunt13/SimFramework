@@ -25,7 +25,7 @@ namespace SimFramework {
         {
             this->m_OutputSignal->Write(this->m_Value);
         };
-        void Update(float t_np1) override {};
+        void Update(float dt) override {};
 
         void Init(float t_0) override
         {
@@ -68,7 +68,7 @@ namespace SimFramework {
             this->m_OutputSignal->Write(this->m_OutputCopy);
         };
 
-        void Update(float t_np1) override
+        void Update(float dt) override
         {
             std::vector<SignalType> weightedValues;
 
@@ -134,7 +134,7 @@ namespace SimFramework {
             }
         };
 
-        void Update(float t_np1) override
+        void Update(float dt) override
         {
             for (int i = 0; i < this->m_MaskIndices.size(); i++)
             {
@@ -167,7 +167,7 @@ namespace SimFramework {
         // Block API
         void Read() override;
         void Write() override;
-        void Update(float t_np1) override;
+        void Update(float dt) override;
         void Init(float t_0) override;
 
     private:
@@ -209,7 +209,7 @@ namespace SimFramework {
             this->m_OutputSignal->Write(this->m_OutputCopy);
         };
 
-        void Update(float t_np1) override
+        void Update(float dt) override
         {
             this->m_OutputCopy = this->m_Gain * this->m_InputCopy;
         };
@@ -258,7 +258,7 @@ namespace SimFramework {
             this->m_Signal->Write(this->m_SignalCopy);
         };
 
-        void Update(float t_np1) override {};
+        void Update(float dt) override {};
 
         void Init(float t_0) override
         {
@@ -294,7 +294,7 @@ namespace SimFramework {
 
         void Write() override {};
 
-        void Update(float t_np1) override {};
+        void Update(float dt) override {};
 
         void Init(float t_0) override {};
 
@@ -336,15 +336,16 @@ namespace SimFramework {
             this->m_OutputSignal->Write(this->m_C * this->m_States + this->m_D * this->m_InputCopy);
         };
 
-        void Update(float t_np1) override
+        void Update(float dt) override
         {
             // Get dt
-            float dt = t_np1 - this->t_n;
+
+//            float dt = t_np1 - this->t_n;
 
             Eigen::VectorXf x_np1 = SimFramework::RK4::Step<Eigen::VectorXf>(this, dt, this->t_n, this->m_States);
 
             this->m_States = x_np1;
-            this->t_n = t_np1;
+            this->t_n = this->t_n + dt;
 
         };
 

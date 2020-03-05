@@ -1,5 +1,6 @@
 #include "SimFramework/Framework.h"
 
+#include "SimFramework/Utilities.h"
 
 namespace SimFramework {
 
@@ -29,12 +30,12 @@ namespace SimFramework {
         this->UpdateFunctions(t_0);
     }
 
-    void Model::UpdateFunctions(float t_np1)
+    void Model::UpdateFunctions(float dt)
     {
         for (auto i: this->m_Functions)
         {
             i->Read();
-            i->Update(t_np1);
+            i->Update(dt);
             i->Write();
         }
     }
@@ -42,45 +43,46 @@ namespace SimFramework {
     void Model::Update(float t_np1)
     {
 
-        // Read
-        for (auto i: this->m_DynamicSystems)
-        {
-            i->Read();
+        // Get steps
+        std::vector<float> timeSteps = TimeSteps(this->m_t_n, t_np1, this->m_dtMax);
+
+        for (float dt: timeSteps) {
+
+            // Read
+            for (auto i: this->m_DynamicSystems) {
+                i->Read();
+            }
+
+            for (auto i: this->m_Sinks) {
+                i->Read();
+            }
+
+            // Update everything else
+            for (auto i: this->m_Sources) {
+                i->Update(dt);
+            }
+
+            for (auto i: this->m_DynamicSystems) {
+                i->Update(dt);
+            }
+
+            for (auto i: this->m_Sinks) {
+                i->Update(dt);
+            }
+
+            // Write everything else
+            for (auto i: this->m_Sources) {
+                i->Write();
+            }
+
+            for (auto i: this->m_DynamicSystems) {
+                i->Write();
+            }
+
+            this->UpdateFunctions(dt);
         }
 
-        for (auto i: this->m_Sinks)
-        {
-            i->Read();
-        }
-
-        // Update everything else
-        for (auto i: this->m_Sources)
-        {
-            i->Update(t_np1);
-        }
-
-        for (auto i: this->m_DynamicSystems)
-        {
-            i->Update(t_np1);
-        }
-
-        for (auto i: this->m_Sinks)
-        {
-            i->Update(t_np1);
-        }
-
-        // Write everything else
-        for (auto i: this->m_Sources)
-        {
-            i->Write();
-        }
-
-        for (auto i: this->m_DynamicSystems)
-        {
-            i->Write();
-        }
-
-        this->UpdateFunctions(t_np1);
+        this->m_t_n = t_np1;
     };
 
 

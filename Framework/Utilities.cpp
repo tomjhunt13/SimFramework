@@ -33,7 +33,7 @@ namespace SimFramework {
     };
 
 
-    std::vector<float> TimeSteps(float tMin, float tMax, float dt) {
+    std::vector<float> TimeSteps(float tMin, float tMax, float dtMax) {
 
         float tRange = tMax - tMin;
 
@@ -41,10 +41,10 @@ namespace SimFramework {
 
         if (tRange > 0.f) {
 
-            if (dt >= tRange) {
-                timesteps.push_back(dt);
+            if (dtMax >= tRange) {
+                timesteps.push_back(tRange);
             } else {
-                int nt = std::ceilf(tRange / dt);
+                int nt = std::ceilf(tRange / dtMax);
                 float dtNew = tRange / (float) nt;
 
                 for (int i = 0; i < nt; i++) {

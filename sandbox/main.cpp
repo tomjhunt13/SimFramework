@@ -19,14 +19,14 @@ int main() {
 
     std::ofstream myfile;
 
-    // ios::out indicates writing, ios::app indicates appending to existing
-    myfile.open ("tmpOut.csv", std::ios::out | std::ios::app);
+    // ios::out indicates writing
+    myfile.open ("tmpOut.csv", std::ios::out);
 
     int counter = 0;
 
-    for (float t = 0.f; t <= 300.f; t += 0.001) {
+    for (float t = 0.f; t <= 300.f; t += 0.1) {
 
-        if (counter == 30000)
+        if (counter == 100)
         {
             simIn->WriteValue(10.f);
         }
