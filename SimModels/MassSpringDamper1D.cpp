@@ -29,7 +29,8 @@ namespace Models {
         this->m_Gain.Configure(&(this->m_MassStates), &(this->m_SpringDamperForce_Vec), gainMatrix);
         this->m_Mask1.Configure(&(this->m_SpringDamperForce_Vec), {&(this->m_SpringDamperForce)}, {0});
         this->m_SumForces.Configure({&(this->m_SpringDamperForce), &(this->m_InputForce)}, &(this->m_SummedForce), {-1.f, 1.f});
-        this->m_MassBlock.Configure(&(this->m_SummedForce), &(this->m_MassStates), A, B, C, D, initialState);
+        this->m_MassBlock.Configure(&(this->m_SummedForce), &(this->m_MassStates), initialState);
+        this->m_MassBlock.SetMatrices(A, B, C, D);
         this->m_Mask2.Configure(&(this->m_MassStates), {&(this->m_MassPosition), &(this->m_MassVelocity)}, {0, 1});
         this->m_PositionOutputBlock.Configure(&(this->m_MassPosition), initialState[0]);
         this->m_VelocityOutputBlock.Configure(&(this->m_MassVelocity), initialState[1]);

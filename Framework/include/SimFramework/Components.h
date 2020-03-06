@@ -162,7 +162,8 @@ namespace SimFramework {
     class LookupTable2D : public Block
     {
     public:
-        void Configure(Table3D& table, Signal<float>* x, Signal<float>* y, Signal<float>* out);
+        void Configure(Signal<float>* x, Signal<float>* y, Signal<float>* out);
+        void SetTable(Table3D& table);
 
         // Block API
         void Read() override;
@@ -307,17 +308,19 @@ namespace SimFramework {
     class StateSpace : public Block, public DynamicSystem<Eigen::VectorXf> {
     public:
         void Configure(Signal<InputType>* inputSignal, Signal<OutputType>* outputSignal,
-                       Eigen::Matrix<float, StateLength, StateLength> A,
-                       Eigen::Matrix<float, StateLength, InputLength> B,
-                       Eigen::Matrix<float, OutputLength, StateLength> C,
-                       Eigen::Matrix<float, OutputLength, InputLength> D,
                        Eigen::VectorXf initialValue)
        {
             this->m_InputSignal = inputSignal;
             this->m_OutputSignal = outputSignal;
             this->m_InitialValue = initialValue;
             this->m_States = initialValue;
+        }
 
+        void SetMatrices(Eigen::Matrix<float, StateLength, StateLength> A,
+                         Eigen::Matrix<float, StateLength, InputLength> B,
+                         Eigen::Matrix<float, OutputLength, StateLength> C,
+                         Eigen::Matrix<float, OutputLength, InputLength> D)
+        {
             this->m_A = A;
             this->m_B = B;
             this->m_C = C;

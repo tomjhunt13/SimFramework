@@ -2,12 +2,16 @@
 
 namespace SimFramework {
 
-    void LookupTable2D::Configure(Table3D& table, Signal<float>* x, Signal<float>* y, Signal<float>* out)
+    void LookupTable2D::Configure(Signal<float>* x, Signal<float>* y, Signal<float>* out)
     {
-        this->m_Table = table;
         this->m_X = x;
         this->m_Y = y;
         this->m_Out = out;
+    }
+
+    void LookupTable2D::SetTable(Table3D &table)
+    {
+        this->m_Table = table;
     }
 
     // Block API
