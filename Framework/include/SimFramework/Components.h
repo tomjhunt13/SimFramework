@@ -341,10 +341,6 @@ namespace SimFramework {
 
         void Update(float dt) override
         {
-            // Get dt
-
-//            float dt = t_np1 - this->t_n;
-
             Eigen::VectorXf x_np1 = SimFramework::RK4::Step<Eigen::VectorXf>(this, dt, this->t_n, this->m_States);
 
             this->m_States = x_np1;
@@ -384,6 +380,90 @@ namespace SimFramework {
         Eigen::Matrix<float, OutputLength, InputLength> m_D;
     };
 
+
+    template <typename InputType>
+    class LinearBlend : public Block
+    {
+    public:
+        void Configure(Signal<InputType>* input1, Signal<InputType>* input2, Signal<float>* alpha, Signal<InputType>* output)
+        {
+            this->m_SInput1 = input1;
+            this->m_SInput2 = input2;
+            this->m_SAlpha = alpha;
+            this->m_SOutput = output;
+        }
+
+        // Block API
+        void Read() override
+        {
+            this->m_In1Copy = this->m_SInput1->Read();
+            this->m_In2Copy = this->m_SInput2->Read();
+            this->m_AlphaCopy = this->m_SAlpha->Read();
+        };
+
+        void Write() override
+        {
+            // Output equation
+            this->m_SOutput->Write(this->m_OutCopy);
+        };
+
+        void Update(float dt) override
+        {
+            this->m_OutCopy = this->m_AlphaCopy * this->m_In1Copy + (1 - this->m_AlphaCopy) * this->m_In2Copy;
+        };
+
+        void Init(float t_0) override
+        {
+            this->m_SAlpha = 0.f;
+        };
+
+    private:
+
+        // Signals
+        Signal<InputType>* m_SInput1;
+        Signal<InputType>* m_SInput2;
+        Signal<float>* m_SAlpha;
+        Signal<InputType>* m_SOutput;
+
+        // Work copies
+        InputType m_In1Copy;
+        InputType m_In2Copy;
+        float  m_AlphaCopy;
+        InputType m_OutCopy;
+    };
+
+
+
+    class TriggerFunction : public Block
+    {
+    public:
+
+        void Configure(Signal<float>* outputSignal);
+        void Trigger();
+
+        virtual float Evaluate(float t) = 0 ;
+
+        // Block API
+        void Read() override;
+        void Write() override;
+        void Update(float dt) override;
+        void Init(float t_0) override;
+
+    protected:
+        float t_end;
+        float m_Default;
+
+    private:
+
+        float t_n;
+        bool m_State;
+
+        // Signals
+        Signal<float>* m_SOutput;
+
+        // Working copies
+        float m_OutCopy;
+    };
 
 
 

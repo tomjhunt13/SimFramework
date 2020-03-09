@@ -3,55 +3,51 @@
 #include <string>
 
 #include "SimFramework/Components.h"
-#include "SimModels/MassSpringDamper1D.h"
 
-#include "SimModels/EngineStandalone.h"
+class LinearTrigger : public SimFramework::TriggerFunction
+{
+public:
+    LinearTrigger()
+    {
+        this->m_Default = 0.f;
+        this->t_end = 2.f;
+    }
 
+    float Evaluate(float t)
+    {
+        return 1.f * (this->t_end - t) / (this->t_end);
+    }
+};
 
 int main() {
 
-    std::string engineJSON = "/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json";
-
-    Models::EngineStandalone eng;
-    eng.SetEngineParameters(engineJSON, 1.f, 0.2);
-
-    SimFramework::Input<float>* throttleIn = eng.InputThrottleBlock();
-    SimFramework::Input<float>* loadIn = eng.InputLoadBlock();
-    SimFramework::Output<float>* speedOut = eng.OutputSpeedBlock();
-    eng.Initialise(0.f);
-
-    throttleIn->WriteValue(0.5);
-    loadIn->WriteValue(100.f);
+    SimFramework::Signal<float> sig;
+    LinearTrigger trig;
+    trig.Configure(&sig);
 
 
     std::ofstream myfile;
     myfile.open ("tmpOut.csv", std::ios::out);
 
-    int counter = 0;
-    int nSamplesPerSecond = 4;
-    float dt = 1.f  / nSamplesPerSecond;
 
+    float dt = 0.05;
+    int counter = 0;
     for (float t = 0.f; t <= 80.f; t += dt) {
 
-        if (counter == (nSamplesPerSecond * 10) )
+        if (counter % 100 == 0)
         {
-            loadIn->WriteValue(150.f);
+            trig.Trigger();
         }
 
-        if (counter == (nSamplesPerSecond * 30))
-        {
-            throttleIn->WriteValue(0.99);
-        }
+        trig.Read();
+        trig.Update(dt);
+        trig.Write();
 
-        if (counter == (nSamplesPerSecond * 50))
-        {
-            loadIn->WriteValue(200.f);
-        }
 
-        eng.Update(t);
 
-        myfile << t << ", " << speedOut->ReadValue() << std::endl;
-        std::cout << "t: " << t << ", omega: " << speedOut->ReadValue() << std::endl;
+
+        myfile << t << ", " << sig.Read() << std::endl;
+        std::cout << "t: " << t << ", alpha: " << sig.Read() << std::endl;
 
         counter ++;
     }
