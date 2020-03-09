@@ -409,12 +409,12 @@ namespace SimFramework {
 
         void Update(float dt) override
         {
-            this->m_OutCopy = this->m_AlphaCopy * this->m_In1Copy + (1 - this->m_AlphaCopy) * this->m_In2Copy;
+            this->m_OutCopy = (1 - this->m_AlphaCopy) * this->m_In1Copy + this->m_AlphaCopy * this->m_In2Copy;
         };
 
         void Init(float t_0) override
         {
-            this->m_SAlpha = 0.f;
+            this->m_AlphaCopy = 0.f;
         };
 
     private:

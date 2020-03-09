@@ -19,12 +19,56 @@ public:
     }
 };
 
+
+class Transmission : public SimFramework::Model
+{
+
+public:
+    Transmission()
+    {
+        this->blend.Configure(&(this->val1Sig), &(this->val2Sig), &(this->trigSig), &(this->outSig));
+        this->trig.Configure(&(this->trigSig));
+        this->output.Configure(&(this->outSig), 0.f);
+
+        // Set values
+        val1Sig.Write(1);
+        val2Sig.Write(2);
+
+        this->RegisterBlocks({}, {}, {&(this->trig), &(this->blend)}, {&(this->output)});
+    };
+
+    SimFramework::Output<float>* OutputBlock()
+    {
+        return &(this->output);
+    };
+
+    LinearTrigger* TriggerBlock()
+    {
+        return &(this->trig);
+    };
+
+
+private:
+
+    // Signals
+    SimFramework::Signal<float> val1Sig;
+    SimFramework::Signal<float> val2Sig;
+    SimFramework::Signal<float> trigSig;
+    SimFramework::Signal<float> outSig;
+
+    // Blocks
+    SimFramework::LinearBlend<float> blend;
+    LinearTrigger trig;
+    SimFramework::Output<float>  output;
+};
+
 int main() {
 
-    SimFramework::Signal<float> sig;
-    LinearTrigger trig;
-    trig.Configure(&sig);
 
+    Transmission transmission;
+    LinearTrigger* trig = transmission.TriggerBlock();
+    SimFramework::Output<float>* outBlock = transmission.OutputBlock();
+    transmission.Initialise(0);
 
     std::ofstream myfile;
     myfile.open ("tmpOut.csv", std::ios::out);
@@ -36,18 +80,13 @@ int main() {
 
         if (counter % 100 == 0)
         {
-            trig.Trigger();
+            trig->Trigger();
         }
 
-        trig.Read();
-        trig.Update(dt);
-        trig.Write();
+        transmission.Update(t);
 
-
-
-
-        myfile << t << ", " << sig.Read() << std::endl;
-        std::cout << "t: " << t << ", alpha: " << sig.Read() << std::endl;
+        myfile << t << ", " << outBlock->ReadValue() << std::endl;
+        std::cout << "t: " << t << ", val: " << outBlock->ReadValue() << std::endl;
 
         counter ++;
     }
