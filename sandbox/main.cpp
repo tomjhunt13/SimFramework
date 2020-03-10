@@ -2,73 +2,23 @@
 #include <fstream>
 #include <string>
 
-#include "SimFramework/Components.h"
+#include "SimModels/TransmissionStandalone.h"
 
-class LinearTrigger : public SimFramework::TriggerFunction
-{
-public:
-    LinearTrigger()
-    {
-        this->m_Default = 0.f;
-        this->t_end = 2.f;
-    }
-
-    float Evaluate(float t)
-    {
-        return 1.f * (this->t_end - t) / (this->t_end);
-    }
-};
-
-
-class Transmission : public SimFramework::Model
-{
-
-public:
-    Transmission()
-    {
-        this->blend.Configure(&(this->val1Sig), &(this->val2Sig), &(this->trigSig), &(this->outSig));
-        this->trig.Configure(&(this->trigSig));
-        this->output.Configure(&(this->outSig), 0.f);
-
-        // Set values
-        val1Sig.Write(1);
-        val2Sig.Write(2);
-
-        this->RegisterBlocks({}, {}, {&(this->trig), &(this->blend)}, {&(this->output)});
-    };
-
-    SimFramework::Output<float>* OutputBlock()
-    {
-        return &(this->output);
-    };
-
-    LinearTrigger* TriggerBlock()
-    {
-        return &(this->trig);
-    };
-
-
-private:
-
-    // Signals
-    SimFramework::Signal<float> val1Sig;
-    SimFramework::Signal<float> val2Sig;
-    SimFramework::Signal<float> trigSig;
-    SimFramework::Signal<float> outSig;
-
-    // Blocks
-    SimFramework::LinearBlend<float> blend;
-    LinearTrigger trig;
-    SimFramework::Output<float>  output;
-};
 
 int main() {
 
 
-    Transmission transmission;
-    LinearTrigger* trig = transmission.TriggerBlock();
-    SimFramework::Output<float>* outBlock = transmission.OutputBlock();
+    Models::Transmission transmission;
+
+    SimFramework::Input<float>* ClutchInBlock = transmission.ClutchInBlock();
+    SimFramework::Input<float>* TyreInBlock = transmission.TyreInBlock();
+    SimFramework::Output<float>* ClutchOutBlock = transmission.ClutchOutBlock();
+    SimFramework::Output<float>* TyreOutBlock = transmission.TyreOutBlock();
+    Models::LinearTrigger* TriggerBlock = transmission.TriggerBlock();
+
     transmission.Initialise(0);
+    ClutchInBlock->WriteValue(10);
+    TyreInBlock->WriteValue(5);
 
     std::ofstream myfile;
     myfile.open ("tmpOut.csv", std::ios::out);
@@ -80,13 +30,13 @@ int main() {
 
         if (counter % 100 == 0)
         {
-            trig->Trigger();
+            TriggerBlock->Trigger();
         }
 
         transmission.Update(t);
 
-        myfile << t << ", " << outBlock->ReadValue() << std::endl;
-        std::cout << "t: " << t << ", val: " << outBlock->ReadValue() << std::endl;
+        myfile << t << ", " << ClutchOutBlock->ReadValue() << std::endl;
+        std::cout << "t: " << t << ", val: " << ClutchOutBlock->ReadValue() << std::endl;
 
         counter ++;
     }

@@ -107,6 +107,53 @@ namespace SimFramework {
         std::vector<float> m_Weights;
     };
 
+    template <typename InputType, typename OutputType>
+    class Vectorise : public Block
+    {
+    public:
+        void Configure(std::vector<Signal<InputType>*> inputs, Signal<OutputType>* output)
+        {
+
+            this->m_SInputSignals = inputs;
+            this->m_SOutputSignal = output;
+
+            this->m_InputCopies.resize(inputs.size());
+        }
+
+        // Block API
+        void Read() override
+        {
+            for (int i = 0; i < this->m_SInputSignals.size(); i++)
+            {
+                this->m_InputCopies[i] = m_SInputSignals[i]->Read();
+            }
+        };
+
+        void Write() override
+        {
+            this->m_SOutputSignal->Write(this->m_OutputCopy);
+        };
+
+        void Update(float dt) override
+        {
+            for (int i = 0; i < this->m_SInputSignals.size(); i++)
+            {
+                m_OutputCopy[i] = m_InputCopies[i];
+            }
+        };
+
+        void Init(float t_0) override {};
+
+    private:
+        // Signals
+        std::vector<Signal<InputType>*> m_SInputSignals;
+        Signal<OutputType>* m_SOutputSignal;
+
+        // Copies
+        std::vector<InputType> m_InputCopies;
+        OutputType m_OutputCopy;
+    };
+
     template <typename inputType, typename outputType>
     class Mask : public Block
     {
@@ -352,7 +399,10 @@ namespace SimFramework {
         {
             this->t_n = t_0;
             this->m_States = this->m_InitialValue;
-            this->m_OutputSignal->Write(this->m_States);
+
+            // TODO: needs to write something initially (I think) but dimensionality  unknown
+//            this->m_InputCopy =
+//            this->m_OutputSignal->Write(this->m_States);
         };
 
         // Dynamic system functions
