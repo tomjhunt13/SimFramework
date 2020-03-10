@@ -12,7 +12,7 @@ namespace Models {
     public:
         LinearTrigger() {
             this->m_Default = 0.f;
-            this->t_end = 5.f;
+            this->t_end = 1.f;
         }
 
         float Evaluate(float t) {
@@ -38,7 +38,7 @@ namespace Models {
             A << 0.f;
 
             Eigen::Matrix<float, 1,2> B;
-            B << 1.f / J_eff, Ratio / J_eff;
+            B << 1.f / J_eff, - Ratio / J_eff;
 
             Eigen::Matrix<float, 2, 1> C;
             C << 1.f, Ratio;

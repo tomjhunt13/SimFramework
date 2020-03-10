@@ -18,7 +18,7 @@ int main() {
 
     transmission.Initialise(0);
     ClutchInBlock->WriteValue(10);
-    TyreInBlock->WriteValue(5);
+    TyreInBlock->WriteValue(4);
 
     std::ofstream myfile;
     myfile.open ("tmpOut.csv", std::ios::out);
