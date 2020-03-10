@@ -14,7 +14,7 @@ void SandboxTransmission()
     Models::TransmissionBlocks blocks = transmission.Blocks();
 
     transmission.Initialise(0);
-    blocks.ClutchInBlock->WriteValue(10);
+    blocks.ClutchInBlock->WriteValue(12);
     blocks.TyreInBlock->WriteValue(4);
 
     std::ofstream myfile;
@@ -22,18 +22,27 @@ void SandboxTransmission()
 
 
     float dt = 0.05;
-    int counter = 0;
+    int counter = 1;
     for (float t = 0.f; t <= 80.f; t += dt) {
 
         if (counter % 100 == 0)
         {
-            blocks.TriggerBlock->Trigger();
+            if (counter < 850)
+            {
+                transmission.ShiftUp();
+            }
+
+            else
+            {
+                transmission.ShiftDown();
+            }
         }
+
 
         transmission.Update(t);
 
-        myfile << t << ", " << blocks.ClutchOutBlock->ReadValue() << std::endl;
-        std::cout << "t: " << t << ", val: " << blocks.ClutchOutBlock->ReadValue() << std::endl;
+        myfile << t << ", " << blocks.ClutchOutBlock->ReadValue() << ", " << transmission.CurrentGear() << std::endl;
+        std::cout << "t: " << t << ", val: " << blocks.ClutchOutBlock->ReadValue() << ", gear:" << transmission.CurrentGear() << std::endl;
 
         counter ++;
     }

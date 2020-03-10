@@ -7,13 +7,6 @@
 
 namespace Models {
 
-
-    struct GearRatios
-    {
-        std::vector<float> ratios = {3.f, 2.f, 1.5, 1.f};
-    };
-
-
     class LinearTrigger : public SimFramework::TriggerFunction {
     public:
         LinearTrigger();
@@ -25,27 +18,27 @@ namespace Models {
         SimFramework::Input<float>* TyreInBlock;
         SimFramework::Output<float>* ClutchOutBlock;
         SimFramework::Output<float>* TyreOutBlock;
-        LinearTrigger* TriggerBlock;
     };
-
 
 
     class Transmission : public SimFramework::Model {
 
     public:
         Transmission();
-
         void ShiftUp();
         void ShiftDown();
         TransmissionBlocks Blocks();
+        int CurrentGear();
 
 
     private:
 
+        void SetGearRatio(int gearIndex);
+
         // Parameters
-        GearRatios m_Ratios;
+        std::vector<float> m_Ratios = {0.5, 1.f, 1.5, 2.f, 3.f};
         int m_GearIndex;
-        float m_Inertia;
+        float m_EffectiveInertia = 1.f;
 
         // Signals
         SimFramework::Signal<float> m_SClutchIn;
@@ -61,16 +54,12 @@ namespace Models {
         // Blocks
         SimFramework::Input<float> m_BClutchIn;
         SimFramework::Input<float> m_BTyreIn;
-
         SimFramework::LinearBlend<float> m_BBlend;
         LinearTrigger m_BTrig;
         SimFramework::ConstantBlock<float> m_BConst;
-
         SimFramework::Vectorise<float, Eigen::Vector2f> m_BVec;
         SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector2f, 2, 1, 2> m_BStates;
-
         SimFramework::Mask<Eigen::Vector2f, float> m_BMask;
-
         SimFramework::Output<float> m_BOutClutch;
         SimFramework::Output<float> m_BOutTyre;
     };
