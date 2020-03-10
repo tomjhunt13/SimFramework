@@ -44,6 +44,11 @@ namespace Models {
                 {&(this->m_PositionOutputBlock), &(this->m_VelocityOutputBlock)});
     }
 
+    MassSpringDamperBlocks MassSpringDamper1D::Blocks()
+    {
+        return {&(this->m_Input), &(this->m_PositionOutputBlock), &(this->m_VelocityOutputBlock)};
+    }
+
     SimFramework::Input<float>* MassSpringDamper1D::InputForceBlock()
     {
         return &(this->m_Input);

@@ -11,11 +11,19 @@
 
 namespace Models {
 
+    struct EngineBlocks
+    {
+        SimFramework::Input<float>* InputLoadBlock;
+        SimFramework::Input<float>* InputThrottleBlock;
+        SimFramework::Output<float>* OutputSpeedBlock;
+    };
+
     class EngineStandalone : public SimFramework::Model {
     public:
         EngineStandalone();
         void SetEngineParameters(std::string engineJSON="/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json", float J=1.f, float b=0.05);
 
+        EngineBlocks Blocks();
         SimFramework::Input<float>* InputLoadBlock();
         SimFramework::Input<float>* InputThrottleBlock();
         SimFramework::Output<float>* OutputSpeedBlock();

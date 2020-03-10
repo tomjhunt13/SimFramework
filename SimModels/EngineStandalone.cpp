@@ -51,6 +51,11 @@ namespace Models {
         this->m_BInertia.SetMatrices(A, B, C, D);
     }
 
+    EngineBlocks EngineStandalone::Blocks()
+    {
+        return {&(this->m_BLoad), &(this->m_BThrottle), &(this->m_BEngineSpeed)};
+    };
+
     SimFramework::Input<float>* EngineStandalone::InputLoadBlock()
     {
         return &(this->m_BLoad);

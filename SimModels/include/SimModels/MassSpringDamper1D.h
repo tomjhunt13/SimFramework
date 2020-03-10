@@ -8,11 +8,20 @@
 
 namespace Models {
 
+    struct MassSpringDamperBlocks
+    {
+        SimFramework::Input<float>* InputForceBlock;
+        SimFramework::Output<float>* MassPositionBlock;
+        SimFramework::Output<float>* MassVelocityBlock;
+    };
+
     class MassSpringDamper1D : public SimFramework::Model
     {
 
     public:
         MassSpringDamper1D(float mass=1.f, float k=1.f, float c=1.f);
+
+        MassSpringDamperBlocks Blocks();
 
         SimFramework::Input<float>* InputForceBlock();
         SimFramework::Output<float>* MassPositionBlock();
