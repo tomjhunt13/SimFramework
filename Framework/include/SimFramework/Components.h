@@ -15,11 +15,13 @@ namespace SimFramework {
         {
             this->m_OutputSignal = outputSignal;
             this->m_Value = value;
-
-            this->m_OutputSignal->Write(this->m_Value);
         }
 
-        void Initialise(float t_0) override {};
+        void Initialise(float t_0) override
+        {
+            this->m_OutputSignal->Write(this->m_Value);
+        };
+
         void Update(float dt) override {};
 
     private:

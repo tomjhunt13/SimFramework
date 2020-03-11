@@ -86,3 +86,82 @@ TEST(Vectorise, Vec3) {
     vec.Update();
     ASSERT_TRUE(out.Read() == expected);
 }
+
+
+TEST(Mask, Vec3_1Out_1) {
+    // Input Signal
+    SimFramework::Signal<Eigen::Vector3f> in;
+
+    // Output Signals
+    SimFramework::Signal<float> out1;
+    SimFramework::Signal<float> out2;
+    SimFramework::Signal<float> out3;
+
+    // Construct block
+    SimFramework::Mask<Eigen::Vector3f, float> vec;
+
+    // Write input values
+    in.Write({1.5, 3.5, 5.5});
+    out1.Write(0.f);
+    out2.Write(0.f);
+    out3.Write(0.f);
+
+    // Only output to out1
+    vec.Configure(&in, {&out1}, {0});
+    vec.Update();
+    ASSERT_FLOAT_EQ(out1.Read(), 1.5);
+    ASSERT_FLOAT_EQ(out2.Read(), 0.f);
+    ASSERT_FLOAT_EQ(out3.Read(), 0.f);
+}
+
+TEST(Mask, Vec3_1Out_2) {
+    // Input Signal
+    SimFramework::Signal<Eigen::Vector3f> in;
+
+    // Output Signals
+    SimFramework::Signal<float> out1;
+    SimFramework::Signal<float> out2;
+    SimFramework::Signal<float> out3;
+
+    // Construct block
+    SimFramework::Mask<Eigen::Vector3f, float> vec;
+
+    // Write input values
+    in.Write({1.5, 3.5, 5.5});
+    out1.Write(0.f);
+    out2.Write(0.f);
+    out3.Write(0.f);
+
+    // Only output to out1
+    vec.Configure(&in, {&out2}, {1});
+    vec.Update();
+    ASSERT_FLOAT_EQ(out1.Read(), 0.f);
+    ASSERT_FLOAT_EQ(out2.Read(), 3.5);
+    ASSERT_FLOAT_EQ(out3.Read(), 0.f);
+}
+
+TEST(Mask, Vec32Out_1) {
+    // Input Signal
+    SimFramework::Signal<Eigen::Vector3f> in;
+
+    // Output Signals
+    SimFramework::Signal<float> out1;
+    SimFramework::Signal<float> out2;
+    SimFramework::Signal<float> out3;
+
+    // Construct block
+    SimFramework::Mask<Eigen::Vector3f, float> vec;
+
+    // Write input values
+    in.Write({1.5, 3.5, 5.5});
+    out1.Write(0.f);
+    out2.Write(0.f);
+    out3.Write(0.f);
+
+    // Only output to out1
+    vec.Configure(&in, {&out2, &out3}, {2, 0});
+    vec.Update();
+    ASSERT_FLOAT_EQ(out1.Read(), 0.f);
+    ASSERT_FLOAT_EQ(out2.Read(), 5.5);
+    ASSERT_FLOAT_EQ(out3.Read(), 1.5);
+}
