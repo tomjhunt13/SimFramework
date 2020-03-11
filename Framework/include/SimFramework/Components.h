@@ -163,8 +163,34 @@ namespace SimFramework {
         InputType m_InputCopy;
     };
 
-//
-//
+
+    template <typename InputType, typename ReturnType, typename GainType=float>
+    class Gain : public Function
+    {
+    public:
+
+        void Configure(Signal<InputType>* inputSignal, Signal<ReturnType>* outputSignal, GainType gain)
+        {
+            this->m_InputSignal = inputSignal;
+            this->m_OutputSignal = outputSignal;
+            this->m_Gain = gain;
+        };
+
+        void Update() override
+        {
+            this->m_OutputSignal->Write(this->m_Gain * this->m_InputSignal->Read());
+        };
+
+    private:
+        // Parameters
+        GainType m_Gain;
+
+        // Signals
+        Signal<InputType>* m_InputSignal;
+        Signal<ReturnType>* m_OutputSignal;
+    };
+
+
 //    class LookupTable2D : public Block
 //    {
 //    public:
@@ -193,52 +219,7 @@ namespace SimFramework {
 //    };
 //
 //
-//    template <typename InputType, typename ReturnType, typename GainType=float>
-//    class Gain : public Block
-//    {
-//    public:
-//
-//        void Configure(Signal<InputType>* inputSignal, Signal<ReturnType>* outputSignal, GainType gain)
-//        {
-//            this->m_InputSignal = inputSignal;
-//            this->m_OutputSignal = outputSignal;
-//            this->m_Gain = gain;
-//        };
-//
-//        // Block API
-//        void Read() override
-//        {
-//            this->m_InputCopy = this->m_InputSignal->Read();
-//        };
-//
-//        void Write() override
-//        {
-//            this->m_OutputSignal->Write(this->m_OutputCopy);
-//        };
-//
-//        void Update(float dt) override
-//        {
-//            this->m_OutputCopy = this->m_Gain * this->m_InputCopy;
-//        };
-//
-//        void Init(float t_0) override
-//        {
-////            this-Write();
-//        };
-//
-//    private:
-//
-//        // Signals
-//        Signal<InputType>* m_InputSignal;
-//        Signal<ReturnType>* m_OutputSignal;
-//
-//        // Copies
-//        InputType m_InputCopy;
-//        ReturnType m_OutputCopy;
-//
-//        // Parameters
-//        GainType m_Gain;
-//    };
+
 //
 //
 //

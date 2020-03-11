@@ -165,3 +165,74 @@ TEST(Mask, Vec32Out_1) {
     ASSERT_FLOAT_EQ(out2.Read(), 5.5);
     ASSERT_FLOAT_EQ(out3.Read(), 1.5);
 }
+
+TEST(Gain, Float_X_Vec) {
+    // Input Signal
+    SimFramework::Signal<Eigen::Vector3f> in;
+
+    // Output Signal
+    SimFramework::Signal<Eigen::Vector3f> out;
+
+    // Construct block
+    SimFramework::Gain<Eigen::Vector3f, Eigen::Vector3f, float> gain;
+
+    // Configure gain
+    gain.Configure(&in, &out, 2.f);
+
+    // Write input values
+    in.Write({1.5, 3.5, 5.5});
+
+    // Test
+    gain.Update();
+    Eigen::Vector3f expected = {3.f, 7.f, 11.f};
+    ASSERT_TRUE(out.Read() == expected);
+}
+
+TEST(Gain, Mat2x2_X_Vec2) {
+    // Input Signal
+    SimFramework::Signal<Eigen::Vector2f> in;
+
+    // Output Signal
+    SimFramework::Signal<Eigen::Vector2f> out;
+
+    // Construct block
+    SimFramework::Gain<Eigen::Vector2f, Eigen::Vector2f, Eigen::Matrix<float, 2, 2>> gain;
+
+    // Configure gain
+    Eigen::Matrix<float, 2, 2> gainMatrix;
+    gainMatrix << 2.f, 2.f, 2.f, 2.f;
+    gain.Configure(&in, &out, gainMatrix);
+
+    // Write input values
+    in.Write({1.5, 2.5});
+
+    // Test
+    gain.Update();
+    Eigen::Vector2f expected = {8.f, 8.f};
+    ASSERT_TRUE(out.Read() == expected);
+}
+
+TEST(Gain, Mat1x2_X_Vec2) {
+    // Input Signal
+    SimFramework::Signal<Eigen::Vector2f> in;
+
+    // Output Signal
+    SimFramework::Signal<Eigen::Vector<float, 1>> out;
+
+    // Construct block
+    SimFramework::Gain<Eigen::Vector2f, Eigen::Vector<float, 1>, Eigen::Matrix<float, 1, 2>> gain;
+
+    // Configure gain
+    Eigen::Matrix<float, 1, 2> gainMatrix;
+    gainMatrix << 2.f, 2.f;
+    gain.Configure(&in, &out, gainMatrix);
+
+    // Write input values
+    in.Write({1.5, 2.5});
+
+    // Test
+    gain.Update();
+    Eigen::Vector<float, 1> expected;
+    expected << 8.f;
+    ASSERT_TRUE(out.Read() == expected);
+}
