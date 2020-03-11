@@ -29,5 +29,5 @@ add_executable(Sandbox Sandbox/main.cpp Sandbox/SandboxTransmission.h Sandbox/Sa
 target_link_libraries(Sandbox Framework SimModels)
 
 # Tests
-add_executable(Tests Test/test_Interpolation.cpp Test/test_Integration.cpp)
+add_executable(Tests Test/test_Interpolation.cpp Test/test_Integration.cpp Test/test_Components.cpp)
 target_link_libraries(Tests gtest gtest_main Framework SimModels)

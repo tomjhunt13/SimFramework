@@ -1,24 +1,24 @@
 #include <cmath>
 #include "gtest/gtest.h"
 #include "Eigen/Dense"
-#include "Framework.h"
+#include "SimFramework/Framework.h"
 
 // f(t, x) = 4x + c
-class Linear : public SimFramework::DynamicSystem<float>
+class Linear : public SimFramework::Integrable<float>
 {
 public:
-    float Gradient(float t, float x) override
+    float Derivative(float t, float x) override
     {
         return 4.f;
     };
 };
 
 // f(t, x) = 3x^2 + 2x + c
-class Quadratic : public SimFramework::DynamicSystem<float>
+class Quadratic : public SimFramework::Integrable<float>
 {
 public:
 
-    float Gradient(float t, float x) override
+    float Derivative(float t, float x) override
     {
         return 2 * 3 * x + 2;
     };
@@ -26,10 +26,10 @@ public:
 
 // f1(t, x) = 2x + c
 // f2(t, x) = 3x + c
-class LinearVector : public SimFramework::DynamicSystem<Eigen::Vector2f>
+class LinearVector : public SimFramework::Integrable<Eigen::Vector2f>
 {
 public:
-    Eigen::Vector2f Gradient(float t, Eigen::Vector2f x) override
+    Eigen::Vector2f Derivative(float t, Eigen::Vector2f x) override
     {
         return {4.f, 3.f};
     };

@@ -11,67 +11,52 @@ namespace SimFramework {
 
 
     //----------------- Signal
+    class SignalBase {};
+
     template <typename SignalType>
-    class Signal
+    class Signal : public SignalBase
     {
     public:
-        Signal(std::string name = "Signal") : m_Name(name) {};
+        Signal() {};
 
         SignalType Read() const { return this->m_Value; };
         void Write(SignalType value) { this->m_Value = value; };
 
     private:
         SignalType m_Value;
-        std::string m_Name;
     };
 
 
     //----------------- Block
-    // TODO: consider making block API protected
     class Block
     {
     public:
         virtual ~Block() {};
-
-        // Block API
-        virtual void Read() = 0;
-        virtual void Write() = 0;
         virtual void Update(float dt) = 0;
-        virtual void Init(float t_0) = 0;
     };
 
-
-    //-------- Dynamic system and integration
-    template <typename GradientType>
-    class DynamicSystem {
+    class Source : public Block
+    {
     public:
-        virtual GradientType Gradient(float t, GradientType x) = 0;
+        virtual void Initialise(float t_0) = 0;
     };
 
-    class ForwardEuler {
+    class DynamicSystem : public Block
+    {
     public:
-        template<typename GradientType>
-        static GradientType Step(DynamicSystem<GradientType>* block, float dt, float t_n, GradientType x_n)
-        {
-            return x_n + dt * block->Gradient(t_n, x_n);
-        };
+        virtual ~DynamicSystem() {};
+        virtual void ReadInputs() = 0;
+        virtual void Initialise(float t_0) = 0;
     };
 
-    class RK4 {
+    class Function
+    {
     public:
-        template<typename GradientType>
-        static GradientType Step(DynamicSystem<GradientType>* block, float dt, float t_n, GradientType x_n)
-        {
-            GradientType k1 = dt * block->Gradient(t_n, x_n);
-            GradientType k2 = dt * block->Gradient(t_n + dt / 2.f, x_n + k1 / 2.f);
-            GradientType k3 = dt * block->Gradient(t_n + dt / 2.f, x_n + k2 / 2.f);
-            GradientType k4 = dt * block->Gradient(t_n + dt, x_n + k3);
-
-            return x_n + (1.f / 6.f) * (k1 + 2 * k2 + 2 * k3 + k4);
-        };
+        virtual ~Function() {};
+        virtual void Update() = 0;
     };
 
-
+    class Sink : public Block {};
 
 
     class Model {
@@ -84,19 +69,59 @@ namespace SimFramework {
         void Update(float t_np1);
 
     protected:
-        void RegisterBlocks(std::vector<Block*> sources, std::vector<Block*> dynamicSystems,
-                                   std::vector<Block*> functions, std::vector<Block*> sinks);
+        void RegisterBlocks(std::vector<Source*> sources, std::vector<DynamicSystem*> dynamicSystems,
+                            std::vector<Function*> functions, std::vector<Sink*> sinks);
 
     private:
         void UpdateFunctions(float t_np1);
-        std::vector<Block*> m_Sources;
-        std::vector<Block*> m_DynamicSystems;
-        std::vector<Block*> m_Functions;
-        std::vector<Block*> m_Sinks;
+
+        std::vector<Source*> m_Sources;
+        std::vector<DynamicSystem*> m_DynamicSystems;
+        std::vector<Function*> m_Functions;
+        std::vector<Sink*> m_Sinks;
 
         float m_dtMax;
         float m_t_n;
     };
+
+
+
+
+
+    //-------- Dynamic system and integration
+    template <typename DerivativeType>
+    class Integrable {
+    public:
+        virtual DerivativeType Derivative(float t, DerivativeType x) = 0;
+    };
+
+    class ForwardEuler {
+    public:
+        template<typename DerivativeType>
+        static DerivativeType Step(Integrable<DerivativeType>* block, float dt, float t_n, DerivativeType x_n)
+        {
+            return x_n + dt * block->Derivative(t_n, x_n);
+        };
+    };
+
+    class RK4 {
+    public:
+        template<typename DerivativeType>
+        static DerivativeType Step(Integrable<DerivativeType>* block, float dt, float t_n, DerivativeType x_n)
+        {
+            DerivativeType k1 = dt * block->Derivative(t_n, x_n);
+            DerivativeType k2 = dt * block->Derivative(t_n + dt / 2.f, x_n + k1 / 2.f);
+            DerivativeType k3 = dt * block->Derivative(t_n + dt / 2.f, x_n + k2 / 2.f);
+            DerivativeType k4 = dt * block->Derivative(t_n + dt, x_n + k3);
+
+            return x_n + (1.f / 6.f) * (k1 + 2 * k2 + 2 * k3 + k4);
+        };
+    };
+
+
+
+
+
 
 
 } // namespace Framework

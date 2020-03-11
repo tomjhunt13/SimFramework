@@ -1,6 +1,6 @@
 #include <vector>
 #include "gtest/gtest.h"
-#include "Interpolation.h"
+#include "SimFramework/Interpolation.h"
 
 TEST(LinearInterp, P1P2Ordered)
 {
