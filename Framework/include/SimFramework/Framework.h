@@ -32,13 +32,18 @@ namespace SimFramework {
     {
     public:
         virtual ~Block() {};
-        virtual void Update(float dt) = 0;
+
+        virtual std::vector<SignalBase*> InputSignals() = 0;
+        virtual std::vector<SignalBase*> OutputSignals() = 0;
     };
 
     class Source : public Block
     {
     public:
+        virtual ~Source() {};
         virtual void Initialise(float t_0) = 0;
+        virtual void Update(float dt) = 0;
+
     };
 
     class DynamicSystem : public Block
@@ -47,16 +52,23 @@ namespace SimFramework {
         virtual ~DynamicSystem() {};
         virtual void ReadInputs() = 0;
         virtual void Initialise(float t_0) = 0;
+        virtual void Update(float dt) = 0;
+
     };
 
-    class Function
+    class Function : public Block
     {
     public:
         virtual ~Function() {};
         virtual void Update() = 0;
     };
 
-    class Sink : public Block {};
+    class Sink : public Block
+    {
+    public:
+        virtual ~Sink() {};
+        virtual void Update(float dt) = 0;
+    };
 
 
     class Model {
