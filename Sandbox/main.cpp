@@ -4,8 +4,8 @@
 
 
 int main() {
-    SandboxMassSpringDamper();
+//    SandboxMassSpringDamper();
 //    SandboxEngine();
-//    SandboxTransmission();
+    SandboxTransmission();
     return 0;
 }

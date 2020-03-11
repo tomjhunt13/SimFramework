@@ -3,15 +3,7 @@
 
 namespace Models {
 
-    LinearTrigger::LinearTrigger()
-    {
-        this->m_Default = 0.f;
-        this->t_end = 1.f;
-    }
 
-    float LinearTrigger::Evaluate(float t) {
-        return 1.f * (this->t_end - t) / (this->t_end);
-    }
 
     Transmission::Transmission() {
 

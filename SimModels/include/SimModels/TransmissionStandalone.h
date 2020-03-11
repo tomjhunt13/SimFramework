@@ -4,14 +4,9 @@
 #include <vector>
 #include "Eigen/Dense"
 #include "SimFramework/Components.h"
+#include "SimModels/VehicleComponents.h"
 
 namespace Models {
-
-    class LinearTrigger : public SimFramework::TriggerFunction {
-    public:
-        LinearTrigger();
-        float Evaluate(float t);
-    };
 
     struct TransmissionBlocks {
         SimFramework::Input<float>* ClutchInBlock;

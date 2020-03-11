@@ -20,7 +20,7 @@ add_library(Framework STATIC Framework/include/SimFramework/Framework.h Framewor
 include_directories(Framework/include)
 
 # SimModels
-add_library(SimModels STATIC SimModels/MassSpringDamper1D.cpp SimModels/include/SimModels/MassSpringDamper1D.h SimModels/EngineStandalone.cpp SimModels/include/SimModels/EngineStandalone.h SimModels/TransmissionStandalone.cpp SimModels/include/SimModels/TransmissionStandalone.h)
+add_library(SimModels STATIC SimModels/MassSpringDamper1D.cpp SimModels/include/SimModels/MassSpringDamper1D.h SimModels/EngineStandalone.cpp SimModels/include/SimModels/EngineStandalone.h SimModels/TransmissionStandalone.cpp SimModels/include/SimModels/TransmissionStandalone.h SimModels/Vehicle.cpp SimModels/include/SimModels/Vehicle.h SimModels/VehicleComponents.cpp SimModels/include/SimModels/VehicleComponents.h)
 target_link_libraries(SimModels Framework)
 include_directories(SimModels/include)
 

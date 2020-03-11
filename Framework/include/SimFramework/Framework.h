@@ -36,7 +36,7 @@ namespace SimFramework {
         // Block API
         virtual void Read() = 0;
         virtual void Write() = 0;
-        virtual void Update(float t_np1) = 0;
+        virtual void Update(float dt) = 0;
         virtual void Init(float t_0) = 0;
     };
 
