@@ -81,6 +81,32 @@ namespace SimFramework {
     };
 
 
+    class TriggerFunction : public Source
+    {
+    public:
+
+        void Configure(Signal<float>* outputSignal);
+        void Trigger();
+        virtual float Evaluate(float t) = 0;
+
+        std::vector<SignalBase*> InputSignals() override;
+        std::vector<SignalBase*> OutputSignals() override;
+        void Initialise(float t_0) override;
+        void Update(float dt) override;
+
+    protected:
+        float t_end;
+        float m_Default;
+
+    private:
+        float t_n;
+        bool m_State;
+
+        // Signals
+        Signal<float>* m_Output;
+    };
+
+
     template <typename InputType, typename OutputType, int InputLength, int StateLength, int OutputLength>
     class StateSpace : public DynamicSystem, public Integrable<Eigen::Vector<float, StateLength>>
     {
@@ -476,42 +502,6 @@ namespace SimFramework {
 
 
 
-
-
-
-//
-//
-//
-//    class TriggerFunction : public Block
-//    {
-//    public:
-//
-//        void Configure(Signal<float>* outputSignal);
-//        void Trigger();
-//
-//        virtual float Evaluate(float t) = 0 ;
-//
-//        // Block API
-//        void Read() override;
-//        void Write() override;
-//        void Update(float dt) override;
-//        void Init(float t_0) override;
-//
-//    protected:
-//        float t_end;
-//        float m_Default;
-//
-//    private:
-//
-//        float t_n;
-//        bool m_State;
-//
-//        // Signals
-//        Signal<float>* m_SOutput;
-//
-//        // Working copies
-//        float m_OutCopy;
-//    };
 
 
 

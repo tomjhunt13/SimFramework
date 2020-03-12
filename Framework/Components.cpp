@@ -2,6 +2,59 @@
 
 namespace SimFramework {
 
+    void TriggerFunction::Configure(Signal<float>* outputSignal)
+    {
+        this->m_Output = outputSignal;
+
+    };
+
+    void TriggerFunction::Trigger()
+    {
+        this->m_State = true;
+        this->t_n = 0.f;
+    };
+
+    std::vector<SignalBase*> TriggerFunction::InputSignals()
+    {
+        return {};
+    }
+
+    std::vector<SignalBase*> TriggerFunction::OutputSignals()
+    {
+        return {this->m_Output};
+    }
+
+    void TriggerFunction::Initialise(float t_0)
+    {
+        this->m_State = false;
+        this->m_Output->Write(this->m_Default);
+    };
+
+    void TriggerFunction::Update(float dt)
+    {
+        float output;
+
+        this->t_n += dt;
+
+        if (this->t_n > this->t_end)
+        {
+            this->m_State = false;
+        }
+
+        if (this->m_State)
+        {
+            output = this->Evaluate(this->t_n);
+        }
+
+        else
+        {
+            output = this->m_Default;
+        }
+
+        this->m_Output->Write(output);
+    };
+
+
     void LookupTable2D::Configure(Signal<float>* x, Signal<float>* y, Signal<float>* out)
     {
         this->m_X = x;
@@ -33,52 +86,8 @@ namespace SimFramework {
     };
 
 
-//
-//
-//    void TriggerFunction::Configure(Signal<float>* outputSignal)
-//    {
-//        this->m_SOutput = outputSignal;
-//
-//    };
-//
-//    void TriggerFunction::Trigger()
-//    {
-//        this->m_State = true;
-//        this->t_n = 0.f;
-//    };
-//
-//    void TriggerFunction::Read() {};
-//
-//    void TriggerFunction::Write()
-//    {
-//        this->m_SOutput->Write(this->m_OutCopy);
-//    };
-//
-//    void TriggerFunction::Update(float dt)
-//    {
-//
-//        if (this->m_State)
-//        {
-//            this->m_OutCopy = this->Evaluate(this->t_n);
-//
-//            this->t_n += dt;
-//
-//            if (this->t_n > this->t_end)
-//            {
-//                this->m_State = false;
-//            }
-//        }
-//
-//        else
-//        {
-//            this->m_OutCopy = this->m_Default;
-//        }
-//    };
-//
-//    void TriggerFunction::Init(float t_0)
-//    {
-//        this->m_State = false;
-//        this->m_OutCopy = this->m_Default;
-//    };
+
+
+
 
 }; // namespace Framework

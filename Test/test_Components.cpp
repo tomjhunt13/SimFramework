@@ -5,6 +5,21 @@
 #include "SimFramework/Framework.h"
 #include "SimFramework/Components.h"
 
+class LinearTriggerFunction : public SimFramework::TriggerFunction {
+public:
+    LinearTriggerFunction(float defaultVal, float t_end)
+    {
+        this->m_Default = defaultVal;
+        this->t_end = t_end;
+    }
+
+    float Evaluate(float t) override
+    {
+        return 1.f * (this->t_end - t) / (this->t_end);
+    };
+};
+
+
 TEST(Constant, testFloat) {
     // Objects
     SimFramework::Signal<float> out;
@@ -30,6 +45,77 @@ TEST(Input, testFloat) {
     inBlock.WriteValue(1.5);
     inBlock.Update(0.f);
     ASSERT_FLOAT_EQ(out.Read(), 1.5);
+}
+
+
+TEST(TriggerFunction, NoTrigger) {
+    // Output Signal
+    SimFramework::Signal<float> out;
+
+    // Construct block
+    LinearTriggerFunction block(1.f, 5.f);
+    block.Configure(&out);
+    block.Initialise(0.f);
+
+    // Test
+    block.Update(1.f);
+    ASSERT_FLOAT_EQ(out.Read(), 1.f);
+    block.Update(1.f);
+    ASSERT_FLOAT_EQ(out.Read(), 1.f);
+}
+
+TEST(TriggerFunction, NormalTrigger) {
+    // Output Signal
+    SimFramework::Signal<float> out;
+
+    // Construct block
+    LinearTriggerFunction block(1.f, 5.f);
+    block.Configure(&out);
+    block.Initialise(0.f);
+
+    // Test
+    block.Update(1.f);
+    ASSERT_FLOAT_EQ(out.Read(), 1.f);
+
+    block.Trigger();
+    block.Update(1.f);
+    ASSERT_FLOAT_EQ(out.Read(), 0.8);
+    block.Update(1.f);
+    ASSERT_FLOAT_EQ(out.Read(), 0.6);
+    block.Update(2.f);
+    ASSERT_FLOAT_EQ(out.Read(), 0.2);
+    block.Update(1.f);
+    ASSERT_FLOAT_EQ(out.Read(), 0.0);
+    block.Update(0.01);
+    ASSERT_FLOAT_EQ(out.Read(), 1.f);
+}
+
+TEST(TriggerFunction, Duplicate) {
+    // Output Signal
+    SimFramework::Signal<float> out;
+
+    // Construct block
+    LinearTriggerFunction block(1.f, 5.f);
+    block.Configure(&out);
+    block.Initialise(0.f);
+
+    // Test
+    block.Update(1.f);
+    ASSERT_FLOAT_EQ(out.Read(), 1.f);
+
+    block.Trigger();
+    block.Update(1.f);
+    ASSERT_FLOAT_EQ(out.Read(), 0.8);
+    block.Update(1.f);
+    ASSERT_FLOAT_EQ(out.Read(), 0.6);
+
+    block.Trigger();
+    block.Update(2.f);
+    ASSERT_FLOAT_EQ(out.Read(), 0.6);
+    block.Update(1.f);
+    ASSERT_FLOAT_EQ(out.Read(), 0.4);
+    block.Update(2.01);
+    ASSERT_FLOAT_EQ(out.Read(), 1.f);
 }
 
 

@@ -41,7 +41,7 @@ namespace SimFramework {
     {
     public:
         virtual ~Source() {};
-        virtual void Initialise(float t_0) = 0;
+        virtual void Initialise(float t_0) = 0;     // Updates internal states AND writes initial values
         virtual void Update(float dt) = 0;
 
     };
@@ -51,9 +51,8 @@ namespace SimFramework {
     public:
         virtual ~DynamicSystem() {};
         virtual void ReadInputs() = 0;
-        virtual void Initialise(float t_0) = 0;
+        virtual void Initialise(float t_0) = 0;     // Only updates internal states
         virtual void Update(float dt) = 0;
-
     };
 
     class Function : public Block
