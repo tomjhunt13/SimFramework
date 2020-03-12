@@ -34,11 +34,11 @@ namespace Models {
 //        float m_OutTorqueCopy;
 //    };
 //
-//    class LinearTrigger : public SimFramework::TriggerFunction {
-//    public:
-//        LinearTrigger();
-//        float Evaluate(float t);
-//    };
+    class LinearTrigger : public SimFramework::TriggerFunction {
+    public:
+        LinearTrigger();
+        float Evaluate(float t);
+    };
 
 }; // namespace Models
 
