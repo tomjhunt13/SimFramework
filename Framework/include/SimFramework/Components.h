@@ -381,75 +381,68 @@ namespace SimFramework {
     };
 
 
+    class LookupTable2D : public Function
+    {
+    public:
+        void Configure(Signal<float>* x, Signal<float>* y, Signal<float>* out);
+        void SetTable(Table3D& table);
+
+        std::vector<SignalBase*> InputSignals() override;
+        std::vector<SignalBase*> OutputSignals() override;
+        void Update() override;
+
+
+    private:
+        // Table
+        Table3D m_Table;
+
+        // Signals
+        Signal<float>* m_X;
+        Signal<float>* m_Y;
+        Signal<float>* m_Out;
+    };
+
+
+    template <typename ValueType>
+    class Output : public Sink
+    {
+    public:
+        void Configure(Signal<ValueType>* inSignal, ValueType initialValue)
+        {
+            this->m_Signal = inSignal;
+            this->m_SignalCopy = initialValue;
+        }
+
+        ValueType ReadValue()
+        {
+            return this->m_SignalCopy;
+        };
+
+        std::vector<SignalBase*> InputSignals() override
+        {
+            return {this->m_Signal};
+        }
+
+        std::vector<SignalBase*> OutputSignals() override
+        {
+            return {};
+        }
+
+        void Update(float dt) override
+        {
+            this->m_SignalCopy = this->m_Signal->Read();
+        };
+
+    private:
+        Signal<ValueType>* m_Signal;
+        ValueType m_SignalCopy;
+    };
 
 
 
-//    class LookupTable2D : public Block
-//    {
-//    public:
-//        void Configure(Signal<float>* x, Signal<float>* y, Signal<float>* out);
-//        void SetTable(Table3D& table);
-//
-//        // Block API
-//        void Read() override;
-//        void Write() override;
-//        void Update(float dt) override;
-//        void Init(float t_0) override;
-//
-//    private:
-//        // Table
-//        Table3D m_Table;
-//
-//        // Signals
-//        Signal<float>* m_X;
-//        Signal<float>* m_Y;
-//        Signal<float>* m_Out;
-//
-//        // Copies
-//        float m_XCopy;
-//        float m_YCopy;
-//        float m_OutCopy;
-//    };
-//
-//
 
-//
-//
-//
 
-//
-//
-//    template <typename valueType>
-//    class Output : public Block
-//    {
-//    public:
-//        void Configure(Signal<valueType>* inSignal, valueType initialValue)
-//        {
-//            this->m_Signal = inSignal;
-//            this->m_SignalCopy = initialValue;
-//        }
-//
-//        valueType ReadValue()
-//        {
-//            return this->m_SignalCopy;
-//        };
-//
-//        // Block API
-//        void Read() override
-//        {
-//            this->m_SignalCopy = this->m_Signal->Read();
-//        };
-//
-//        void Write() override {};
-//
-//        void Update(float dt) override {};
-//
-//        void Init(float t_0) override {};
-//
-//    private:
-//        Signal<valueType>* m_Signal;
-//        valueType m_SignalCopy;
-//    };
+
 //
 //
 //

@@ -551,3 +551,50 @@ TEST(Gain, Mat1x2_X_Vec2) {
     expected << 8.f;
     ASSERT_TRUE(out.Read() == expected);
 }
+
+
+TEST(LookupTable2D, test1) {
+    // Input Signals
+    SimFramework::Signal<float> inX;
+    SimFramework::Signal<float> inY;
+
+    // Output Signal
+    SimFramework::Signal<float> out;
+
+    // Construct block
+    SimFramework::LookupTable2D block;
+    block.Configure(&inX, &inY, &out);
+
+    // Set up table
+    SimFramework::Table3D tab;
+    tab.x = {1.f, 2.f};
+    tab.y = {1.f, 2.f};
+    tab.z = {{0.f, 0.f}, {1.f, 1.f}};
+    block.SetTable(tab);
+
+    // Test
+    inX.Write(1.5);
+    inY.Write(1.f);
+    block.Update();
+    ASSERT_FLOAT_EQ(out.Read(), 0.f);
+
+    inY.Write(1.5);
+    block.Update();
+    ASSERT_FLOAT_EQ(out.Read(), 0.5);
+}
+
+
+TEST(Output, FloatSig) {
+    // Input Signal
+    SimFramework::Signal<float> in;
+
+    // Construct block
+    SimFramework::Output<float> block;
+    block.Configure(&in, 0.f);
+
+    // Test
+    ASSERT_FLOAT_EQ(block.ReadValue(), 0.f);
+    in.Write(1.f);
+    block.Update(0.f);
+    ASSERT_FLOAT_EQ(block.ReadValue(), 1.f);
+}
