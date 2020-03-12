@@ -370,6 +370,7 @@ namespace SimFramework {
     };
 
 
+    // TODO: Gain should have SetGain method
     template <typename InputType, typename ReturnType, typename GainType=float>
     class Gain : public Function
     {
@@ -499,11 +500,6 @@ namespace SimFramework {
         Signal<ValueType>* m_Signal;
         ValueType m_SignalCopy;
     };
-
-
-
-
-
 
 }; // namespace SimFramework
 

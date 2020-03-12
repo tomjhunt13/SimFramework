@@ -9,16 +9,13 @@
 
 void SandboxMassSpringDamper()
 {
-
+    // Set up system
     Models::MassSpringDamper1D sys(1.f, 4.f, 0.2);
+    Models::MassSpringDamperBlocks blocks = sys.Blocks();
     sys.Initialise(0);
 
-    Models::MassSpringDamperBlocks blocks = sys.Blocks();
-    blocks.InputForceBlock->WriteValue(0.f);
-
+    // Set up file writing
     std::ofstream myfile;
-
-    // ios::out indicates writing
     myfile.open ("tmpOut.csv", std::ios::out);
 
     int counter = 0;

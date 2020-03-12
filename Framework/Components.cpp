@@ -85,9 +85,4 @@ namespace SimFramework {
         this->m_Out->Write(InterpTable3D(this->m_Table, {x, y}));
     };
 
-
-
-
-
-
 }; // namespace Framework
