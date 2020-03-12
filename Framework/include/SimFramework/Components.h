@@ -40,6 +40,131 @@ namespace SimFramework {
     };
 
 
+    template <typename ValueType>
+    class Input : public Source
+    {
+    public:
+        void Configure(Signal<ValueType>* outSignal, ValueType initialValue)
+        {
+            this->m_Signal = outSignal;
+            this->m_SignalValue = initialValue;
+        }
+
+        std::vector<SignalBase*> InputSignals() override
+        {
+            return {};
+        }
+
+        std::vector<SignalBase*> OutputSignals() override
+        {
+            return {this->m_Signal};
+        }
+
+        void WriteValue(ValueType value)
+        {
+            this->m_SignalValue = value;
+        };
+
+        void Initialise(float t_0) override
+        {
+            this->Update(0.f);
+        }
+
+        void Update(float dt) override
+        {
+            this->m_Signal->Write(this->m_SignalValue);
+        };
+
+    private:
+        Signal<ValueType>* m_Signal;
+        ValueType m_SignalValue;
+    };
+
+
+    template <typename InputType, typename OutputType, int InputLength, int StateLength, int OutputLength>
+    class StateSpace : public DynamicSystem, public Integrable<Eigen::Vector<float, StateLength>>
+    {
+    public:
+        void Configure(Signal<InputType>* inputSignal, Signal<OutputType>* outputSignal)
+        {
+            this->m_InputSignal = inputSignal;
+            this->m_OutputSignal = outputSignal;
+        }
+
+        void SetInitialConditions(Eigen::Vector<float, StateLength> initialValue)
+        {
+            this->m_InitialValue = initialValue;
+        }
+
+        void SetMatrices(Eigen::Matrix<float, StateLength, StateLength> A,
+                         Eigen::Matrix<float, StateLength, InputLength> B,
+                         Eigen::Matrix<float, OutputLength, StateLength> C,
+                         Eigen::Matrix<float, OutputLength, InputLength> D)
+        {
+            this->m_A = A;
+            this->m_B = B;
+            this->m_C = C;
+            this->m_D = D;
+        }
+
+        std::vector<SignalBase*> InputSignals() override
+        {
+            return {this->m_InputSignal};
+        }
+
+        std::vector<SignalBase*> OutputSignals() override
+        {
+            return {this->m_OutputSignal};
+        }
+
+        void Initialise(float t_0) override
+        {
+            this->t_n = t_0;
+            this->m_States = this->m_InitialValue;
+        };
+
+        void ReadInputs() override
+        {
+            this->m_InputCopy = this->m_InputSignal->Read();
+        };
+
+        void Update(float dt) override
+        {
+            Eigen::Vector<float, StateLength> x_np1 = SimFramework::RK4::Step<Eigen::Vector<float, StateLength>>(this, dt, this->t_n, this->m_States);
+
+            this->m_States = x_np1;
+            this->t_n = this->t_n + dt;
+
+            // Output equation
+            this->m_OutputSignal->Write(this->m_C * this->m_States + this->m_D * this->m_InputCopy);
+
+        };
+
+        Eigen::Vector<float, StateLength> Derivative(float t, Eigen::Vector<float, StateLength> x) override
+        {
+            return this->m_A * this->m_States + this->m_B * this->m_InputCopy;
+        };
+
+    private:
+
+        // Signals
+        Signal<InputType>* m_InputSignal;
+        Signal<OutputType>* m_OutputSignal;
+
+        // Work copies
+        float t_n;
+        Eigen::Vector<float, StateLength> m_InitialValue;
+        Eigen::Vector<float, StateLength> m_States;
+        InputType m_InputCopy;
+
+        // State space matrices
+        Eigen::Matrix<float, StateLength, StateLength> m_A;
+        Eigen::Matrix<float, StateLength, InputLength> m_B;
+        Eigen::Matrix<float, OutputLength, StateLength> m_C;
+        Eigen::Matrix<float, OutputLength, InputLength> m_D;
+    };
+
+
     template <typename SignalType>
     class SummingJunction : public Function {
     public:
@@ -256,6 +381,9 @@ namespace SimFramework {
     };
 
 
+
+
+
 //    class LookupTable2D : public Block
 //    {
 //    public:
@@ -288,40 +416,7 @@ namespace SimFramework {
 //
 //
 //
-//    template <typename valueType>
-//    class Input : public Block
-//    {
-//    public:
-//        void Configure(Signal<valueType>* outSignal, valueType initialValue)
-//        {
-//            this->m_Signal = outSignal;
-//            this->m_SignalCopy = initialValue;
-//        }
-//
-//        void WriteValue(valueType value)
-//        {
-//            this->m_SignalCopy = value;
-//        };
-//
-//        // Block API
-//        void Read() override {};
-//
-//        void Write() override
-//        {
-//            this->m_Signal->Write(this->m_SignalCopy);
-//        };
-//
-//        void Update(float dt) override {};
-//
-//        void Init(float t_0) override
-//        {
-//            this->Write();
-//        };
-//
-//    private:
-//        Signal<valueType>* m_Signal;
-//        valueType m_SignalCopy;
-//    };
+
 //
 //
 //    template <typename valueType>
@@ -356,84 +451,7 @@ namespace SimFramework {
 //        valueType m_SignalCopy;
 //    };
 //
-//    template <typename InputType, typename OutputType, int InputLength, int StateLength, int OutputLength>
-//    class StateSpace : public Block, public Integrable<Eigen::VectorXf> {
-//    public:
-//        void Configure(Signal<InputType>* inputSignal, Signal<OutputType>* outputSignal,
-//                       Eigen::VectorXf initialValue)
-//       {
-//            this->m_InputSignal = inputSignal;
-//            this->m_OutputSignal = outputSignal;
-//            this->m_InitialValue = initialValue;
-//            this->m_States = initialValue;
-//        }
 //
-//        void SetMatrices(Eigen::Matrix<float, StateLength, StateLength> A,
-//                         Eigen::Matrix<float, StateLength, InputLength> B,
-//                         Eigen::Matrix<float, OutputLength, StateLength> C,
-//                         Eigen::Matrix<float, OutputLength, InputLength> D)
-//        {
-//            this->m_A = A;
-//            this->m_B = B;
-//            this->m_C = C;
-//            this->m_D = D;
-//        }
-//
-//        // Block API
-//        void Read() override
-//        {
-//            this->m_InputCopy = this->m_InputSignal->Read();
-//        };
-//
-//        void Write() override
-//        {
-//            // Output equation
-//            this->m_OutputSignal->Write(this->m_C * this->m_States + this->m_D * this->m_InputCopy);
-//        };
-//
-//        void Update(float dt) override
-//        {
-//            Eigen::VectorXf x_np1 = SimFramework::RK4::Step<Eigen::VectorXf>(this, dt, this->t_n, this->m_States);
-//
-//            this->m_States = x_np1;
-//            this->t_n = this->t_n + dt;
-//
-//        };
-//
-//        void Init(float t_0) override
-//        {
-//            this->t_n = t_0;
-//            this->m_States = this->m_InitialValue;
-//
-//            // TODO: needs to write something initially (I think) but dimensionality  unknown
-////            this->m_InputCopy =
-////            this->m_OutputSignal->Write(this->m_States);
-//        };
-//
-//        // Dynamic system functions
-//        Eigen::VectorXf Derivative(float t, Eigen::VectorXf x) override
-//        {
-//            return this->m_A * this->m_States + this->m_B * this->m_InputCopy;
-//        };
-//
-//    private:
-//
-//        // Signals
-//        Signal<InputType>* m_InputSignal;
-//        Signal<OutputType>* m_OutputSignal;
-//
-//        // Work copies
-//        float t_n;
-//        Eigen::VectorXf m_InitialValue;
-//        Eigen::VectorXf m_States;
-//        InputType m_InputCopy;
-//
-//        // State space matrices
-//        Eigen::Matrix<float, StateLength, StateLength> m_A;
-//        Eigen::Matrix<float, StateLength, InputLength> m_B;
-//        Eigen::Matrix<float, OutputLength, StateLength> m_C;
-//        Eigen::Matrix<float, OutputLength, InputLength> m_D;
-//    };
 //
 //
 //    template <typename InputType>

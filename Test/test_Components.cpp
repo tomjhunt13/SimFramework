@@ -1,8 +1,323 @@
 #include <vector>
+#include <iostream>
 #include "gtest/gtest.h"
 #include "Eigen/Dense"
 #include "SimFramework/Framework.h"
 #include "SimFramework/Components.h"
+
+TEST(Constant, testFloat) {
+    // Objects
+    SimFramework::Signal<float> out;
+    SimFramework::ConstantBlock<float> block;
+    block.Configure(&out, 1.3);
+
+    // Test
+    block.Initialise(0.f);
+    ASSERT_FLOAT_EQ(out.Read(), 1.3);
+}
+
+
+TEST(Input, testFloat) {
+    // Objects
+    SimFramework::Signal<float> out;
+    SimFramework::Input<float> inBlock;
+    inBlock.Configure(&out, 0.f);
+
+    // Test
+    inBlock.Initialise(0.f);
+    ASSERT_FLOAT_EQ(out.Read(), 0.f);
+
+    inBlock.WriteValue(1.5);
+    inBlock.Update(0.f);
+    ASSERT_FLOAT_EQ(out.Read(), 1.5);
+}
+
+
+TEST(StateSpace, PureIntegrator1) {
+    // 1 input, 1 state and 1 output
+
+    // Input Signal
+    SimFramework::Signal<Eigen::Vector<float, 1>> in;
+
+    // Output Signal
+    SimFramework::Signal<Eigen::Vector<float, 1>> out;
+
+    // Construct block
+    SimFramework::StateSpace<Eigen::Vector<float, 1>, Eigen::Vector<float, 1>, 1, 1, 1> SS;
+    SS.Configure(&in, &out);
+
+    // Configure SS as pure integrator
+    Eigen::Matrix<float, 1, 1> A;
+    A << 0.f;
+
+    Eigen::Matrix<float, 1, 1> B;
+    B << 1.f;
+
+    Eigen::Matrix<float, 1, 1> C;
+    C << 1.f;
+
+    Eigen::Matrix<float, 1, 1> D;
+    D << 0.f;
+
+    Eigen::Vector<float, 1> init;
+    init << 1.f;
+
+    SS.SetMatrices(A, B, C, D);
+    SS.SetInitialConditions(init);
+
+    // Write input values
+    Eigen::Vector<float, 1> grad;
+    grad << 2.f;
+    in.Write(grad);
+
+    // Test
+    SS.Initialise(0.f);
+    SS.ReadInputs();
+    SS.Update(3.f);
+    Eigen::Vector<float, 1> expected;
+    expected << 7.f;
+    Eigen::Vector<float, 1> actual = out.Read();
+    ASSERT_FLOAT_EQ(expected[0], actual[0]);
+}
+
+TEST(StateSpace, PureIntegrator2) {
+    // 2 inputs, 1 state and 1 output
+
+    // Input Signal
+    SimFramework::Signal<Eigen::Vector<float, 2>> in;
+
+    // Output Signal
+    SimFramework::Signal<Eigen::Vector<float, 1>> out;
+
+    // Construct block
+    SimFramework::StateSpace<Eigen::Vector<float, 2>, Eigen::Vector<float, 1>, 2, 1, 1> SS;
+    SS.Configure(&in, &out);
+
+    // Configure SS as pure integrator
+    Eigen::Matrix<float, 1, 1> A;
+    A << 0.f;
+
+    Eigen::Matrix<float, 1, 2> B;
+    B << 1.f, 1.f;
+
+    Eigen::Matrix<float, 1, 1> C;
+    C << 1.f;
+
+    Eigen::Matrix<float, 1, 2> D;
+    D << 0.f, 0.f;
+
+    Eigen::Vector<float, 1> init;
+    init << 1.f;
+
+    SS.SetMatrices(A, B, C, D);
+    SS.SetInitialConditions(init);
+
+    // Write input values
+    Eigen::Vector<float, 2> grad;
+    grad << 2.f, 2.f;
+    in.Write(grad);
+
+    // Test
+    SS.Initialise(0.f);
+    SS.ReadInputs();
+    SS.Update(3.f);
+    Eigen::Vector<float, 1> expected;
+    expected << 13.f;
+    Eigen::Vector<float, 1> actual = out.Read();
+    ASSERT_FLOAT_EQ(expected[0], actual[0]);
+}
+
+TEST(StateSpace, PureIntegrator3) {
+    // 1 input, 2 states and 1 output
+
+    // Input Signal
+    SimFramework::Signal<Eigen::Vector<float, 1>> in;
+
+    // Output Signal
+    SimFramework::Signal<Eigen::Vector<float, 1>> out;
+
+    // Construct block
+    SimFramework::StateSpace<Eigen::Vector<float, 1>, Eigen::Vector<float, 1>, 1, 2, 1> SS;
+    SS.Configure(&in, &out);
+
+    // Configure SS as pure integrator
+    Eigen::Matrix<float, 2, 2> A;
+    A << 0.f, 0.f, 0.f, 0.f;
+
+    Eigen::Matrix<float, 2, 1> B;
+    B << 1.f, 1.f;
+
+    Eigen::Matrix<float, 1, 2> C;
+    C << 1.f, 1.f;
+
+    Eigen::Matrix<float, 1, 1> D;
+    D << 0.f;
+
+    Eigen::Vector<float, 2> init;
+    init << 1.f, 1.f;
+
+    SS.SetMatrices(A, B, C, D);
+    SS.SetInitialConditions(init);
+
+    // Write input values
+    Eigen::Vector<float, 1> grad;
+    grad << 2.f;
+    in.Write(grad);
+
+    // Test
+    SS.Initialise(0.f);
+    SS.ReadInputs();
+    SS.Update(3.f);
+    Eigen::Vector<float, 1> expected;
+    expected << 14.f;
+    Eigen::Vector<float, 1> actual = out.Read();
+    ASSERT_FLOAT_EQ(expected[0], actual[0]);
+}
+
+TEST(StateSpace, PureIntegrator4) {
+    // 1 input, 1 state and 2 outputs
+
+    // Input Signal
+    SimFramework::Signal<Eigen::Vector<float, 1>> in;
+
+    // Output Signal
+    SimFramework::Signal<Eigen::Vector<float, 2>> out;
+
+    // Construct block
+    SimFramework::StateSpace<Eigen::Vector<float, 1>, Eigen::Vector<float, 2>, 1, 1, 2> SS;
+    SS.Configure(&in, &out);
+
+    // Configure SS as pure integrator
+    Eigen::Matrix<float, 1, 1> A;
+    A << 0.f;
+
+    Eigen::Matrix<float, 1, 1> B;
+    B << 1.f;
+
+    Eigen::Matrix<float, 2, 1> C;
+    C << 1.f, 1.f;
+
+    Eigen::Matrix<float, 2, 1> D;
+    D << 0.f, 0.f;
+
+    Eigen::Vector<float, 1> init;
+    init << 1.f;
+
+    SS.SetMatrices(A, B, C, D);
+    SS.SetInitialConditions(init);
+
+    // Write input values
+    Eigen::Vector<float, 1> grad;
+    grad << 2.f;
+    in.Write(grad);
+
+    // Test
+    SS.Initialise(0.f);
+    SS.ReadInputs();
+    SS.Update(3.f);
+    Eigen::Vector<float, 2> expected;
+    expected << 7.f, 7.f;
+    Eigen::Vector<float, 2> actual = out.Read();
+    ASSERT_FLOAT_EQ(expected[0], actual[0]);
+    ASSERT_FLOAT_EQ(expected[1], actual[1]);
+}
+
+TEST(StateSpace, PureIntegrator5) {
+    // 1 input, 2 states and 2 outputs
+
+    // Input Signal
+    SimFramework::Signal<Eigen::Vector<float, 1>> in;
+
+    // Output Signal
+    SimFramework::Signal<Eigen::Vector<float, 2>> out;
+
+    // Construct block
+    SimFramework::StateSpace<Eigen::Vector<float, 1>, Eigen::Vector<float, 2>, 1, 2, 2> SS;
+    SS.Configure(&in, &out);
+
+    // Configure SS as pure integrator
+    Eigen::Matrix<float, 2, 2> A;
+    A << 0.f, 0.f, 0.f, 0.f;
+
+    Eigen::Matrix<float, 2, 1> B;
+    B << 1.f, 0.f;
+
+    Eigen::Matrix<float, 2, 2> C;
+    C << 1.f, 0.f, 0.f, 0.f;
+
+    Eigen::Matrix<float, 2, 1> D;
+    D << 0.f, 0.f;
+
+    Eigen::Vector<float, 2> init;
+    init << 1.f, 1.f;
+
+    SS.SetMatrices(A, B, C, D);
+    SS.SetInitialConditions(init);
+
+    // Write input values
+    Eigen::Vector<float, 1> grad;
+    grad << 2.f;
+    in.Write(grad);
+
+    // Test
+    SS.Initialise(0.f);
+    SS.ReadInputs();
+    SS.Update(3.f);
+    Eigen::Vector<float, 2> expected;
+    expected << 7.f, 0.f;
+    Eigen::Vector<float, 2> actual = out.Read();
+    ASSERT_FLOAT_EQ(expected[0], actual[0]);
+    ASSERT_FLOAT_EQ(expected[1], actual[1]);
+}
+
+TEST(StateSpace, PureIntegrator6) {
+    // 2 inputs, 2 states and 2 outputs
+
+    // Input Signal
+    SimFramework::Signal<Eigen::Vector<float, 2>> in;
+
+    // Output Signal
+    SimFramework::Signal<Eigen::Vector<float, 2>> out;
+
+    // Construct block
+    SimFramework::StateSpace<Eigen::Vector<float, 2>, Eigen::Vector<float, 2>, 2, 2, 2> SS;
+    SS.Configure(&in, &out);
+
+    // Configure SS as pure integrator
+    Eigen::Matrix<float, 2, 2> A;
+    A << 0.f, 0.f, 0.f, 0.f;
+
+    Eigen::Matrix<float, 2, 2> B;
+    B << 1.f, 0.f, 0.f, 1.f;
+
+    Eigen::Matrix<float, 2, 2> C;
+    C << 1.f, 0.f, 0.f, 1.f;
+
+    Eigen::Matrix<float, 2, 2> D;
+    D << 0.f, 0.f, 0.f, 0.f;
+
+    Eigen::Vector<float, 2> init;
+    init << 1.f, 1.f;
+
+    SS.SetMatrices(A, B, C, D);
+    SS.SetInitialConditions(init);
+
+    // Write input values
+    Eigen::Vector<float, 2> grad;
+    grad << 2.f, 3.f;
+    in.Write(grad);
+
+    // Test
+    SS.Initialise(0.f);
+    SS.ReadInputs();
+    SS.Update(3.f);
+    Eigen::Vector<float, 2> expected;
+    expected << 7.f, 10.f;
+    Eigen::Vector<float, 2> actual = out.Read();
+    ASSERT_FLOAT_EQ(expected[0], actual[0]);
+    ASSERT_FLOAT_EQ(expected[1], actual[1]);
+}
+
 
 TEST(SummingJunction, testFloat) {
     // Input Signals
