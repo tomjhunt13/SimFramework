@@ -391,7 +391,6 @@ namespace SimFramework {
         std::vector<SignalBase*> OutputSignals() override;
         void Update() override;
 
-
     private:
         // Table
         Table3D m_Table;
@@ -400,6 +399,43 @@ namespace SimFramework {
         Signal<float>* m_X;
         Signal<float>* m_Y;
         Signal<float>* m_Out;
+    };
+
+
+    template <typename InputType>
+    class LinearBlend : public Function
+    {
+    public:
+        void Configure(Signal<InputType>* input1, Signal<InputType>* input2, Signal<float>* alpha, Signal<InputType>* output)
+        {
+            this->m_Input1 = input1;
+            this->m_Input2 = input2;
+            this->m_Alpha = alpha;
+            this->m_Output = output;
+        }
+
+        std::vector<SignalBase*> InputSignals() override
+        {
+            return {this->m_Input1, this->m_Input2, this->m_Alpha};
+        }
+
+        std::vector<SignalBase*> OutputSignals() override
+        {
+            return {this->m_Output};
+        }
+
+        void Update() override
+        {
+            float alpha = this->m_Alpha->Read();
+            this->m_Output->Write((1 - alpha) * this->m_Input1->Read() + alpha * this->m_Input2->Read());
+        };
+
+    private:
+        // Signals
+        Signal<InputType>* m_Input1;
+        Signal<InputType>* m_Input2;
+        Signal<float>* m_Alpha;
+        Signal<InputType>* m_Output;
     };
 
 
@@ -443,60 +479,6 @@ namespace SimFramework {
 
 
 
-//
-//
-//
-//
-//    template <typename InputType>
-//    class LinearBlend : public Block
-//    {
-//    public:
-//        void Configure(Signal<InputType>* input1, Signal<InputType>* input2, Signal<float>* alpha, Signal<InputType>* output)
-//        {
-//            this->m_SInput1 = input1;
-//            this->m_SInput2 = input2;
-//            this->m_SAlpha = alpha;
-//            this->m_SOutput = output;
-//        }
-//
-//        // Block API
-//        void Read() override
-//        {
-//            this->m_In1Copy = this->m_SInput1->Read();
-//            this->m_In2Copy = this->m_SInput2->Read();
-//            this->m_AlphaCopy = this->m_SAlpha->Read();
-//        };
-//
-//        void Write() override
-//        {
-//            // Output equation
-//            this->m_SOutput->Write(this->m_OutCopy);
-//        };
-//
-//        void Update(float dt) override
-//        {
-//            this->m_OutCopy = (1 - this->m_AlphaCopy) * this->m_In1Copy + this->m_AlphaCopy * this->m_In2Copy;
-//        };
-//
-//        void Init(float t_0) override
-//        {
-//            this->m_AlphaCopy = 0.f;
-//        };
-//
-//    private:
-//
-//        // Signals
-//        Signal<InputType>* m_SInput1;
-//        Signal<InputType>* m_SInput2;
-//        Signal<float>* m_SAlpha;
-//        Signal<InputType>* m_SOutput;
-//
-//        // Work copies
-//        InputType m_In1Copy;
-//        InputType m_In2Copy;
-//        float  m_AlphaCopy;
-//        InputType m_OutCopy;
-//    };
 //
 //
 //

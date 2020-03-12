@@ -584,6 +584,42 @@ TEST(LookupTable2D, test1) {
 }
 
 
+TEST(LinearBlend, test1) {
+    // Input Signals
+    SimFramework::Signal<Eigen::Vector3f> in1;
+    SimFramework::Signal<Eigen::Vector3f> in2;
+    SimFramework::Signal<float> inAlpha;
+
+    // Output Signal
+    SimFramework::Signal<Eigen::Vector3f> out;
+
+    // Construct block
+    SimFramework::LinearBlend<Eigen::Vector3f> block;
+    block.Configure(&in1, &in2, &inAlpha, &out);
+
+    // Test
+    Eigen::Vector3f vec1 = {4.f, 2.f, 0.f};
+    Eigen::Vector3f vec2 = {0.f, 2.f, 4.f};
+    in1.Write(vec1);
+    in2.Write(vec2);
+
+    inAlpha.Write(0.f);
+    block.Update();
+    Eigen::Vector3f expected = {4.f, 2.f, 0.f};
+    ASSERT_TRUE(out.Read() == expected);
+
+    inAlpha.Write(0.5);
+    block.Update();
+    expected = {2.f, 2.f, 2.f};
+    ASSERT_TRUE(out.Read() == expected);
+
+    inAlpha.Write(1.f);
+    block.Update();
+    expected = {0.f, 2.f, 4.f};
+    ASSERT_TRUE(out.Read() == expected);
+}
+
+
 TEST(Output, FloatSig) {
     // Input Signal
     SimFramework::Signal<float> in;
