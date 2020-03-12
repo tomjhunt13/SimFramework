@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <map>
+#include <utility>
 #include <string>
 
 #include "Eigen/Dense"
@@ -131,6 +132,20 @@ namespace SimFramework {
 
 
 
+    namespace Internal {
+
+        struct FunctionTree {
+            Function* block;
+            std::vector<FunctionTree*> children;
+            bool root = true;
+        };
+
+//        std::map<Function*, std::vector<SignalBase*>> FunctionInputs(std::vector<Function*> functions);
+        std::map<SignalBase*, Function*> FunctionOutputs(std::vector<Function*> functions);
+
+        std::vector<FunctionTree> AssembleTree(std::vector<Function*> functions);
+
+    }; // namespace Internal
 
 
 
