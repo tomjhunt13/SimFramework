@@ -140,10 +140,10 @@ namespace SimFramework {
             bool root = true;
         };
 
-//        std::map<Function*, std::vector<SignalBase*>> FunctionInputs(std::vector<Function*> functions);
         std::map<SignalBase*, Function*> FunctionOutputs(std::vector<Function*> functions);
-
-        std::vector<FunctionTree> AssembleTree(std::vector<Function*> functions);
+        std::vector<Function*> UnpackTree(FunctionTree& tree);
+        std::vector<Function*> MergeOrderedFunctions(std::vector<std::vector<Function*>> functions);
+        std::vector<Function*> OrderFunctions(std::vector<Function*> functions);
 
     }; // namespace Internal
 

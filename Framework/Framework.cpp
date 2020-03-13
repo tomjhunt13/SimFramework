@@ -91,12 +91,41 @@ namespace SimFramework {
             return outputMap;
         }
 
-        std::vector<Function*> TestRef(FunctionTree&  tree)
+        void SortTree(FunctionTree* node, std::vector<Function*>& blockList)
+        {
+            // If no children add to list
+            if (node->children.empty())
+            {
+                blockList.push_back(node->block);
+                return;
+            }
+
+            // Otherwise call sort tree on each child in turn
+            for (FunctionTree* child : node->children)
+            {
+                SortTree(child, blockList);
+            }
+
+            // Then add current node to list
+            blockList.push_back(node->block);
+            return;
+        }
+
+        std::vector<Function*> UnpackTree(FunctionTree& tree)
+        {
+            std::vector<Function*> outputVec;
+            SortTree(&tree, outputVec);
+            return outputVec;
+        }
+
+        std::vector<Function*> MergeOrderedFunctions(std::vector<std::vector<Function*>> functions)
         {
             return {};
         }
 
-        std::vector<FunctionTree> AssembleTree(std::vector<Function*> functions)
+
+
+        std::vector<Function*> OrderFunctions(std::vector<Function*> functions)
         {
 
             // Map of function pointers to their trees
@@ -130,22 +159,20 @@ namespace SimFramework {
                 }
             }
 
-            // Find roots of trees
-            std::vector<FunctionTree> treeVector;
-
+            // Unpack tree structures into ordered vector
+            std::vector<Function*> orderedFunctions;
             for (FunctionTree& tree : functionTrees)
             {
+
+                // TODO: If no root, algebraic loop!
                 if (tree.root)
                 {
-                    treeVector.push_back(tree);
-                }
+                    std::vector<Function*> orderedTree = UnpackTree(tree);
+                    orderedFunctions.insert(orderedFunctions.end(), orderedTree.begin(), orderedTree.end());
+                };
             }
 
-            // If no root, algebraic loop!
-            TestRef(treeVector[0]);
-
-            return treeVector;
-
+            return orderedFunctions;
         }
 
     }; // namespace Internal
