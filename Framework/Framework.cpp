@@ -6,6 +6,11 @@ namespace SimFramework {
 
     void Model::Initialise(float t_0)
     {
+        if (!this->m_Configured)
+        {
+            this->Configure();
+        }
+
         for (auto i: this->m_Sources)
         {
             i->Initialise(t_0);
@@ -73,6 +78,13 @@ namespace SimFramework {
         this->m_Functions = functions;
         this->m_Sinks = sinks;
     };
+
+    void Model::Configure()
+    {
+        this->m_Functions = Internal::SortFunctions(this->m_Functions);
+        this->m_Configured = true;
+    }
+
 
 
     namespace Internal {

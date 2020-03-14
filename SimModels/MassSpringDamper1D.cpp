@@ -39,7 +39,7 @@ namespace Models {
         this->RegisterBlocks(
                 {&(this->m_Input)},
                 {&(this->m_MassBlock)},
-                {&(this->m_Gain), &(this->m_Mask1), &(this->m_SumForces), &(this->m_Mask2)},
+                {&(this->m_SumForces), &(this->m_Gain), &(this->m_Mask1), &(this->m_Mask2)},
                 {&(this->m_PositionOutputBlock), &(this->m_VelocityOutputBlock)});
     }
 

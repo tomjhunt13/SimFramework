@@ -72,7 +72,7 @@ namespace SimFramework {
 
     public:
 
-        Model(float dtMax=0.1) : m_dtMax(dtMax) {}
+        Model(float dtMax=0.1) : m_Configured(false), m_dtMax(dtMax) {}
 
         void Initialise(float t_0);
         void Update(float t_np1);
@@ -82,13 +82,14 @@ namespace SimFramework {
                             std::vector<Function*> functions, std::vector<Sink*> sinks);
 
     private:
-        void UpdateFunctions(float t_np1);
+        void Configure();
 
         std::vector<Source*> m_Sources;
         std::vector<DynamicSystem*> m_DynamicSystems;
         std::vector<Function*> m_Functions;
         std::vector<Sink*> m_Sinks;
 
+        bool m_Configured;
         float m_dtMax;
         float m_t_n;
     };
@@ -126,7 +127,6 @@ namespace SimFramework {
             return x_n + (1.f / 6.f) * (k1 + 2 * k2 + 2 * k3 + k4);
         };
     };
-
 
 
     namespace Internal {
