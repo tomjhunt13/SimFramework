@@ -104,6 +104,8 @@ namespace SimFramework {
             for (FunctionTree* child : node->children)
             {
                 SortTree(child, blockList);
+
+                // remove child
             }
 
             // Then add current node to list
@@ -174,6 +176,65 @@ namespace SimFramework {
 
             return orderedFunctions;
         }
+
+
+
+
+        // Given a vector functions, return map of signals to the functions they drive
+        std::map<SignalBase*, std::vector<Function*>> FunctionInputs(std::vector<Function*> functions)
+        {
+
+            std::map<SignalBase*, std::vector<Function*>> outputMap;
+
+            // Iterate over functions
+            for (Function* func : functions)
+            {
+
+                // Iterate over input signals
+                for (SignalBase* sig : func->InputSignals())
+                {
+
+                    // If signal not already in map, create Function* vector
+                    if (outputMap.count(sig) == 0)
+                    {
+                        outputMap.insert({sig, {}});
+                    }
+
+                    // Append signal to Function* vector
+                    outputMap[sig].push_back(func);
+                }
+            }
+
+            return outputMap;
+        }
+
+        std::vector<std::vector<Function*>> AdjacencyList(std::vector<Function*> functions)
+        {
+
+            // Map of signals to their driving functions
+            std::map<SignalBase*, std::vector<Function*>> mapSigFunc = FunctionInputs(functions);
+
+            std::vector<std::vector<Function*>> outputList(functions.size());
+
+            // Iterate through functions
+            for (int i=0; i < functions.size(); i++)
+            {
+                // Get outputs
+                for (SignalBase* sig : functions[i]->OutputSignals())
+                {
+                    if (mapSigFunc.count(sig) > 0)
+                    {
+                        for (Function* drivenFunc : mapSigFunc[sig])
+                        {
+                            outputList[i].push_back(drivenFunc);
+                        }
+                    }
+                }
+            }
+
+            return outputList;
+        };
+
 
     }; // namespace Internal
 

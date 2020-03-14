@@ -145,6 +145,10 @@ namespace SimFramework {
         std::vector<Function*> MergeOrderedFunctions(std::vector<std::vector<Function*>> functions);
         std::vector<Function*> OrderFunctions(std::vector<Function*> functions);
 
+
+        std::map<SignalBase*, std::vector<Function*>> FunctionInputs(std::vector<Function*> functions);
+        std::vector<std::vector<Function*>> AdjacencyList(std::vector<Function*> functions);
+
     }; // namespace Internal
 
 
