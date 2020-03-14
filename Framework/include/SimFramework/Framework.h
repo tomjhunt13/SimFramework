@@ -3,10 +3,7 @@
 
 #include <vector>
 #include <map>
-#include <utility>
-#include <string>
-
-#include "Eigen/Dense"
+#include <stack>
 
 namespace SimFramework {
 
@@ -134,20 +131,10 @@ namespace SimFramework {
 
     namespace Internal {
 
-        struct FunctionTree {
-            Function* block;
-            std::vector<FunctionTree*> children;
-            bool root = true;
-        };
-
-        std::map<SignalBase*, Function*> FunctionOutputs(std::vector<Function*> functions);
-        std::vector<Function*> UnpackTree(FunctionTree& tree);
-        std::vector<Function*> MergeOrderedFunctions(std::vector<std::vector<Function*>> functions);
-        std::vector<Function*> OrderFunctions(std::vector<Function*> functions);
-
-
         std::map<SignalBase*, std::vector<Function*>> FunctionInputs(std::vector<Function*> functions);
-        std::vector<std::vector<Function*>> AdjacencyList(std::vector<Function*> functions);
+        std::vector<std::vector<int>> AdjacencyList(std::vector<Function*> functions);
+        std::vector<int> TopologicalSort(std::vector<std::vector<int>> adjacencyList);
+
 
     }; // namespace Internal
 

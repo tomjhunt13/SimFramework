@@ -1,5 +1,4 @@
 #include "SimFramework/Framework.h"
-
 #include "SimFramework/Utilities.h"
 
 namespace SimFramework {
@@ -78,106 +77,6 @@ namespace SimFramework {
 
     namespace Internal {
 
-        std::map<SignalBase*, Function*> FunctionOutputs(std::vector<Function*> functions)
-        {
-            std::map<SignalBase*, Function*> outputMap;
-            for (Function* func : functions)
-            {
-                for (SignalBase* sig : func->OutputSignals())
-                {
-                    outputMap.insert({sig, func});
-                }
-            }
-            return outputMap;
-        }
-
-        void SortTree(FunctionTree* node, std::vector<Function*>& blockList)
-        {
-            // If no children add to list
-            if (node->children.empty())
-            {
-                blockList.push_back(node->block);
-                return;
-            }
-
-            // Otherwise call sort tree on each child in turn
-            for (FunctionTree* child : node->children)
-            {
-                SortTree(child, blockList);
-
-                // remove child
-            }
-
-            // Then add current node to list
-            blockList.push_back(node->block);
-            return;
-        }
-
-        std::vector<Function*> UnpackTree(FunctionTree& tree)
-        {
-            std::vector<Function*> outputVec;
-            SortTree(&tree, outputVec);
-            return outputVec;
-        }
-
-        std::vector<Function*> MergeOrderedFunctions(std::vector<std::vector<Function*>> functions)
-        {
-            return {};
-        }
-
-
-
-        std::vector<Function*> OrderFunctions(std::vector<Function*> functions)
-        {
-
-            // Map of function pointers to their trees
-            std::vector<FunctionTree> functionTrees(functions.size());
-            std::map<Function*, FunctionTree*> mapFuncTree;
-
-            // Iterate over each function block and create corresponding tree
-            for (int i = 0; i < functions.size(); i++)
-            {
-                functionTrees[i] = {functions[i]};
-                mapFuncTree.insert({functions[i], &functionTrees[i]});
-            }
-
-            // Map of signals to their driving functions
-            std::map<SignalBase*, Function*> mapSigFunc = FunctionOutputs(functions);
-
-            // Iterate over each function again to create tree structure
-            for (FunctionTree& tree : functionTrees)
-            {
-
-                // Iterate over each driving signal of function
-                for (SignalBase* signal : tree.block->InputSignals())
-                {
-                    // If driving signal is driven by a function
-                    if (mapSigFunc.count(signal) > 0)
-                    {
-                        // Add driving function of the driving signal as child of func function tree and mark root as false
-                        tree.children.push_back(mapFuncTree[mapSigFunc[signal]]);
-                        mapFuncTree[mapSigFunc[signal]]->root = false;
-                    }
-                }
-            }
-
-            // Unpack tree structures into ordered vector
-            std::vector<Function*> orderedFunctions;
-            for (FunctionTree& tree : functionTrees)
-            {
-
-                // TODO: If no root, algebraic loop!
-                if (tree.root)
-                {
-                    std::vector<Function*> orderedTree = UnpackTree(tree);
-                    orderedFunctions.insert(orderedFunctions.end(), orderedTree.begin(), orderedTree.end());
-                };
-            }
-
-            return orderedFunctions;
-        }
-
-
 
 
         // Given a vector functions, return map of signals to the functions they drive
@@ -208,13 +107,20 @@ namespace SimFramework {
             return outputMap;
         }
 
-        std::vector<std::vector<Function*>> AdjacencyList(std::vector<Function*> functions)
+        std::vector<std::vector<int>> AdjacencyList(std::vector<Function*> functions)
         {
+
+            // Map of Function* to index in list
+            std::map<Function*, int> mapFuncIndex;
+            for (int i = 0; i < functions.size(); i++)
+            {
+                mapFuncIndex.insert({functions[i], i});
+            }
 
             // Map of signals to their driving functions
             std::map<SignalBase*, std::vector<Function*>> mapSigFunc = FunctionInputs(functions);
 
-            std::vector<std::vector<Function*>> outputList(functions.size());
+            std::vector<std::vector<int>> outputList(functions.size());
 
             // Iterate through functions
             for (int i=0; i < functions.size(); i++)
@@ -226,7 +132,7 @@ namespace SimFramework {
                     {
                         for (Function* drivenFunc : mapSigFunc[sig])
                         {
-                            outputList[i].push_back(drivenFunc);
+                            outputList[i].push_back(mapFuncIndex[drivenFunc]);
                         }
                     }
                 }
@@ -234,6 +140,46 @@ namespace SimFramework {
 
             return outputList;
         };
+
+        void TopologicalSortRecursive(int index, std::vector<std::vector<int>>& adjacencyList, std::vector<bool>& visited, std::stack<int>& stack)
+        {
+            if (!visited[index])
+            {
+                // Append children
+                for (int i : adjacencyList[index])
+                {
+                    TopologicalSortRecursive(i, adjacencyList, visited, stack);
+                }
+
+                // Add self to stack and mark as visited
+                stack.push(index);
+                visited[index] = true;
+            }
+        };
+
+        std::vector<int> TopologicalSort(std::vector<std::vector<int>> adjacencyList)
+        {
+
+            std::stack<int> stack;
+            std::vector<bool> visited(adjacencyList.size());
+
+            for (int i = 0; i < adjacencyList.size(); i++)
+            {
+                TopologicalSortRecursive(i, adjacencyList, visited, stack);
+            }
+
+            // Unpack stack into vector
+            std::vector<int> output(adjacencyList.size());
+
+            for (int i = 0; i < adjacencyList.size(); i++)
+            {
+                output[i] = stack.top();
+                stack.pop();
+            }
+
+            return output;
+        };
+
 
 
     }; // namespace Internal
