@@ -651,3 +651,74 @@ TEST(SortFunctions, MultipleDependants) {
 
     ASSERT_TRUE(test);
 }
+
+
+
+class PureFunctions : public SimFramework::Model
+{
+public:
+    PureFunctions() : Model(1.f)
+    {
+        // Configure blocks
+        this->In1.Configure(&(this->S1), 0.f);
+        this->In2.Configure(&(this->S3), 0.f);
+        this->Out.Configure(&(this->S6), 0.f);
+        this->G1.Configure(&(this->S1), &(this->S2), 2.f);
+        this->G2.Configure(&(this->S3), &(this->S4), 3.f);
+        this->G3.Configure(&(this->S5), &(this->S6), 4.f);
+        this->Sum.Configure({&(this->S2), &(this->S4)}, &(this->S5), {1.f, -1.f});
+
+        this->RegisterBlocks(
+                {&(this->In1), &(this->In2)},
+                {},
+                {&(this->G3), &(this->Sum), &(this->G2), &(this->G1)},
+                {&(this->Out)});
+    };
+
+    void Input(float in1, float in2)
+    {
+        this->In1.WriteValue(in1);
+        this->In2.WriteValue(in2);
+    };
+
+    float Output()
+    {
+        return this->Out.ReadValue();
+    };
+
+private:
+    //Signals
+    SimFramework::Signal<float> S1;
+    SimFramework::Signal<float> S2;
+    SimFramework::Signal<float> S3;
+    SimFramework::Signal<float> S4;
+    SimFramework::Signal<float> S5;
+    SimFramework::Signal<float> S6;
+
+    // Blocks
+    SimFramework::Input<float> In1;
+    SimFramework::Input<float> In2;
+    SimFramework::Output<float> Out;
+    SimFramework::Gain<float, float> G1;
+    SimFramework::Gain<float, float> G2;
+    SimFramework::Gain<float, float> G3;
+    SimFramework::SummingJunction<float> Sum;
+
+
+};
+
+TEST(SortedModel, PureFunctions)
+{
+    PureFunctions p;
+    p.Initialise(0.f);
+
+    p.Input(3.f, 4.f);
+    p.Update(1.f);
+    p.Update(2.f);
+    ASSERT_FLOAT_EQ(p.Output(), -24.f);
+
+    p.Input(5.f, -2.f);
+    p.Update(3.f);
+    p.Update(4.f);
+    ASSERT_FLOAT_EQ(p.Output(), 64.f);
+}

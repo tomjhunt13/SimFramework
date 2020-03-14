@@ -29,6 +29,8 @@ namespace SimFramework {
         for (auto i: this->m_Sinks) {
             i->Update(0.f);
         }
+
+        this->m_t_n = t_0;
     }
 
 
