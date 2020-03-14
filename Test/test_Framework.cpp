@@ -7,6 +7,25 @@
 #include "SimFramework/Framework.h"
 #include "SimFramework/Components.h"
 
+template <typename Type>
+bool EqualVectors(std::vector<Type> vector1, std::vector<Type> vector2)
+{
+    if (vector1.size() != vector2.size())
+    {
+        return false;
+    }
+
+    for (int i = 0; i < vector1.size(); i++)
+    {
+        if (vector1[i] != vector2[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 TEST(FunctionInputs, TwoParallelTrees) {
     // Signals
     SimFramework::Signal<float> s1;
@@ -365,52 +384,116 @@ TEST(AdjacencyList, MultipleDependants) {
 }
 
 
-//TEST(TopologicalSort, TwoParallelTrees) {
-//
-//    std::vector<std::vector<int>> adjacencyList = {{1}, {}, {3}, {}};
-//
-//
-//    std::vector<int> res = SimFramework::Internal::TopologicalSort(adjacencyList);
-//
-//    ASSERT_EQ(res.size(), 4);
-//
-//}
+TEST(TopologicalSort, TwoParallelTrees) {
 
-//TEST(TopologicalSort, SummingJunction) {
-//
-//    std::vector<std::vector<int>> adjacencyList = {{2}, {2}, {3}, {}};
-//
-//    std::vector<int> res = SimFramework::Internal::TopologicalSort(adjacencyList);
-//
-//    int adbg = 4;
-//}
+    // Problem
+    std::vector<std::vector<int>> adjacencyList = {{1}, {}, {3}, {}};
+    std::vector<int> res = SimFramework::Internal::TopologicalSort(adjacencyList);
 
-//TEST(TopologicalSort, Mask) {
-//
-//    std::vector<std::vector<int>> adjacencyList = {{1}, {2, 3, 4}, {}, {}, {}};
-//
-//    std::vector<int> res = SimFramework::Internal::TopologicalSort(adjacencyList);
-//
-//    int dsvsdb = 5;
-//}
+    // Possible solutions
+    std::vector<std::vector<int>> solutions = {{0, 1, 2, 3}, {2, 3, 0, 1}};
 
-//TEST(TopologicalSort, MultipleDependants) {
-//
-//    std::vector<std::vector<int>> adjacencyList = {{1, 2}, {3}, {3}, {4},  {5, 6}, {}, {}};
-//
-//    std::vector<int> res = SimFramework::Internal::TopologicalSort(adjacencyList);
-//
-//    int seefbsd =  4;
-//
-//}
+    ASSERT_TRUE(EqualVectors<int>(res, solutions[0]) || EqualVectors<int>(res, solutions[1]));
+}
 
+TEST(TopologicalSort, SummingJunction) {
+
+    // Problem
+    std::vector<std::vector<int>> adjacencyList = {{2}, {2}, {3}, {}};
+    std::vector<int> res = SimFramework::Internal::TopologicalSort(adjacencyList);
+
+    // Possible solutions
+    std::vector<std::vector<int>> solutions = {{0, 1, 2, 3}, {1, 0, 2, 3}};
+
+    ASSERT_TRUE(EqualVectors<int>(res, solutions[0]) || EqualVectors<int>(res, solutions[1]));
+}
+
+TEST(TopologicalSort, Mask) {
+
+    // Problem
+    std::vector<std::vector<int>> adjacencyList = {{1}, {2, 3, 4}, {}, {}, {}};
+    std::vector<int> res = SimFramework::Internal::TopologicalSort(adjacencyList);
+
+    // Possible solutions
+    std::vector<std::vector<int>> solutions = {
+            {0, 1, 2, 3, 4},
+            {0, 1, 2, 4, 3},
+            {0, 1, 3, 2, 4},
+            {0, 1, 3, 4, 2},
+            {0, 1, 4, 2, 3},
+            {0, 1, 4, 3, 2}};
+
+    bool test = (EqualVectors<int>(res, solutions[0]) ||
+                 EqualVectors<int>(res, solutions[1]) ||
+                 EqualVectors<int>(res, solutions[2]) ||
+                 EqualVectors<int>(res, solutions[3]) ||
+                 EqualVectors<int>(res, solutions[4]) ||
+                 EqualVectors<int>(res, solutions[5]));
+
+    ASSERT_TRUE(test);
+}
+
+TEST(TopologicalSort, MultipleDependants) {
+
+    // Problem
+    std::vector<std::vector<int>> adjacencyList = {{1, 2}, {3}, {3}, {4},  {5, 6}, {}, {}};
+    std::vector<int> res = SimFramework::Internal::TopologicalSort(adjacencyList);
+
+    // Possible solutions
+    std::vector<std::vector<int>> solutions = {
+            {0, 1, 2, 3, 4, 5, 6},
+            {0, 1, 2, 3, 4, 6, 5},
+            {0, 2, 1, 3, 4, 5, 6},
+            {0, 2, 1, 3, 4, 6, 5}};
+
+    bool test = (EqualVectors<int>(res, solutions[0]) ||
+                 EqualVectors<int>(res, solutions[1]) ||
+                 EqualVectors<int>(res, solutions[2]) ||
+                 EqualVectors<int>(res, solutions[3]));
+
+    ASSERT_TRUE(test);
+}
 
 TEST(TopologicalSort, ExtraTest) {
 
+    // Problem
     std::vector<std::vector<int>> adjacencyList = {{1}, {2, 4, 7}, {3}, {5}, {6}, {8}, {8}, {8}, {9, 10}, {}, {}};
-
     std::vector<int> res = SimFramework::Internal::TopologicalSort(adjacencyList);
 
-    int seefbsd =  4;
+    // Possible solutions
+    std::vector<std::vector<int>> solutions = {
+            {0, 1, 2, 3, 5, 4, 6, 7, 8, 9, 10},
+            {0, 1, 2, 3, 5, 4, 6, 7, 8, 10, 9},
+
+            {0, 1, 2, 3, 5, 7, 4, 6, 8, 9, 10},
+            {0, 1, 2, 3, 5, 7, 4, 6, 8, 10, 9},
+
+            {0, 1, 4, 6, 2, 3, 5, 7, 8, 9, 10},
+            {0, 1, 4, 6, 2, 3, 5, 7, 8, 10, 9},
+
+            {0, 1, 4, 6, 7, 2, 3, 5, 8, 9, 10},
+            {0, 1, 4, 6, 7, 2, 3, 5, 8, 10, 9},
+
+            {0, 1, 7, 4, 6, 2, 3, 5, 8, 9, 10},
+            {0, 1, 7, 4, 6, 2, 3, 5, 8, 10, 9},
+
+            {0, 1, 7, 2, 3, 5, 4, 6, 8, 9, 10},
+            {0, 1, 7, 2, 3, 4, 4, 6, 8, 10, 9}};
+
+
+    bool test = (EqualVectors<int>(res, solutions[0]) ||
+                 EqualVectors<int>(res, solutions[1]) ||
+                 EqualVectors<int>(res, solutions[2]) ||
+                 EqualVectors<int>(res, solutions[3]) ||
+                 EqualVectors<int>(res, solutions[4]) ||
+                 EqualVectors<int>(res, solutions[5]) ||
+                 EqualVectors<int>(res, solutions[6]) ||
+                 EqualVectors<int>(res, solutions[7]) ||
+                 EqualVectors<int>(res, solutions[8]) ||
+                 EqualVectors<int>(res, solutions[9]) ||
+                 EqualVectors<int>(res, solutions[10]) ||
+                 EqualVectors<int>(res, solutions[11]));
+
+    ASSERT_TRUE(test);
 
 }
