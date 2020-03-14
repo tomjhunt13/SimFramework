@@ -497,3 +497,157 @@ TEST(TopologicalSort, ExtraTest) {
     ASSERT_TRUE(test);
 
 }
+
+
+TEST(SortFunctions, TwoParallelTrees) {
+    // Signals
+    SimFramework::Signal<float> s1;
+    SimFramework::Signal<float> s2;
+    SimFramework::Signal<float> s3;
+    SimFramework::Signal<float> s4;
+    SimFramework::Signal<float> s5;
+    SimFramework::Signal<float> s6;
+
+    // Blocks
+    SimFramework::Gain<float, float> a;
+    SimFramework::Gain<float, float> b;
+    SimFramework::Gain<float, float> c;
+    SimFramework::Gain<float, float> d;
+
+    a.Configure(&s1, &s2, 1);
+    b.Configure(&s2, &s3, 1);
+    c.Configure(&s4, &s5, 1);
+    d.Configure(&s5, &s6, 1);
+
+    std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d};
+    std::vector<SimFramework::Function*> sortedFuncs = SimFramework::Internal::SortFunctions(funcs);
+
+    // Possible solutions
+    std::vector<std::vector<SimFramework::Function*>> solutions = {{&a, &b, &c, &d}, {&c, &d, &a, &b}};
+    ASSERT_TRUE(EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[0]) || EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[1]));
+
+}
+
+TEST(SortFunctions, SummingJunction) {
+    // Signals
+    SimFramework::Signal<float> s1;
+    SimFramework::Signal<float> s2;
+    SimFramework::Signal<float> s3;
+    SimFramework::Signal<float> s4;
+    SimFramework::Signal<float> s5;
+    SimFramework::Signal<float> s6;
+    SimFramework::Signal<float> s7;
+
+    // Blocks
+    SimFramework::Gain<float, float> a;
+    SimFramework::Gain<float, float> b;
+    SimFramework::SummingJunction<float> c;
+    SimFramework::Gain<float, float> d;
+
+    a.Configure(&s1, &s2, 1);
+    b.Configure(&s3, &s4, 1);
+    c.Configure({&s2, &s4, &s5}, &s6, {1.f, 1.f, 1.f});
+    d.Configure(&s6, &s7, 1);
+
+    std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d};
+    std::vector<SimFramework::Function*> sortedFuncs = SimFramework::Internal::SortFunctions(funcs);
+
+    // Possible solutions
+    std::vector<std::vector<SimFramework::Function*>> solutions = {{&a, &b, &c, &d}, {&b, &a, &c, &d}};
+
+    ASSERT_TRUE(EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[0]) || EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[1]));
+}
+
+TEST(SortFunctions, Mask) {
+    // Signals
+    SimFramework::Signal<Eigen::Vector3f> s1;
+    SimFramework::Signal<Eigen::Vector3f> s2;
+    SimFramework::Signal<float> s3;
+    SimFramework::Signal<float> s4;
+    SimFramework::Signal<float> s5;
+    SimFramework::Signal<float> s6;
+    SimFramework::Signal<float> s7;
+    SimFramework::Signal<float> s8;
+
+
+    // Blocks
+    SimFramework::Gain<Eigen::Vector3f, Eigen::Vector3f> a;
+    SimFramework::Mask<Eigen::Vector3f, float> b;
+    SimFramework::Gain<float, float> c;
+    SimFramework::Gain<float, float> d;
+    SimFramework::Gain<float, float> e;
+
+    a.Configure(&s1, &s2, 1);
+    b.Configure(&s2, {&s3, &s5, &s7}, {0, 1, 2});
+    c.Configure(&s3, &s4, 1);
+    d.Configure(&s5, &s6, 1);
+    e.Configure(&s7, &s8, 1);
+
+    std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d, &e};
+    std::vector<SimFramework::Function*> sortedFuncs = SimFramework::Internal::SortFunctions(funcs);
+
+    // Possible solutions
+    std::vector<std::vector<SimFramework::Function*>> solutions = {
+            {&a, &b, &c, &d, &e},
+            {&a, &b, &c, &e, &d},
+            {&a, &b, &d, &c, &e},
+            {&a, &b, &d, &e, &c},
+            {&a, &b, &e, &c, &d},
+            {&a, &b, &e, &d, &c}};
+
+    bool test = (EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[0]) ||
+                 EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[1]) ||
+                 EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[2]) ||
+                 EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[3]) ||
+                 EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[4]) ||
+                 EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[5]));
+
+    ASSERT_TRUE(test);
+}
+
+TEST(SortFunctions, MultipleDependants) {
+    // Signals
+    SimFramework::Signal<Eigen::Vector2f> s1;
+    SimFramework::Signal<Eigen::Vector2f> s2;
+    SimFramework::Signal<Eigen::Vector2f> s3;
+    SimFramework::Signal<Eigen::Vector2f> s4;
+    SimFramework::Signal<Eigen::Vector2f> s5;
+    SimFramework::Signal<float> s6;
+    SimFramework::Signal<float> s7;
+    SimFramework::Signal<float> s8;
+    SimFramework::Signal<float> s9;
+
+    // Blocks
+    SimFramework::Gain<Eigen::Vector2f, Eigen::Vector2f> a;
+    SimFramework::Gain<Eigen::Vector2f, Eigen::Vector2f> b;
+    SimFramework::Gain<Eigen::Vector2f, Eigen::Vector2f> c;
+    SimFramework::SummingJunction<Eigen::Vector2f> d;
+    SimFramework::Mask<Eigen::Vector2f, float> e;
+    SimFramework::Gain<float, float> f;
+    SimFramework::Gain<float, float> g;
+
+    a.Configure(&s1, &s2, 1);
+    b.Configure(&s2, &s3, 1);
+    c.Configure(&s2, &s4, 1);
+    d.Configure({&s3, &s4, &s2}, &s5, {1, 1, 1});
+    e.Configure(&s5, {&s6, &s7}, {0, 1});
+    f.Configure(&s6, &s8, 1);
+    g.Configure(&s7, &s9, 1);
+
+    std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d, &e, &f, &g};
+    std::vector<SimFramework::Function*> sortedFuncs = SimFramework::Internal::SortFunctions(funcs);
+
+    // Possible solutions
+    std::vector<std::vector<SimFramework::Function*>> solutions = {
+            {&a, &b, &c, &d, &e, &f, &g},
+            {&a, &b, &c, &d, &e, &g, &f},
+            {&a, &c, &b, &d, &e, &f, &g},
+            {&a, &c, &b, &d, &e, &g, &f}};
+
+    bool test = (EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[0]) ||
+                 EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[1]) ||
+                 EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[2]) ||
+                 EqualVectors<SimFramework::Function*>(sortedFuncs, solutions[3]));
+
+    ASSERT_TRUE(test);
+}

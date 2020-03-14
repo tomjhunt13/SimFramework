@@ -134,7 +134,7 @@ namespace SimFramework {
         std::map<SignalBase*, std::vector<Function*>> FunctionInputs(std::vector<Function*> functions);
         std::vector<std::vector<int>> AdjacencyList(std::vector<Function*> functions);
         std::vector<int> TopologicalSort(std::vector<std::vector<int>> adjacencyList);
-
+        std::vector<Function*> SortFunctions(std::vector<Function*> functions);
 
     }; // namespace Internal
 

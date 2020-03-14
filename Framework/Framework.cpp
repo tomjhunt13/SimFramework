@@ -180,6 +180,19 @@ namespace SimFramework {
             return output;
         };
 
+        std::vector<Function*> SortFunctions(std::vector<Function*> functions)
+        {
+            std::vector<std::vector<int>> adjacencyList = AdjacencyList(functions);
+            std::vector<int> sortedIndices = TopologicalSort(adjacencyList);
+
+            std::vector<Function*> output(functions.size());
+            for (int i = 0; i < functions.size(); i++)
+            {
+                output[i] = functions[sortedIndices[i]];
+            }
+
+            return output;
+        };
 
 
     }; // namespace Internal
