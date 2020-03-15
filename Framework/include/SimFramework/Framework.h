@@ -77,7 +77,6 @@ namespace SimFramework {
         void Initialise(float t_0);
         void Update(float t_np1);
 
-    protected:
         void RegisterBlocks(std::vector<Source*> sources, std::vector<DynamicSystem*> dynamicSystems,
                             std::vector<Function*> functions, std::vector<Sink*> sinks);
 
@@ -95,6 +94,14 @@ namespace SimFramework {
     };
 
 
+
+    class Subsystem
+    {
+    public:
+
+        // virtual void Configure(inputs, output) = 0;
+        virtual void RegisterBlocks(Model* model) = 0;
+    };
 
 
 

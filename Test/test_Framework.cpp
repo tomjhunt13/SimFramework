@@ -710,15 +710,14 @@ private:
 TEST(SortedModel, PureFunctions)
 {
     PureFunctions p;
-    p.Initialise(0.f);
 
     p.Input(3.f, 4.f);
+    p.Initialise(0.f);
     p.Update(1.f);
-    p.Update(2.f);
     ASSERT_FLOAT_EQ(p.Output(), -24.f);
 
     p.Input(5.f, -2.f);
-    p.Update(3.f);
-    p.Update(4.f);
+    p.Initialise(0.f);
+    p.Update(1.f);
     ASSERT_FLOAT_EQ(p.Output(), 64.f);
 }

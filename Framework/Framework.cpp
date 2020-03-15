@@ -75,10 +75,10 @@ namespace SimFramework {
             std::vector<Source*> sources, std::vector<DynamicSystem*> dynamicSystems,
             std::vector<Function*> functions, std::vector<Sink*> sinks)
     {
-        this->m_Sources = sources;
-        this->m_DynamicSystems = dynamicSystems;
-        this->m_Functions = functions;
-        this->m_Sinks = sinks;
+        this->m_Sources.insert(this->m_Sources.end(), sources.begin(), sources.end());
+        this->m_DynamicSystems.insert(this->m_DynamicSystems.end(), dynamicSystems.begin(), dynamicSystems.end());
+        this->m_Functions.insert(this->m_Functions.end(), functions.begin(), functions.end());
+        this->m_Sinks.insert(this->m_Sinks.end(), sinks.begin(), sinks.end());
     };
 
     void Model::Configure()
