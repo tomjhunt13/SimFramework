@@ -31,7 +31,8 @@ namespace Models {
                 {&(this->m_BClutchIn), &(this->m_BTyreIn), &(this->m_BConst), &(this->m_BTrig)},
                 {&(this->m_BStates)},
                 {&(this->m_BBlend), &(this->m_BVec), &(this->m_BMask)},
-                {&(this->m_BOutTyre), &(this->m_BOutClutch)});
+                {&(this->m_BOutTyre), &(this->m_BOutClutch)},
+                {});
     };
 
     void Transmission::ShiftUp()

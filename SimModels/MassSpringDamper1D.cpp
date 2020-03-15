@@ -40,7 +40,8 @@ namespace Models {
                 {&(this->m_Input)},
                 {&(this->m_MassBlock)},
                 {&(this->m_SumForces), &(this->m_Gain), &(this->m_Mask1), &(this->m_Mask2)},
-                {&(this->m_PositionOutputBlock), &(this->m_VelocityOutputBlock)});
+                {&(this->m_PositionOutputBlock), &(this->m_VelocityOutputBlock)},
+                {});
     }
 
     MassSpringDamperBlocks MassSpringDamper1D::Blocks()
