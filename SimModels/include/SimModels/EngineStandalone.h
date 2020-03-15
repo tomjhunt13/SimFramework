@@ -64,6 +64,18 @@ namespace Models {
         SimFramework::Input<float> m_BLoad;
         SimFramework::Output<float> m_BEngineSpeed;
 
+        // Temp Blocks
+        SimFramework::ConstantBlock<float> m_tempConst;
+        SimFramework::Signal<float> m_STempConst;
+
+        SimFramework::SummingJunction<float> m_tempSum;
+        SimFramework::Signal<float> m_STempSum;
+
+        SimFramework::Gain<float, float> m_tempGain;
+        SimFramework::Signal<float> m_STempGain;
+
+        SimFramework::Output<float> m_tempOut;
+
         // Subsystems
         Engine m_SysEngine;
     };

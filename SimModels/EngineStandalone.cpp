@@ -72,6 +72,17 @@ namespace Models {
                 {},
                 {&(this->m_BEngineSpeed)});
 
+        this->m_tempConst.Configure(&(this->m_STempConst), 40.f);
+        this->m_tempSum.Configure({&(this->m_SEngineSpeed), &(this->m_STempConst)}, &(this->m_STempSum), {1.f, 1.f});
+        this->m_tempGain.Configure(&(this->m_STempSum), &(this->m_STempGain), 3.f);
+        this->m_tempOut.Configure(&(this->m_STempGain), 0.f);
+
+        this->RegisterBlocks(
+                {&(this->m_tempConst)},
+                {},
+                {&(this->m_tempGain), &(this->m_tempSum)},
+                {&(this->m_tempOut)});
+
     }
 
     void EngineStandalone::SetEngineParameters(std::string engineJSON, float J, float b)
@@ -81,7 +92,7 @@ namespace Models {
 
     EngineBlocks EngineStandalone::Blocks()
     {
-        return {&(this->m_BLoad), &(this->m_BThrottle), &(this->m_BEngineSpeed)};
+        return {&(this->m_BLoad), &(this->m_BThrottle), &(this->m_tempOut)};
     };
 
 
