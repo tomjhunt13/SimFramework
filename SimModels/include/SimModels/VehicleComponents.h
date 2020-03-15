@@ -31,6 +31,14 @@ namespace Models {
         float m_OutTorqueCopy;
     };
 
+
+    class LinearTrigger : public SimFramework::TriggerFunction {
+    public:
+        LinearTrigger();
+        float Evaluate(float t);
+    };
+
+
     class Engine : public SimFramework::Subsystem {
     public:
 
@@ -57,13 +65,48 @@ namespace Models {
     };
 
 
+    class Transmission : public SimFramework::Subsystem {
 
-
-    class LinearTrigger : public SimFramework::TriggerFunction {
     public:
-        LinearTrigger();
-        float Evaluate(float t);
+        Transmission();
+        void ShiftUp();
+        void ShiftDown();
+        int CurrentGear();
+
+        void Configure(
+                SimFramework::Signal<float>* inClutchTorque,
+                SimFramework::Signal<float>* inTyreTorque,
+                SimFramework::Signal<float>* outClutchSpeed,
+                SimFramework::Signal<float>* outTyreSpeed);
+
+        void RegisterBlocks(SimFramework::Model* model) override;
+
+    private:
+        void SetGearRatio(int gearIndex);
+
+        // Parameters
+        std::vector<float> m_Ratios = {0.5, 1.f, 1.5, 2.f, 3.f};
+        int m_GearIndex;
+        float m_EffectiveInertia = 1.f;
+
+        // Signals
+        SimFramework::Signal<float> m_SConst;
+        SimFramework::Signal<float> m_STrig;
+        SimFramework::Signal<float> m_SAugmented;
+        SimFramework::Signal<Eigen::Vector2f> m_STorqueVec;
+        SimFramework::Signal<Eigen::Vector2f> m_SSpeeds;
+
+        // Blocks
+        SimFramework::LinearBlend<float> m_BBlend;
+        LinearTrigger m_BTrig;
+        SimFramework::ConstantBlock<float> m_BConst;
+        SimFramework::Vectorise<float, Eigen::Vector2f> m_BVec;
+        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector2f, 2, 1, 2> m_BStates;
+        SimFramework::Mask<Eigen::Vector2f, float> m_BMask;
     };
+
+
+
 
 }; // namespace Models
 

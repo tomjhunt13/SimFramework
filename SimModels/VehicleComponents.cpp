@@ -25,6 +25,17 @@ namespace Models {
     };
 
 
+    LinearTrigger::LinearTrigger()
+    {
+        this->m_Default = 0.f;
+        this->t_end = 1.f;
+    }
+
+    float LinearTrigger::Evaluate(float t) {
+        return 1.f * (this->t_end - t) / (this->t_end);
+    }
+
+
     void Engine::SetEngineParameters(std::string engineJSON, float J, float b)
     {
         // Set engine table
@@ -77,16 +88,99 @@ namespace Models {
 
 
 
+    Transmission::Transmission() {}
 
-
-    LinearTrigger::LinearTrigger()
+    void Transmission::Configure(
+            SimFramework::Signal<float>* inClutchTorque,
+            SimFramework::Signal<float>* inTyreTorque,
+            SimFramework::Signal<float>* outClutchSpeed,
+            SimFramework::Signal<float>* outTyreSpeed)
     {
-        this->m_Default = 0.f;
-        this->t_end = 1.f;
+
+        // TODO: decide where to put this
+        //  Initial speed and gear ratio
+        this->m_GearIndex = 0;
+        this->SetGearRatio(this->m_GearIndex);
+        Eigen::Vector<float, 1> initState;
+        initState << 0;
+
+        // Configure blocks
+        this->m_BBlend.Configure(inClutchTorque, &(this->m_SConst), &(this->m_STrig), &(this->m_SAugmented));
+        this->m_BTrig.Configure(&(this->m_STrig));
+        this->m_BConst.Configure(&(this->m_SConst), 0);
+        this->m_BVec.Configure({&(this->m_SAugmented),  inTyreTorque}, &(this->m_STorqueVec));
+        this->m_BStates.Configure(&(this->m_STorqueVec), &(this->m_SSpeeds));
+        this->m_BStates.SetInitialConditions(initState);
+        this->m_BMask.Configure(&(this->m_SSpeeds), {outClutchSpeed, outTyreSpeed}, {0, 1});
+    };
+
+    void Transmission::RegisterBlocks(SimFramework::Model* model)
+    {
+        model->RegisterBlocks(
+                {&(this->m_BConst), &(this->m_BTrig)},
+                {&(this->m_BStates)},
+                {&(this->m_BBlend), &(this->m_BVec), &(this->m_BMask)},
+                {},
+                {});
+    };
+
+
+    void Transmission::ShiftUp()
+    {
+        // Ignore if in top gear
+        if (this->m_GearIndex == this->m_Ratios.size() - 1)
+        {
+            return;
+        }
+
+        // Else increment gear
+        this->m_GearIndex += 1;
+
+        // Trigger trigger  block
+        this->m_BTrig.Trigger();
+
+        // Change gear
+        this->SetGearRatio(this->m_GearIndex);
+
+    };
+    void Transmission::ShiftDown()
+    {
+        // Ignore if in bottom gear
+        if (this->m_GearIndex == 0)
+        {
+            return;
+        }
+
+        // Else decrement gear
+        this->m_GearIndex -= 1;
+
+        // Trigger trigger block
+        this->m_BTrig.Trigger();
+
+        // Change gear
+        this->SetGearRatio(this->m_GearIndex);
+    };
+
+    void Transmission::SetGearRatio(int gearIndex)
+    {
+        Eigen::Matrix<float, 1, 1> A;
+        A << 0.f;
+
+        Eigen::Matrix<float, 1,2> B;
+        B << 1.f / this->m_EffectiveInertia, - this->m_Ratios[this->m_GearIndex] / this->m_EffectiveInertia;
+
+        Eigen::Matrix<float, 2, 1> C;
+        C << 1.f, this->m_Ratios[this->m_GearIndex];
+
+        Eigen::Matrix<float, 2, 2> D;
+        D << 0.f, 0.f, 0.f, 0.f;
+
+        this->m_BStates.SetMatrices(A, B, C, D);
     }
 
-    float LinearTrigger::Evaluate(float t) {
-        return 1.f * (this->t_end - t) / (this->t_end);
+    int Transmission::CurrentGear()
+    {
+        return this->m_GearIndex + 1;
     }
 
 }; // namespace Models
