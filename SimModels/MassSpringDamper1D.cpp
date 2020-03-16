@@ -34,14 +34,14 @@ namespace Models {
         this->m_MassBlock.SetInitialConditions(initialState);
         this->m_MassBlock.SetMatrices(A, B, C, D);
 
+        SimFramework::BlockList list = {{&(this->m_Input)},
+                                        {&(this->m_MassBlock)},
+                                        {&(this->m_SumForces), &(this->m_Gain), &(this->m_Mask1), &(this->m_Mask2)},
+                                        {&(this->m_PositionOutputBlock), &(this->m_VelocityOutputBlock)},
+                                        {}};
 
         // Construct system
-        this->RegisterBlocks(
-                {&(this->m_Input)},
-                {&(this->m_MassBlock)},
-                {&(this->m_SumForces), &(this->m_Gain), &(this->m_Mask1), &(this->m_Mask2)},
-                {&(this->m_PositionOutputBlock), &(this->m_VelocityOutputBlock)},
-                {});
+        this->RegisterBlocks(list);
     }
 
     MassSpringDamperBlocks MassSpringDamper1D::Blocks()

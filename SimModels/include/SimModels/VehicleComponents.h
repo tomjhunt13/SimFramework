@@ -11,7 +11,7 @@ namespace Models {
     class Clutch : public SimFramework::Function
     {
     public:
-        void Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* outClutchTorque);
+        void Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* inClutchSpeed, SimFramework::Signal<float>* outClutchTorque);
 
         std::vector<SimFramework::SignalBase*> InputSignals() override;
         std::vector<SimFramework::SignalBase*> OutputSignals() override;
@@ -49,7 +49,7 @@ namespace Models {
                 SimFramework::Signal<float>* inLoadTorque,
                 SimFramework::Signal<float>* outEngineSpeed);
 
-        void RegisterBlocks(SimFramework::Model* model) override;
+        SimFramework::BlockList Blocks() override;
 
     private:
         // Signals
@@ -79,7 +79,7 @@ namespace Models {
                 SimFramework::Signal<float>* outClutchSpeed,
                 SimFramework::Signal<float>* outTyreSpeed);
 
-        void RegisterBlocks(SimFramework::Model* model) override;
+        SimFramework::BlockList Blocks() override;
 
     private:
         void SetGearRatio(int gearIndex);

@@ -67,7 +67,26 @@ namespace SimFramework {
         virtual void Update(float dt) = 0;
     };
 
+
     class Subsystem;
+
+
+    struct BlockList
+    {
+        std::vector<Source*> Sources;
+        std::vector<DynamicSystem*> DynamicSystems;
+        std::vector<Function*> Functions;
+        std::vector<Sink*> Sinks;
+        std::vector<Subsystem*> Subsystems;
+    };
+
+    class Subsystem
+    {
+    public:
+
+        // virtual void Configure(inputs, output) = 0;
+        virtual BlockList Blocks() = 0;
+    };
 
     class Model {
 
@@ -79,9 +98,8 @@ namespace SimFramework {
         void Update(float t_np1);
 
 
-        void RegisterBlocks(std::vector<Source*> sources, std::vector<DynamicSystem*> dynamicSystems,
-                            std::vector<Function*> functions, std::vector<Sink*> sinks,
-                            std::vector<Subsystem*> subsystems);
+    protected:
+        void RegisterBlocks(BlockList& blocks);
 
     private:
         void Configure();
@@ -98,13 +116,7 @@ namespace SimFramework {
 
 
 
-    class Subsystem
-    {
-    public:
 
-        // virtual void Configure(inputs, output) = 0;
-        virtual void RegisterBlocks(Model* model) = 0;
-    };
 
 
 

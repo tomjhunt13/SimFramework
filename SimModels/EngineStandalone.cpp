@@ -13,14 +13,13 @@ namespace Models {
         // Configure engine
         this->m_SysEngine.Configure(&(this->m_SThrottle), &(this->m_SLoadTorque), &(this->m_SEngineSpeed));
 
-
         // Construct system
-        this->RegisterBlocks(
-                {&(this->m_BThrottle), &(this->m_BLoad)},
-                {},
-                {},
-                {&(this->m_BEngineSpeed)},
-                {&(this->m_SysEngine)});
+        SimFramework::BlockList list = {{&(this->m_BThrottle), &(this->m_BLoad)},
+                                        {},
+                                        {},
+                                        {&(this->m_BEngineSpeed)},
+                                        {&(this->m_SysEngine)}};
+        this->RegisterBlocks(list);
     }
 
     void EngineStandalone::SetEngineParameters(std::string engineJSON, float J, float b)

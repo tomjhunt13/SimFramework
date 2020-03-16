@@ -14,12 +14,13 @@ namespace Models {
         // Configure subsystems
         this->m_Transmission.Configure(&(this->m_SClutchIn), &(this->m_STyreIn), &(this->m_SClutchOut), &(this->m_STyreOut));
 
-        this->RegisterBlocks(
-                {&(this->m_BClutchIn), &(this->m_BTyreIn)},
-                {},
-                {},
-                {&(this->m_BOutTyre), &(this->m_BOutClutch)},
-                {&(this->m_Transmission)});
+        SimFramework::BlockList list = {{&(this->m_BClutchIn), &(this->m_BTyreIn)},
+                                        {},
+                                        {},
+                                        {&(this->m_BOutTyre), &(this->m_BOutClutch)},
+                                        {&(this->m_Transmission)}};
+
+        this->RegisterBlocks(list);
     };
 
     void TransmissionStandalone::ShiftUp()

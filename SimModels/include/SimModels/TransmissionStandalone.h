@@ -24,7 +24,6 @@ namespace Models {
         TransmissionBlocks Blocks();
         int CurrentGear();
 
-
     private:
         // Signals
         SimFramework::Signal<float> m_SClutchIn;

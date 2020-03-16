@@ -2,7 +2,7 @@
 
 namespace Models {
 
-    void Clutch::Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* outClutchTorque)
+    void Clutch::Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* inClutchSpeed, SimFramework::Signal<float>* outClutchTorque)
     {
         this->m_InEngineSpeed = inEngineSpeed;
         this->m_OutClutchTorque = outClutchTorque;
@@ -75,15 +75,14 @@ namespace Models {
         this->m_BMask.Configure(&(this->m_SEngineSpeed_), {outEngineSpeed}, {0});
     };
 
-    void Engine::RegisterBlocks(SimFramework::Model* model)
+    SimFramework::BlockList Engine::Blocks()
     {
         // Construct system
-        model->RegisterBlocks(
-                {},
+        return {{},
                 {&(this->m_BInertia)},
                 {&(this->m_BMask), &(this->m_BEngineMap), &(this->m_BSum)},
                 {},
-                {});
+                {}};
     };
 
 
@@ -114,14 +113,13 @@ namespace Models {
         this->m_BMask.Configure(&(this->m_SSpeeds), {outClutchSpeed, outTyreSpeed}, {0, 1});
     };
 
-    void Transmission::RegisterBlocks(SimFramework::Model* model)
+    SimFramework::BlockList Transmission::Blocks()
     {
-        model->RegisterBlocks(
-                {&(this->m_BConst), &(this->m_BTrig)},
+        return {{&(this->m_BConst), &(this->m_BTrig)},
                 {&(this->m_BStates)},
                 {&(this->m_BBlend), &(this->m_BVec), &(this->m_BMask)},
                 {},
-                {});
+                {}};
     };
 
 
