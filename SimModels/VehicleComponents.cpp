@@ -36,6 +36,56 @@ namespace Models {
     }
 
 
+    void Tyre::Configure(SimFramework::Signal<float> *inRotationalSpeed,
+                         SimFramework::Signal<float> *inLinearSpeed,
+                         SimFramework::Signal<float> *outForce,
+                         SimFramework::Signal<float> *outTorque)
+     {
+        this->m_RotationalSpeed = inRotationalSpeed;
+        this->m_LinearSpeed = inLinearSpeed;
+        this->m_Force = outForce;
+        this->m_Torque = outTorque;
+
+        this->SetParameters();
+     }
+
+     void Tyre::SetParameters(float radius, float Fz, float B, float C, float D, float E)
+     {
+        // TODO: Fz could be an input signal
+        this->radius = radius;
+        this->Fz = Fz;
+        this->B = B;
+        this->C = C;
+        this->D = D;
+        this->E = E;
+     }
+
+    std::vector<SimFramework::SignalBase*> Tyre::InputSignals()
+    {
+        return {&(this->m_RotationalSpeed), &(this->m_LinearSpeed)};
+    };
+
+    std::vector<SimFramework::SignalBase*> Tyre::OutputSignals()
+    {
+        return {&(this->m_Force), &(this->m_Torque)};
+    };
+
+    void Tyre::Update()
+    {
+        // Input signals
+        float V = this->m_LinearSpeed->Read();
+        float omega = this->m_RotationalSpeed->Read();
+
+        // Calculate slip ratio
+        float k = (omega * this->radius - V) / std::abs(V);
+        float Fx = this->Fz * this->D * std::sin(this->C * std::atan(this->B * k - this->E * (this->B * k - std::atan(this->B * k))));
+
+        // Write result to output signals
+        this->m_Force->Write(Fx);
+        this->m_Torque->Write(Fx * this->radius);
+    };
+
+
     void Engine::SetEngineParameters(std::string engineJSON, float J, float b)
     {
         // Set engine table

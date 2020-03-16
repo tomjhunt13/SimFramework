@@ -668,11 +668,11 @@ public:
         this->G3.Configure(&(this->S5), &(this->S6), 4.f);
         this->Sum.Configure({&(this->S2), &(this->S4)}, &(this->S5), {1.f, -1.f});
 
-        this->RegisterBlocks(
-                {&(this->In1), &(this->In2)},
-                {},
-                {&(this->G3), &(this->Sum), &(this->G2), &(this->G1)},
-                {&(this->Out)});
+        SimFramework::BlockList list = {{&(this->In1), &(this->In2)},
+                                        {},
+                                        {&(this->G3), &(this->Sum), &(this->G2), &(this->G1)},
+                                        {&(this->Out)}};
+        this->RegisterBlocks(list);
     };
 
     void Input(float in1, float in2)

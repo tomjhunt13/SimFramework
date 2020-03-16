@@ -1,7 +1,7 @@
 #ifndef FRAMEWORK_VEHICLECOMPONENTS_H
 #define FRAMEWORK_VEHICLECOMPONENTS_H
 
-
+#include <cmath>
 #include "SimFramework/Utilities.h"
 #include "SimFramework/Framework.h"
 #include "SimFramework/Components.h"
@@ -36,6 +36,37 @@ namespace Models {
     public:
         LinearTrigger();
         float Evaluate(float t);
+    };
+
+
+    class Tyre : public SimFramework::Function
+    {
+    public:
+        void Configure(SimFramework::Signal<float>* inRotationalSpeed,
+                       SimFramework::Signal<float>* inLinearSpeed,
+                       SimFramework::Signal<float>* outForce,
+                       SimFramework::Signal<float>* outTorque);
+
+        void SetParameters(float radius=0.2, float Fz=5000,  float B=10, float C=1.9, float D=1, float E=0.97);
+
+        std::vector<SimFramework::SignalBase*> InputSignals() override;
+        std::vector<SimFramework::SignalBase*> OutputSignals() override;
+        void Update() override;
+
+    private:
+        // Parameters
+        float radius;
+        float Fz;
+        float B;
+        float C;
+        float D;
+        float E;
+
+        // Signals
+        SimFramework::Signal<float>* m_RotationalSpeed;
+        SimFramework::Signal<float>* m_LinearSpeed;
+        SimFramework::Signal<float>* m_Force;
+        SimFramework::Signal<float>* m_Torque;
     };
 
 
