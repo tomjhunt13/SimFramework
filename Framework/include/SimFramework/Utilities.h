@@ -12,6 +12,7 @@ namespace SimFramework {
     // Unit conversions
     float RadiansPerSecondToRPM(float radiansPerSecond);
     float RPMToRadiansPerSecond(float RPM);
+    const float pi();
 
     Table3D ReadTableJSON(std::string JSONFilePath, std::string xName, std::string yName, std::string zName);
 

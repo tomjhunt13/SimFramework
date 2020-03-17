@@ -21,7 +21,7 @@ namespace Models {
         {
             this->m_Engine.Configure(&(this->m_SThrottle), &(this->m_SClutchTorque), &(this->m_SEngineSpeed));
             this->m_Clutch.Configure(&(this->m_SEngineSpeed), &(this->m_SClutchSpeed), &(this->m_SClutchTorque));
-            this->m_Transmission.Configure(&(this->m_SClutchTorque), &(this->m_STyreTorque), &(this->m_SClutchSpeed), &(this->m_STyreSpeed));
+//            this->m_Transmission.Configure(&(this->m_SClutchTorque), &(this->m_STyreTorque), &(this->m_SClutchSpeed), &(this->m_STyreSpeed));
 
             SimFramework::BlockList list = {{&(this->m_InThrottle)},
                                             {},

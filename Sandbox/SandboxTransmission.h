@@ -38,6 +38,11 @@ void SandboxTransmission()
             }
         }
 
+        if (counter == 1200)
+        {
+            blocks.BrakePressureIn->WriteValue(1.f);
+        }
+
 
         transmission.Update(t);
 

@@ -11,6 +11,7 @@ namespace Models {
     struct TransmissionBlocks {
         SimFramework::Input<float>* ClutchInBlock;
         SimFramework::Input<float>* TyreInBlock;
+        SimFramework::Input<float>* BrakePressureIn;
         SimFramework::Output<float>* ClutchOutBlock;
         SimFramework::Output<float>* TyreOutBlock;
     };
@@ -28,12 +29,14 @@ namespace Models {
         // Signals
         SimFramework::Signal<float> m_SClutchIn;
         SimFramework::Signal<float> m_STyreIn;
+        SimFramework::Signal<float> m_SBrakePressureIn;
         SimFramework::Signal<float> m_SClutchOut;
         SimFramework::Signal<float> m_STyreOut;
 
         // Blocks
         SimFramework::Input<float> m_BClutchIn;
         SimFramework::Input<float> m_BTyreIn;
+        SimFramework::Input<float> m_BBrakePressure;
         SimFramework::Output<float> m_BOutClutch;
         SimFramework::Output<float> m_BOutTyre;
 

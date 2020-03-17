@@ -18,9 +18,9 @@ void SandboxVehicleStandalone()
     myfile.open ("tmpOut.csv", std::ios::out);
 
 
-    float dt = 0.05;
+    float dt = 0.5;
     int counter = 1;
-    for (float t = 0.f; t <= 1000.f; t += dt) {
+    for (float t = 0.f; t <= 3000.f; t += dt) {
 
 
         vehicle.Update(t);

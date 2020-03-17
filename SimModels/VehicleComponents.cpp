@@ -117,6 +117,51 @@ namespace Models {
     };
 
 
+    void DiscBrake::Configure(SimFramework::Signal<float>* inBrakePressure, SimFramework::Signal<float>* inWheelSpeed, SimFramework::Signal<float>* outBrakeTorque)
+    {
+        this->m_BrakePressure = inBrakePressure;
+        this->m_WheelSpeed = inWheelSpeed;
+        this->m_BrakeTorque = outBrakeTorque;
+
+        this->SetParameters();
+    };
+
+    void DiscBrake::SetParameters(float mu, float R, float D, int N)
+    {
+        this->mu = mu;
+        this->R = R;
+        this->D = D;
+        this->N = N;
+
+        this->m_BrakeConstant = (mu * SimFramework::pi() * D * D * R * N) / (4);
+    };
+
+    std::vector<SimFramework::SignalBase*> DiscBrake::InputSignals()
+    {
+        return {this->m_BrakePressure};
+    };
+
+    std::vector<SimFramework::SignalBase*> DiscBrake::OutputSignals()
+    {
+        return {this->m_BrakeTorque};
+    };
+
+    void DiscBrake::Update()
+    {
+        float speed = this->m_WheelSpeed->Read();
+        float brakeMagnitude = this->m_BrakeConstant * this->m_BrakePressure->Read() * 6000000.f;
+
+        if (speed >= 0.f)
+        {
+            this->m_BrakeTorque->Write(-1 * brakeMagnitude);
+        }
+        else
+        {
+            this->m_BrakeTorque->Write(brakeMagnitude);
+        };
+    };
+
+
     void Engine::SetEngineParameters(std::string engineJSON, float J, float b)
     {
         // Set engine table
@@ -170,6 +215,7 @@ namespace Models {
     void Transmission::Configure(
             SimFramework::Signal<float>* inClutchTorque,
             SimFramework::Signal<float>* inTyreTorque,
+            SimFramework::Signal<float>* inBrakePressure,
             SimFramework::Signal<float>* outClutchSpeed,
             SimFramework::Signal<float>* outTyreSpeed)
     {
@@ -182,10 +228,11 @@ namespace Models {
         initState << 0;
 
         // Configure blocks
+        this->m_BDiscBrake.Configure(inBrakePressure, outTyreSpeed, &(this->m_SBrakeTorque));
         this->m_BBlend.Configure(inClutchTorque, &(this->m_SConst), &(this->m_STrig), &(this->m_SAugmented));
         this->m_BTrig.Configure(&(this->m_STrig));
         this->m_BConst.Configure(&(this->m_SConst), 0);
-        this->m_BVec.Configure({&(this->m_SAugmented),  inTyreTorque}, &(this->m_STorqueVec));
+        this->m_BVec.Configure({&(this->m_SAugmented),  inTyreTorque, &(this->m_SBrakeTorque)}, &(this->m_STorqueVec));
         this->m_BStates.Configure(&(this->m_STorqueVec), &(this->m_SSpeeds));
         this->m_BStates.SetInitialConditions(initState);
         this->m_BMask.Configure(&(this->m_SSpeeds), {outClutchSpeed, outTyreSpeed}, {0, 1});
@@ -195,7 +242,7 @@ namespace Models {
     {
         return {{&(this->m_BConst), &(this->m_BTrig)},
                 {&(this->m_BStates)},
-                {&(this->m_BBlend), &(this->m_BVec), &(this->m_BMask)},
+                {&(this->m_BBlend), &(this->m_BVec), &(this->m_BMask), &(this->m_BDiscBrake)},
                 {},
                 {}};
     };
@@ -242,14 +289,14 @@ namespace Models {
         Eigen::Matrix<float, 1, 1> A;
         A << 0.f;
 
-        Eigen::Matrix<float, 1,2> B;
-        B << 1.f / this->m_EffectiveInertia, - this->m_Ratios[this->m_GearIndex] / this->m_EffectiveInertia;
+        Eigen::Matrix<float, 1,3> B;
+        B << 1.f / this->m_EffectiveInertia, - this->m_Ratios[this->m_GearIndex] / this->m_EffectiveInertia, this->m_Ratios[this->m_GearIndex] / this->m_EffectiveInertia;
 
         Eigen::Matrix<float, 2, 1> C;
         C << 1.f, this->m_Ratios[this->m_GearIndex];
 
-        Eigen::Matrix<float, 2, 2> D;
-        D << 0.f, 0.f, 0.f, 0.f;
+        Eigen::Matrix<float, 2, 3> D;
+        D << 0.f, 0.f, 0.f, 0.f, 0.f, 0.f;
 
         this->m_BStates.SetMatrices(A, B, C, D);
     }

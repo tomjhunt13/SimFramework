@@ -17,6 +17,11 @@ namespace SimFramework {
         return RPM * 0.10471975512;
     };
 
+    const float pi()
+    {
+        return 3.141592653589793;
+    };
+
 
     Table3D ReadTableJSON(std::string JSONFilePath, std::string xName, std::string yName, std::string zName)
     {

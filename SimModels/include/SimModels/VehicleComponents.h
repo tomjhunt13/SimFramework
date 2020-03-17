@@ -92,6 +92,32 @@ namespace Models {
     };
 
 
+    class DiscBrake : public SimFramework::Function
+    {
+        // TODO: currently brake pressure is a value between 0 and 1. Should consider putting gain outside
+    public:
+        void Configure(SimFramework::Signal<float>* inBrakePressure, SimFramework::Signal<float>* inWheelSpeed, SimFramework::Signal<float>* outBrakeTorque);
+        void SetParameters(float mu=0.9, float R=0.15, float D=0.01, int N=2);
+
+        std::vector<SimFramework::SignalBase*> InputSignals() override;
+        std::vector<SimFramework::SignalBase*> OutputSignals() override;
+        void Update() override;
+
+    private:
+        // Parameters
+        float mu;   // Friction coefficient
+        float R;    // Average radius of pad
+        float D;    // Diameter of cylinder
+        int N;      // Number of cylinders
+        float m_BrakeConstant;
+
+        // Signals
+        SimFramework::Signal<float>* m_BrakePressure;
+        SimFramework::Signal<float>* m_WheelSpeed;
+        SimFramework::Signal<float>* m_BrakeTorque;
+    };
+
+
     class Engine : public SimFramework::Subsystem {
     public:
 
@@ -128,6 +154,7 @@ namespace Models {
         void Configure(
                 SimFramework::Signal<float>* inClutchTorque,
                 SimFramework::Signal<float>* inTyreTorque,
+                SimFramework::Signal<float>* inBrakePressure,
                 SimFramework::Signal<float>* outClutchSpeed,
                 SimFramework::Signal<float>* outTyreSpeed);
 
@@ -145,15 +172,17 @@ namespace Models {
         SimFramework::Signal<float> m_SConst;
         SimFramework::Signal<float> m_STrig;
         SimFramework::Signal<float> m_SAugmented;
-        SimFramework::Signal<Eigen::Vector2f> m_STorqueVec;
+        SimFramework::Signal<Eigen::Vector3f> m_STorqueVec;
         SimFramework::Signal<Eigen::Vector2f> m_SSpeeds;
+        SimFramework::Signal<float> m_SBrakeTorque;
 
         // Blocks
+        DiscBrake m_BDiscBrake;
         SimFramework::LinearBlend<float> m_BBlend;
         LinearTrigger m_BTrig;
         SimFramework::ConstantBlock<float> m_BConst;
-        SimFramework::Vectorise<float, Eigen::Vector2f> m_BVec;
-        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector2f, 2, 1, 2> m_BStates;
+        SimFramework::Vectorise<float, Eigen::Vector3f> m_BVec;
+        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 1, 2> m_BStates;
         SimFramework::Mask<Eigen::Vector2f, float> m_BMask;
     };
 
@@ -167,6 +196,8 @@ namespace Models {
                 SimFramework::Signal<float>* inTyreForce,
                 SimFramework::Signal<float>* outVehiclePosition,
                 SimFramework::Signal<float>* outVehicleVelocity);
+
+        void SetParameters(float mass, float Cd=0.3, float A=2.5, float rho=1.225);
 
         SimFramework::BlockList Blocks() override;
 
