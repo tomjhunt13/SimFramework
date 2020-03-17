@@ -86,6 +86,37 @@ namespace Models {
     };
 
 
+    void AeroDrag::Configure(SimFramework::Signal<float>* inSpeed, SimFramework::Signal<float>* outForce)
+    {
+        this->m_Speed = inSpeed;
+        this->m_Force = outForce;
+        this->SetParameters();
+    };
+
+    void AeroDrag::SetParameters(float Cd, float A, float rho)
+    {
+        this->Cd = Cd;
+        this->A = A;
+        this->rho = rho;
+    };
+
+    std::vector<SimFramework::SignalBase*> AeroDrag::InputSignals()
+    {
+        return {this->m_Speed};
+    };
+
+    std::vector<SimFramework::SignalBase*> AeroDrag::OutputSignals()
+    {
+        return {this->m_Force};
+    };
+
+    void AeroDrag::Update()
+    {
+        float speed = this->m_Speed->Read();
+        this->m_Force->Write(0.5 * this->rho * this->A * this->Cd * speed * speed);
+    };
+
+
     void Engine::SetEngineParameters(std::string engineJSON, float J, float b)
     {
         // Set engine table

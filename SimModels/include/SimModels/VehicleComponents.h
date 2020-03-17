@@ -70,6 +70,28 @@ namespace Models {
     };
 
 
+    class AeroDrag : public SimFramework::Function
+    {
+    public:
+        void Configure(SimFramework::Signal<float>* inSpeed, SimFramework::Signal<float>* outForce);
+        void SetParameters(float Cd=0.3, float A=2.5, float rho=1.225);
+
+        std::vector<SimFramework::SignalBase*> InputSignals() override;
+        std::vector<SimFramework::SignalBase*> OutputSignals() override;
+        void Update() override;
+
+    private:
+        // Parameters
+        float Cd;
+        float A;
+        float rho;
+
+        // Signals
+        SimFramework::Signal<float>* m_Speed;
+        SimFramework::Signal<float>* m_Force;
+    };
+
+
     class Engine : public SimFramework::Subsystem {
     public:
 
@@ -135,6 +157,9 @@ namespace Models {
         SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector2f, 2, 1, 2> m_BStates;
         SimFramework::Mask<Eigen::Vector2f, float> m_BMask;
     };
+
+
+//    class VehicleDynamics :
 
 
 
