@@ -121,7 +121,6 @@ namespace Models {
     class Transmission : public SimFramework::Subsystem {
 
     public:
-        Transmission();
         void ShiftUp();
         void ShiftDown();
         int CurrentGear();
@@ -159,7 +158,36 @@ namespace Models {
     };
 
 
-//    class VehicleDynamics :
+    class VehicleDynamics : public SimFramework::Subsystem
+    {
+    public:
+        VehicleDynamics() : mass(1000.f) {};
+
+        void Configure(
+                SimFramework::Signal<float>* inTyreForce,
+                SimFramework::Signal<float>* outVehiclePosition,
+                SimFramework::Signal<float>* outVehicleVelocity);
+
+        SimFramework::BlockList Blocks() override;
+
+    private:
+        // Parameters
+        float mass;
+
+        // Signals
+        SimFramework::Signal<float> m_SAeroDrag;
+        SimFramework::Signal<float> m_SGravity;
+        SimFramework::Signal<Eigen::Vector3f> m_SForceVec;
+        SimFramework::Signal<Eigen::Vector2f> m_SStatesVec;
+
+
+        // Blocks
+        AeroDrag m_BAeroDrag;
+        SimFramework::Vectorise<float, Eigen::Vector3f> m_BVectorise;
+        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 2, 2> m_BStateSpace;
+        SimFramework::Mask<Eigen::Vector2f, float> m_BMask;
+
+    };
 
 
 

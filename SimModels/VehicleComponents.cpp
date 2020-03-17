@@ -167,9 +167,6 @@ namespace Models {
     };
 
 
-
-    Transmission::Transmission() {}
-
     void Transmission::Configure(
             SimFramework::Signal<float>* inClutchTorque,
             SimFramework::Signal<float>* inTyreTorque,
@@ -262,4 +259,47 @@ namespace Models {
         return this->m_GearIndex + 1;
     }
 
+
+    void VehicleDynamics::Configure(
+            SimFramework::Signal<float>* inTyreForce,
+            SimFramework::Signal<float>* outVehiclePosition,
+            SimFramework::Signal<float>* outVehicleVelocity)
+    {
+        // Configure blocks
+        this->m_BAeroDrag.Configure(outVehicleVelocity, &(this->m_SAeroDrag));
+        this->m_BVectorise.Configure({inTyreForce, &(this->m_SAeroDrag), &(this->m_SGravity)}, &(this->m_SForceVec));
+        this->m_BStateSpace.Configure(&(this->m_SForceVec), &(this->m_SStatesVec));
+        this->m_BMask.Configure(&(this->m_SStatesVec), {outVehiclePosition, outVehicleVelocity}, {0, 1});
+
+        // Set up state matrices
+        Eigen::Matrix<float, 2, 2> A;
+        A << 0.f, 1.f, 0.f, 0.f;
+
+        Eigen::Matrix<float, 2, 3> B;
+        B << 0, 0, 0, 1.f / this->mass, -1.f / this->mass, 1.f / this->mass;
+
+        Eigen::Matrix<float, 2, 2> C;
+        C << 1.f, 0.f, 0.f, 1.f;
+
+        Eigen::Matrix<float, 2, 3> D;
+        D << 0.f, 0.f, 0.f, 0.f, 0.f, 0.f;
+
+        this->m_BStateSpace.SetMatrices(A, B, C, D);
+        Eigen::Vector2f initialConditions = {0.f, 0.f};
+        this->m_BStateSpace.SetInitialConditions(initialConditions);
+
+
+        // TODO: gravity properly
+        this->m_SGravity.Write(0);
+    };
+
+    SimFramework::BlockList VehicleDynamics::Blocks()
+    {
+        return {
+            {},
+            {&(this->m_BStateSpace)},
+            {&(this->m_BAeroDrag), &(this->m_BVectorise), &(this->m_BMask)},
+            {},
+            {}};
+    };
 }; // namespace Models

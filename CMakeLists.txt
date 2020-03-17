@@ -16,7 +16,7 @@ add_subdirectory(ThirdParty/googletest)
 include_directories(ThirdParty/googletest/googletest/include)
 
 # Framework
-add_library(Framework STATIC Framework/include/SimFramework/Framework.h Framework/Framework.cpp Framework/include/SimFramework/Components.h Framework/Components.cpp Framework/include/SimFramework/Interpolation.h Framework/Interpolation.cpp Framework/include/SimFramework/Utilities.h Framework/Utilities.cpp)
+add_library(Framework STATIC Framework/include/SimFramework/Framework.h Framework/Framework.cpp Framework/include/SimFramework/Components.h Framework/Components.cpp Framework/include/SimFramework/Interpolation.h Framework/Interpolation.cpp Framework/include/SimFramework/Utilities.h Framework/Utilities.cpp SimModels/VehicleDynamicsStandalone.cpp SimModels/include/SimModels/VehicleDynamicsStandalone.h)
 include_directories(Framework/include)
 
 # SimModels
@@ -25,7 +25,7 @@ target_link_libraries(SimModels Framework)
 include_directories(SimModels/include)
 
 # Sandbox
-add_executable(Sandbox Sandbox/main.cpp Sandbox/SandboxTransmission.h Sandbox/SandboxMassSpringDamper.h Sandbox/SandboxEngine.h)
+add_executable(Sandbox Sandbox/main.cpp Sandbox/SandboxTransmission.h Sandbox/SandboxMassSpringDamper.h Sandbox/SandboxEngine.h Sandbox/SandboxVehicleStandalone.h)
 target_link_libraries(Sandbox Framework SimModels)
 
 # Tests
