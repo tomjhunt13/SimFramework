@@ -65,6 +65,7 @@ namespace Models {
         float C;
         float D;
         float E;
+        float V_threshold = 0.001;
 
         // Signals
         SimFramework::Signal<float>* m_RotationalSpeed;

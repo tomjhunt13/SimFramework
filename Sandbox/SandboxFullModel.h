@@ -25,7 +25,7 @@ void SandboxFullModel()
 
     float dt = 0.05;
     int counter = 1;
-    for (float t = 0.f; t <= 80.f; t += dt) {
+    for (float t = 0.f; t <= 200.f; t += dt) {
 
         if (counter % 100 == 0)
         {
@@ -44,6 +44,36 @@ void SandboxFullModel()
         {
             blocks.InThrottle->WriteValue(0.f);
             blocks.InBrakePressure->WriteValue(1.f);
+        }
+
+        if (counter == 1800)
+        {
+            blocks.InThrottle->WriteValue(0.25f);
+            blocks.InBrakePressure->WriteValue(0.f);
+        }
+
+        if (counter == 2000)
+        {
+            blocks.InThrottle->WriteValue(0.5f);
+            blocks.InBrakePressure->WriteValue(0.f);
+        }
+
+        if (counter == 2200)
+        {
+            blocks.InThrottle->WriteValue(0.75f);
+            blocks.InBrakePressure->WriteValue(0.f);
+        }
+
+        if (counter == 2400)
+        {
+            blocks.InThrottle->WriteValue(0.25f);
+            blocks.InBrakePressure->WriteValue(0.f);
+        }
+
+        if (counter == 2600)
+        {
+            blocks.InThrottle->WriteValue(1.f);
+            blocks.InBrakePressure->WriteValue(0.f);
         }
 
 

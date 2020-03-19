@@ -6,9 +6,9 @@
 
 int main() {
 
-//    SandboxFullModel();
+    SandboxFullModel();
 //    SandboxMassSpringDamper();
-    SandboxEngine();
+//    SandboxEngine();
 //    SandboxTransmission();
 //    SandboxVehicleStandalone();
 

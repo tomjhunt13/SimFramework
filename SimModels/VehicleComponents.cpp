@@ -81,7 +81,19 @@ namespace Models {
         float omega = this->m_RotationalSpeed->Read();
 
         // Calculate slip ratio
-        float k = (omega * this->radius - V) / std::abs(V);
+        float V_abs = std::abs(V);
+        float V_sx = omega * this->radius - V;
+        float k;
+
+        if (std::abs(V) <= this->V_threshold)
+        {
+            k = (2.f * V_sx) / (V_threshold + (V * V) / V_threshold);
+        }
+        else
+        {
+            k = (V_sx) / V_abs;
+        }
+
         float Fx = this->Fz * this->D * std::sin(this->C * std::atan(this->B * k - this->E * (this->B * k - std::atan(this->B * k))));
 
         // Write result to output signals
