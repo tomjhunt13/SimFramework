@@ -90,20 +90,12 @@ namespace Models {
     };
 
 
-    AeroDrag::AeroDrag(std::string name) : Function(name) {};
+    AeroDrag::AeroDrag(std::string name, float Cd, float A, float rho) : Function(name), Cd(Cd), A(A), rho(rho) {};
 
     void AeroDrag::Configure(SimFramework::Signal<float>* inSpeed, SimFramework::Signal<float>* outForce)
     {
         this->m_Speed = inSpeed;
         this->m_Force = outForce;
-        this->SetParameters();
-    };
-
-    void AeroDrag::SetParameters(float Cd, float A, float rho)
-    {
-        this->Cd = Cd;
-        this->A = A;
-        this->rho = rho;
     };
 
     std::vector<SimFramework::SignalBase*> AeroDrag::InputSignals()
@@ -313,10 +305,31 @@ namespace Models {
     }
 
 
-    VehicleDynamics::VehicleDynamics() :
-        mass(1000.f),
+    VehicleDynamics::VehicleDynamics(float initialPosition, float initialVelocity, float mass, float Cd, float A, float rho) :
         m_SAeroDrag("Drag"), m_SGravity("Const Gravity"), m_SForceVec("Vehicle Force Input"), m_SStatesVec("Vehicle States"),
-        m_BAeroDrag("Drag"), m_BVectorise("Vehicle Force Input"), m_BStateSpace("Vehicle Dynamics"), m_BMask("Vehicle Dynamics") {};
+        m_BAeroDrag("Drag", Cd, A, rho), m_BVectorise("Vehicle Force Input"), m_BStateSpace("Vehicle Dynamics"), m_BMask("Vehicle Dynamics")
+    {
+        // Set up state matrices
+        Eigen::Matrix<float, 2, 2> matA;
+        matA << 0.f, 1.f, 0.f, 0.f;
+
+        Eigen::Matrix<float, 2, 3> B;
+        B << 0, 0, 0, 1.f / mass, -1.f / mass, 1.f / mass;
+
+        Eigen::Matrix<float, 2, 2> C;
+        C << 1.f, 0.f, 0.f, 1.f;
+
+        Eigen::Matrix<float, 2, 3> D;
+        D << 0.f, 0.f, 0.f, 0.f, 0.f, 0.f;
+
+        this->m_BStateSpace.SetMatrices(matA, B, C, D);
+        Eigen::Vector2f initialConditions = {initialPosition, initialVelocity};
+        this->m_BStateSpace.SetInitialConditions(initialConditions);
+
+
+        // TODO: gravity properly
+        this->m_SGravity.Write(0);
+    };
 
 
     void VehicleDynamics::Configure(
@@ -330,26 +343,7 @@ namespace Models {
         this->m_BStateSpace.Configure(&(this->m_SForceVec), &(this->m_SStatesVec));
         this->m_BMask.Configure(&(this->m_SStatesVec), {outVehiclePosition, outVehicleVelocity}, {0, 1});
 
-        // Set up state matrices
-        Eigen::Matrix<float, 2, 2> A;
-        A << 0.f, 1.f, 0.f, 0.f;
 
-        Eigen::Matrix<float, 2, 3> B;
-        B << 0, 0, 0, 1.f / this->mass, -1.f / this->mass, 1.f / this->mass;
-
-        Eigen::Matrix<float, 2, 2> C;
-        C << 1.f, 0.f, 0.f, 1.f;
-
-        Eigen::Matrix<float, 2, 3> D;
-        D << 0.f, 0.f, 0.f, 0.f, 0.f, 0.f;
-
-        this->m_BStateSpace.SetMatrices(A, B, C, D);
-        Eigen::Vector2f initialConditions = {0.f, 0.f};
-        this->m_BStateSpace.SetInitialConditions(initialConditions);
-
-
-        // TODO: gravity properly
-        this->m_SGravity.Write(0);
     };
 
     SimFramework::BlockList VehicleDynamics::Blocks()

@@ -77,11 +77,9 @@ namespace Models {
     class AeroDrag : public SimFramework::Function
     {
     public:
-        AeroDrag(std::string name = "Aero Drag");
+        AeroDrag(std::string name="Aero Drag", float Cd=0.3, float A=2.5, float rho=1.225);
 
         void Configure(SimFramework::Signal<float>* inSpeed, SimFramework::Signal<float>* outForce);
-        void SetParameters(float Cd=0.3, float A=2.5, float rho=1.225);
-
         std::vector<SimFramework::SignalBase*> InputSignals() override;
         std::vector<SimFramework::SignalBase*> OutputSignals() override;
         void Update() override;
@@ -195,21 +193,16 @@ namespace Models {
     class VehicleDynamics : public SimFramework::Subsystem
     {
     public:
-        VehicleDynamics();
+        VehicleDynamics(float initialPosition=0.f, float initialVelocity=0.f, float mass=1000.f, float Cd=0.3, float A=2.5, float rho=1.225);
 
         void Configure(
                 SimFramework::Signal<float>* inTyreForce,
                 SimFramework::Signal<float>* outVehiclePosition,
                 SimFramework::Signal<float>* outVehicleVelocity);
 
-        void SetParameters(float mass, float Cd=0.3, float A=2.5, float rho=1.225);
-
         SimFramework::BlockList Blocks() override;
 
     private:
-        // Parameters
-        float mass;
-
         // Signals
         SimFramework::Signal<float> m_SAeroDrag;
         SimFramework::Signal<float> m_SGravity;

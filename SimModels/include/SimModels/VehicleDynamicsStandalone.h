@@ -9,6 +9,16 @@
 
 namespace Models {
 
+    struct VehicleDynamicsParams
+    {
+        float InitialPosition = 0.f;
+        float InitialVelocity = 0.f;
+        float Mass = 1000.f;
+        float Cd = 0.3;
+        float A = 2.5;
+        float rho = 1.225;
+    };
+
     struct VehicleDynamicsBlocks
     {
         SimFramework::Input<float>* InTyreForce;
@@ -16,10 +26,9 @@ namespace Models {
         SimFramework::Output<float>* OutVehicleSpeed;
     };
 
-
     class VehicleDynamicsStandalone : public SimFramework::System {
     public:
-        VehicleDynamicsStandalone();
+        VehicleDynamicsStandalone(VehicleDynamicsParams params);
         VehicleDynamicsBlocks Blocks();
 
     private:
