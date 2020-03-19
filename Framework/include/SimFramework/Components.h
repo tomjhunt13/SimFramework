@@ -84,6 +84,7 @@ namespace SimFramework {
     class TriggerFunction : public Source
     {
     public:
+        TriggerFunction(std::string name = "Trigger Function");
 
         void Configure(Signal<float>* outputSignal);
         void Trigger();
@@ -111,6 +112,8 @@ namespace SimFramework {
     class StateSpace : public DynamicSystem, public Integrable<Eigen::Vector<float, StateLength>>
     {
     public:
+        StateSpace(std::string name = "State Space") : DynamicSystem(name) {};
+
         void Configure(Signal<InputType>* inputSignal, Signal<OutputType>* outputSignal)
         {
             this->m_InputSignal = inputSignal;
@@ -271,6 +274,8 @@ namespace SimFramework {
     class Vectorise : public Function
     {
     public:
+        Vectorise(std::string name = "Vectorise") : Function(name) {};
+
         void Configure(std::vector<Signal<InputType>*> inputs, Signal<OutputType>* output)
         {
             this->m_InputSignals = inputs;
@@ -326,6 +331,7 @@ namespace SimFramework {
     class Mask : public Function
     {
     public:
+        Mask(std::string name = "Mask") : Function(name) {};
 
         void Configure(Signal<InputType>* inputSignal, std::vector<Signal<OutputType>*> maskedSignals, std::vector<int> maskIndices)
         {

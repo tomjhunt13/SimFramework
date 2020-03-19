@@ -2,6 +2,8 @@
 
 namespace SimFramework {
 
+    TriggerFunction::TriggerFunction(std::string name) : Source(name) {};
+
     void TriggerFunction::Configure(Signal<float>* outputSignal)
     {
         this->m_Output = outputSignal;

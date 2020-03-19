@@ -3,7 +3,7 @@
 
 namespace Models {
 
-    EngineStandalone::EngineStandalone() : System(0.001)
+    EngineStandalone::EngineStandalone(std::string engineJSON, float initialSpeed, float J, float b) : System(0.001), m_SysEngine(engineJSON, initialSpeed, J, b)
     {
         // Configure blocks
         this->m_BThrottle.Configure(&(this->m_SThrottle), 0.f);
@@ -20,11 +20,6 @@ namespace Models {
                                         {&(this->m_BEngineSpeed)},
                                         {&(this->m_SysEngine)}};
         this->RegisterBlocks(list);
-    }
-
-    void EngineStandalone::SetEngineParameters(std::string engineJSON, float J, float b)
-    {
-        this->m_SysEngine.SetEngineParameters(engineJSON, J, b);
     }
 
     EngineBlocks EngineStandalone::Blocks()

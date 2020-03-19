@@ -10,13 +10,20 @@ namespace SimFramework {
 
 
     //----------------- Signal
-    class SignalBase {};
+    class SignalBase
+    {
+    public:
+        SignalBase(std::string name = "Signal");
+
+    private:
+        std::string m_Name;
+    };
 
     template <typename SignalType>
     class Signal : public SignalBase
     {
     public:
-        Signal() {};
+        Signal(std::string name = "Signal") : SignalBase(name) {};
 
         SignalType Read() const { return this->m_Value; };
         void Write(SignalType value) { this->m_Value = value; };
@@ -30,15 +37,22 @@ namespace SimFramework {
     class Block
     {
     public:
+        Block(std::string name = "Block");
+
         virtual ~Block() {};
 
         virtual std::vector<SignalBase*> InputSignals() = 0;
         virtual std::vector<SignalBase*> OutputSignals() = 0;
+
+    private:
+        std::string m_Name;
     };
 
     class Source : public Block
     {
     public:
+        Source(std::string name = "Source");
+
         virtual ~Source() {};
         virtual void Initialise(float t_0) = 0;     // Updates internal states AND writes initial values
         virtual void Update(float dt) = 0;
@@ -48,6 +62,8 @@ namespace SimFramework {
     class DynamicSystem : public Block
     {
     public:
+        DynamicSystem(std::string name = "Dynamic System");
+
         virtual ~DynamicSystem() {};
         virtual void ReadInputs() = 0;
         virtual void Initialise(float t_0) = 0;     // Set initial states AND write initial output
@@ -57,6 +73,8 @@ namespace SimFramework {
     class Function : public Block
     {
     public:
+        Function(std::string name = "Function");
+
         virtual ~Function() {};
         virtual void Update() = 0;
     };
@@ -64,6 +82,8 @@ namespace SimFramework {
     class Sink : public Block
     {
     public:
+        Sink(std::string name = "Sink");
+
         virtual ~Sink() {};
         virtual void Update(float dt) = 0;
     };

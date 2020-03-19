@@ -3,6 +3,16 @@
 
 namespace SimFramework {
 
+
+    // Names for signals and blocks
+    SignalBase::SignalBase(std::string name) : m_Name(name) {};
+    Block::Block(std::string name) : m_Name(name) {};
+    Source::Source(std::string name) : Block(name) {};
+    DynamicSystem::DynamicSystem(std::string name) : Block(name) {};
+    Function::Function(std::string name) : Block(name) {};
+    Sink::Sink(std::string name) : Block(name) {};
+
+
     void System::Initialise(float t_0)
     {
         if (!this->m_Configured)

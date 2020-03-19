@@ -23,9 +23,7 @@ namespace Models {
 
     class EngineStandalone : public SimFramework::System {
     public:
-        EngineStandalone();
-        void SetEngineParameters(std::string engineJSON="/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json", float J=1.f, float b=0.05);
-
+        EngineStandalone(std::string engineJSON="/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json", float initialSpeed=200.f, float J=1.f, float b=0.05);
         EngineBlocks Blocks();
 
     private:

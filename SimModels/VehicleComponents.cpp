@@ -2,6 +2,8 @@
 
 namespace Models {
 
+    Clutch::Clutch(std::string name) : Function(name) {};
+
     void Clutch::Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* outClutchTorque)
     {
         this->m_InEngineSpeed = inEngineSpeed;
@@ -24,16 +26,18 @@ namespace Models {
         this->m_OutClutchTorque->Write(this->m_TorqueCapacity * ( speed * speed - this->m_EngagementSpeed * this->m_EngagementSpeed));
     };
 
-
-    LinearTrigger::LinearTrigger()
+    LinearTrigger::LinearTrigger(float defaultValue, float t_end, std::string name) : SimFramework::TriggerFunction(name)
     {
-        this->m_Default = 0.f;
+        this->m_Default = defaultValue;
         this->t_end = 1.f;
-    }
+    };
 
     float LinearTrigger::Evaluate(float t) {
         return 1.f * (this->t_end - t) / (this->t_end);
     }
+
+
+    Tyre::Tyre(std::string name) : Function(name) {};
 
 
     void Tyre::Configure(SimFramework::Signal<float> *inRotationalSpeed,
@@ -85,6 +89,8 @@ namespace Models {
         this->m_Torque->Write(Fx * this->radius);
     };
 
+
+    AeroDrag::AeroDrag(std::string name) : Function(name) {};
 
     void AeroDrag::Configure(SimFramework::Signal<float>* inSpeed, SimFramework::Signal<float>* outForce)
     {
@@ -162,7 +168,7 @@ namespace Models {
     };
 
 
-    void Engine::SetEngineParameters(std::string engineJSON, float J, float b)
+    Engine::Engine(std::string engineJSON, float initialSpeed, float J, float b)
     {
         // Set engine table
         SimFramework::Table3D engineTable = SimFramework::ReadTableJSON(engineJSON, "speed", "throttle", "torque");
@@ -185,7 +191,7 @@ namespace Models {
 
         // Initial engine speed
         Eigen::Matrix<float, 1, 1> init;
-        init << 300.f;
+        init << initialSpeed;
         this->m_BInertia.SetInitialConditions(init);
     }
 
@@ -305,6 +311,12 @@ namespace Models {
     {
         return this->m_GearIndex + 1;
     }
+
+
+    VehicleDynamics::VehicleDynamics() :
+        mass(1000.f),
+        m_SAeroDrag("Drag"), m_SGravity("Const Gravity"), m_SForceVec("Vehicle Force Input"), m_SStatesVec("Vehicle States"),
+        m_BAeroDrag("Drag"), m_BVectorise("Vehicle Force Input"), m_BStateSpace("Vehicle Dynamics"), m_BMask("Vehicle Dynamics") {};
 
 
     void VehicleDynamics::Configure(

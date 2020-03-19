@@ -1,6 +1,8 @@
 #ifndef FRAMEWORK_VEHICLE_H
 #define FRAMEWORK_VEHICLE_H
 
+#include <string>
+
 #include "SimFramework/Utilities.h"
 #include "SimFramework/Framework.h"
 #include "SimFramework/Components.h"
@@ -10,6 +12,24 @@
 // TODO: Singleton with all vehicle parameters
 
 namespace Models {
+
+    struct VehicleParameters
+    {
+        // Engine
+        std::string EngineJSON = "/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json";
+        float EngineInitialSpeed = 200.f;
+        float EngineInertia = 1.f;
+        float EngineViscousConstant = 0.05;
+
+        // Clutch
+
+        // Transmission
+
+        // Tyre
+
+        // Vehicle
+        float mass = 1000;
+    };
 
     struct VehicleBlocks
     {
@@ -24,7 +44,7 @@ namespace Models {
     class Vehicle : public SimFramework::System
     {
     public:
-        Vehicle();
+        Vehicle(VehicleParameters parameters);
         void ShiftUp();
         void ShiftDown();
         int CurrentGear() const;

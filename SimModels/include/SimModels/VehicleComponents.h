@@ -11,6 +11,8 @@ namespace Models {
     class Clutch : public SimFramework::Function
     {
     public:
+        Clutch(std::string = "Clutch");
+
         void Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* outClutchTorque);
 
         std::vector<SimFramework::SignalBase*> InputSignals() override;
@@ -34,7 +36,7 @@ namespace Models {
 
     class LinearTrigger : public SimFramework::TriggerFunction {
     public:
-        LinearTrigger();
+        LinearTrigger(float defaultValue = 0.f, float t_end = 1.f, std::string name = "Linear Trigger");
         float Evaluate(float t);
     };
 
@@ -42,6 +44,8 @@ namespace Models {
     class Tyre : public SimFramework::Function
     {
     public:
+        Tyre(std::string name = "Tyre");
+
         void Configure(SimFramework::Signal<float>* inRotationalSpeed,
                        SimFramework::Signal<float>* inLinearSpeed,
                        SimFramework::Signal<float>* outForce,
@@ -73,6 +77,8 @@ namespace Models {
     class AeroDrag : public SimFramework::Function
     {
     public:
+        AeroDrag(std::string name = "Aero Drag");
+
         void Configure(SimFramework::Signal<float>* inSpeed, SimFramework::Signal<float>* outForce);
         void SetParameters(float Cd=0.3, float A=2.5, float rho=1.225);
 
@@ -120,8 +126,7 @@ namespace Models {
 
     class Engine : public SimFramework::Subsystem {
     public:
-
-        void SetEngineParameters(std::string engineJSON="/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json", float J=1.f, float b=0.05);
+        Engine(std::string engineJSON="/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json", float initialSpeed=200.f, float J=1.f, float b=0.05);
 
         void Configure(
                 SimFramework::Signal<float>* inThrottle,
@@ -190,7 +195,7 @@ namespace Models {
     class VehicleDynamics : public SimFramework::Subsystem
     {
     public:
-        VehicleDynamics() : mass(1000.f) {};
+        VehicleDynamics();
 
         void Configure(
                 SimFramework::Signal<float>* inTyreForce,
@@ -210,7 +215,6 @@ namespace Models {
         SimFramework::Signal<float> m_SGravity;
         SimFramework::Signal<Eigen::Vector3f> m_SForceVec;
         SimFramework::Signal<Eigen::Vector2f> m_SStatesVec;
-
 
         // Blocks
         AeroDrag m_BAeroDrag;

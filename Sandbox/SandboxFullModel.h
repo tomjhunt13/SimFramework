@@ -8,7 +8,9 @@
 void SandboxFullModel()
 {
     // Set up system
-    Models::Vehicle vehicle;
+    Models::VehicleParameters vehicleParameters;
+
+    Models::Vehicle vehicle(vehicleParameters);
     Models::VehicleBlocks blocks = vehicle.Blocks();
     blocks.InThrottle->WriteValue(1.f);
     vehicle.Initialise(0);
@@ -48,7 +50,7 @@ void SandboxFullModel()
         vehicle.Update(t);
 
         myfile << t << ", " << blocks.OutPosition->ReadValue() << ", " << blocks.OutVelocity->ReadValue() << ", " << blocks.OutEngineSpeed->ReadValue() << std::endl;
-//        std::cout << "t: " << t << ", Car Pos: " << blocks.OutPosition->ReadValue() << ", Car Vel: " << blocks.OutVelocity. << transmission.CurrentGear() << std::endl;
+        std::cout << "t: " << t << ", Car Pos: " << blocks.OutPosition->ReadValue() << ", Car Vel: " << blocks.OutVelocity->ReadValue() << ", Engine Speed: " << blocks.OutEngineSpeed->ReadValue()<< std::endl;
 
         counter ++;
     }
