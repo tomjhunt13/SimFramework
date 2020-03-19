@@ -3,67 +3,55 @@
 
 namespace Models {
 
-
-//    void Vehicle::ShiftUp()
-//    {
-//        // Ignore if in top gear
-//        if (this->m_GearIndex == this->m_Ratios.size() - 1)
-//        {
-//            return;
-//        }
-//
-//        // Else increment gear
-//        this->m_GearIndex += 1;
-//
-//        // Trigger trigger  block
-//        this->m_BTrig.Trigger();
-//
-//        // Change gear
-//        this->SetGearRatio(this->m_GearIndex);
-//
-//    };
-//    void Vehicle::ShiftDown()
-//    {
-//        // Ignore if in bottom gear
-//        if (this->m_GearIndex == 0)
-//        {
-//            return;
-//        }
-//
-//        // Else decrement gear
-//        this->m_GearIndex -= 1;
-//
-//        // Trigger trigger block
-//        this->m_BTrig.Trigger();
-//
-//        // Change gear
-//        this->SetGearRatio(this->m_GearIndex);
-//    };
-//
-//    int Vehicle::CurrentGear()
-//    {
-//        return this->m_GearIndex + 1;
-//    }
-//
-//    void Vehicle::SetGearRatio(int gearIndex)
-//    {
-//        Eigen::Matrix<float, 1, 1> A;
-//        A << 0.f;
-//
-//        Eigen::Matrix<float, 1,2> B;
-//        B << 1.f / this->m_EffectiveInertia, - this->m_Ratios[this->m_GearIndex] / this->m_EffectiveInertia;
-//
-//        Eigen::Matrix<float, 2, 1> C;
-//        C << 1.f, this->m_Ratios[this->m_GearIndex];
-//
-//        Eigen::Matrix<float, 2, 2> D;
-//        D << 0.f, 0.f, 0.f, 0.f;
-//
-//        this->m_BStates.SetMatrices(A, B, C, D);
-//    }
-//
+    Vehicle::Vehicle() : System(0.001) {
+        // Configure subsytems
+        this->m_Engine.Configure(&(this->m_SThrottle), &(this->m_SClutchTorque), &(this->m_SEngineSpeed));
+        this->m_Transmission.Configure(&(this->m_SClutchTorque), &(this->m_STyreTorque), &(this->m_SBrake),
+                                       &(this->m_SClutchSpeed), &(this->m_STyreSpeed));
+        this->m_VehicleDynamics.Configure(&(this->m_STyreForce), &(this->m_SCarPosition), &(this->m_SCarSpeed));
 
 
+        this->m_Engine.SetEngineParameters();
 
+        // Configure model blocks
+        this->m_Clutch.Configure(&(this->m_SEngineSpeed), &(this->m_SClutchTorque));
+        this->m_Tyre.Configure(&(this->m_STyreSpeed), &(this->m_SCarSpeed), &(this->m_STyreForce),
+                               &(this->m_STyreTorque));
 
+        // Configure IO blocks
+        this->m_InThrottle.Configure(&(this->m_SThrottle), 0.f);
+        this->m_InBrakePressure.Configure(&(this->m_SBrake), 0.f);
+        this->m_OutEngineSpeed.Configure(&(this->m_SEngineSpeed), 0.f);
+        this->m_OutTyreSpeed.Configure(&(this->m_STyreSpeed), 0.f);
+        this->m_OutPosition.Configure(&(this->m_SCarPosition), 0.f);
+        this->m_OutVelocity.Configure(&(this->m_SCarSpeed), 0.f);
+
+        SimFramework::BlockList list = {{&(this->m_InThrottle),     &(this->m_InBrakePressure)},
+                                        {},
+                                        {&(this->m_Clutch), &(this->m_Tyre)},
+                                        {&(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity)},
+                                        {&(this->m_Engine),         &(this->m_Transmission), &(this->m_VehicleDynamics)}};
+        this->RegisterBlocks(list);
+
+    };
+
+    void Vehicle::ShiftUp()
+    {
+        this->m_Transmission.ShiftUp();
+    };
+
+    void Vehicle::ShiftDown()
+    {
+        this->m_Transmission.ShiftDown();
+    };
+
+    int Vehicle::CurrentGear() const
+    {
+        return this->CurrentGear();
+    };
+
+    const VehicleBlocks Vehicle::Blocks()
+    {
+        return {&(this->m_InThrottle), &(this->m_InBrakePressure), &(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity)};
+    };
 }; // namespace Models

@@ -147,6 +147,10 @@ namespace SimFramework {
         {
             this->t_n = t_0;
             this->m_States = this->m_InitialValue;
+
+            OutputType seg = this->m_C * this->m_States;
+
+            this->m_OutputSignal->Write(this->m_C * this->m_States);
         };
 
         void ReadInputs() override

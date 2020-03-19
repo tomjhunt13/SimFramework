@@ -2,13 +2,15 @@
 #include "SandboxEngine.h"
 #include "SandboxTransmission.h"
 #include "SandboxVehicleStandalone.h"
+#include "SandboxFullModel.h"
 
 int main() {
 
+    SandboxFullModel();
 //    SandboxMassSpringDamper();
 //    SandboxEngine();
-    SandboxTransmission();
-
+//    SandboxTransmission();
 //    SandboxVehicleStandalone();
+
     return 0;
 }

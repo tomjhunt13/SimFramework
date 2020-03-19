@@ -654,10 +654,10 @@ TEST(SortFunctions, MultipleDependants) {
 
 
 
-class PureFunctions : public SimFramework::Model
+class PureFunctions : public SimFramework::System
 {
 public:
-    PureFunctions() : Model(1.f)
+    PureFunctions() : System(1.f)
     {
         // Configure blocks
         this->In1.Configure(&(this->S1), 0.f);

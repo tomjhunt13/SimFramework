@@ -15,7 +15,7 @@ namespace Models {
         SimFramework::Output<float>* MassVelocityBlock;
     };
 
-    class MassSpringDamper1D : public SimFramework::Model
+    class MassSpringDamper1D : public SimFramework::System
     {
 
     public:

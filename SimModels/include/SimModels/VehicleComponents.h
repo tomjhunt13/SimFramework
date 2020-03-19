@@ -11,7 +11,7 @@ namespace Models {
     class Clutch : public SimFramework::Function
     {
     public:
-        void Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* inClutchSpeed, SimFramework::Signal<float>* outClutchTorque);
+        void Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* outClutchTorque);
 
         std::vector<SimFramework::SignalBase*> InputSignals() override;
         std::vector<SimFramework::SignalBase*> OutputSignals() override;

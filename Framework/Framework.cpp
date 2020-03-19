@@ -3,8 +3,7 @@
 
 namespace SimFramework {
 
-
-    void Model::Initialise(float t_0)
+    void System::Initialise(float t_0)
     {
         if (!this->m_Configured)
         {
@@ -27,14 +26,14 @@ namespace SimFramework {
 
         // Update sinks to t_np1
         for (auto i: this->m_Sinks) {
-            i->Update(0.f);
+            i->Update(t_0);
         }
 
         this->m_t_n = t_0;
     }
 
 
-    void Model::Update(float t_np1)
+    void System::Update(float t_np1)
     {
 
         // Get steps
@@ -52,6 +51,11 @@ namespace SimFramework {
                 i->Update(dt);
             }
 
+            // Update sources to t_np1
+            for (auto i: this->m_Sources) {
+                i->Update(dt);
+            }
+
             // Update functions in order, write out value at t_np1
             for (auto i: this->m_Functions) {
                 i->Update();
@@ -61,17 +65,12 @@ namespace SimFramework {
             for (auto i: this->m_Sinks) {
                 i->Update(dt);
             }
-
-            // Update sources to t_np1
-            for (auto i: this->m_Sources) {
-                i->Update(dt);
-            }
         }
 
         this->m_t_n = t_np1;
     };
 
-    void Model::RegisterBlocks(BlockList& blocks)
+    void System::RegisterBlocks(BlockList& blocks)
     {
         this->m_Sources.insert(this->m_Sources.end(), blocks.Sources.begin(), blocks.Sources.end());
         this->m_DynamicSystems.insert(this->m_DynamicSystems.end(), blocks.DynamicSystems.begin(), blocks.DynamicSystems.end());
@@ -85,7 +84,7 @@ namespace SimFramework {
         }
     };
 
-    void Model::Configure()
+    void System::Configure()
     {
         this->m_Functions = Internal::SortFunctions(this->m_Functions);
         this->m_Configured = true;

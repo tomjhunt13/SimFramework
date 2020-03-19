@@ -16,7 +16,7 @@ namespace Models {
         SimFramework::Output<float>* TyreOutBlock;
     };
 
-    class TransmissionStandalone : public SimFramework::Model {
+    class TransmissionStandalone : public SimFramework::System {
 
     public:
         TransmissionStandalone();

@@ -25,7 +25,7 @@ target_link_libraries(SimModels Framework)
 include_directories(SimModels/include)
 
 # Sandbox
-add_executable(Sandbox Sandbox/main.cpp Sandbox/SandboxTransmission.h Sandbox/SandboxMassSpringDamper.h Sandbox/SandboxEngine.h Sandbox/SandboxVehicleStandalone.h)
+add_executable(Sandbox Sandbox/main.cpp Sandbox/SandboxTransmission.h Sandbox/SandboxMassSpringDamper.h Sandbox/SandboxEngine.h Sandbox/SandboxVehicleStandalone.h Sandbox/SandboxFullModel.h)
 target_link_libraries(Sandbox Framework SimModels)
 
 # Tests

@@ -3,7 +3,7 @@
 
 namespace Models {
 
-    EngineStandalone::EngineStandalone() : Model(0.001)
+    EngineStandalone::EngineStandalone() : System(0.001)
     {
         // Configure blocks
         this->m_BThrottle.Configure(&(this->m_SThrottle), 0.f);

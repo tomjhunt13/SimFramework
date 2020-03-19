@@ -3,7 +3,7 @@
 
 namespace Models {
 
-    MassSpringDamper1D::MassSpringDamper1D(float mass, float k, float c) : Model(0.001), m_Mass(mass), m_K(k), m_C(c)
+    MassSpringDamper1D::MassSpringDamper1D(float mass, float k, float c) : System(0.001), m_Mass(mass), m_K(k), m_C(c)
     {
         // Gain matrix
         Eigen::Matrix<float, 1, 2> gainMatrix;

@@ -2,7 +2,7 @@
 
 namespace Models {
 
-    void Clutch::Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* inClutchSpeed, SimFramework::Signal<float>* outClutchTorque)
+    void Clutch::Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* outClutchTorque)
     {
         this->m_InEngineSpeed = inEngineSpeed;
         this->m_OutClutchTorque = outClutchTorque;
@@ -149,7 +149,7 @@ namespace Models {
     void DiscBrake::Update()
     {
         float speed = this->m_WheelSpeed->Read();
-        float brakeMagnitude = this->m_BrakeConstant * this->m_BrakePressure->Read() * 6000000.f;
+        float brakeMagnitude = this->m_BrakeConstant * this->m_BrakePressure->Read() * 6000000.f * 4.f;
 
         if (speed >= 0.f)
         {

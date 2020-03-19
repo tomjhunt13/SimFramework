@@ -1,6 +1,7 @@
 #ifndef SIMFRAMEWORK_FRAMEWORK_H
 #define SIMFRAMEWORK_FRAMEWORK_H
 
+#include <string>
 #include <vector>
 #include <map>
 #include <stack>
@@ -49,7 +50,7 @@ namespace SimFramework {
     public:
         virtual ~DynamicSystem() {};
         virtual void ReadInputs() = 0;
-        virtual void Initialise(float t_0) = 0;     // Only updates internal states
+        virtual void Initialise(float t_0) = 0;     // Set initial states AND write initial output
         virtual void Update(float dt) = 0;
     };
 
@@ -70,7 +71,6 @@ namespace SimFramework {
 
     class Subsystem;
 
-
     struct BlockList
     {
         std::vector<Source*> Sources;
@@ -88,11 +88,11 @@ namespace SimFramework {
         virtual BlockList Blocks() = 0;
     };
 
-    class Model {
+    class System {
 
     public:
 
-        Model(float dtMax=0.1) : m_Configured(false), m_dtMax(dtMax) {}
+        System(float dtMax=0.1) : m_Configured(false), m_dtMax(dtMax) {}
 
         void Initialise(float t_0);
         void Update(float t_np1);

@@ -7,50 +7,60 @@
 
 #include "SimModels/VehicleComponents.h"
 
+// TODO: Singleton with all vehicle parameters
+
 namespace Models {
 
     struct VehicleBlocks
     {
-
+        SimFramework::Input<float>* InThrottle;
+        SimFramework::Input<float>* InBrakePressure;
+        SimFramework::Output<float>* OutEngineSpeed;
+        SimFramework::Output<float>* OutTyreSpeed;
+        SimFramework::Output<float>* OutPosition;
+        SimFramework::Output<float>* OutVelocity;
     };
 
-    class Vehicle : public SimFramework::Model
+    class Vehicle : public SimFramework::System
     {
     public:
-        Vehicle()
-        {
-            this->m_Engine.Configure(&(this->m_SThrottle), &(this->m_SClutchTorque), &(this->m_SEngineSpeed));
-            this->m_Clutch.Configure(&(this->m_SEngineSpeed), &(this->m_SClutchSpeed), &(this->m_SClutchTorque));
-//            this->m_Transmission.Configure(&(this->m_SClutchTorque), &(this->m_STyreTorque), &(this->m_SClutchSpeed), &(this->m_STyreSpeed));
+        Vehicle();
+        void ShiftUp();
+        void ShiftDown();
+        int CurrentGear() const;
 
-            SimFramework::BlockList list = {{&(this->m_InThrottle)},
-                                            {},
-                                            {&(this->m_Clutch)},
-                                            {&(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed)},
-                                            {&(this->m_Engine), &(this->m_Transmission)}};
-            this->RegisterBlocks(list);
-        }
+        const VehicleBlocks Blocks();
+
 
     private:
         // Signals
         SimFramework::Signal<float> m_SThrottle;
+        SimFramework::Signal<float> m_SBrake;
         SimFramework::Signal<float> m_SEngineSpeed;
         SimFramework::Signal<float> m_SClutchSpeed;
         SimFramework::Signal<float> m_SClutchTorque;
+        SimFramework::Signal<float> m_STyreForce;
         SimFramework::Signal<float> m_STyreTorque;
         SimFramework::Signal<float> m_STyreSpeed;
+        SimFramework::Signal<float> m_SCarPosition;
+        SimFramework::Signal<float> m_SCarSpeed;
 
         // Blocks - IO
         SimFramework::Input<float> m_InThrottle;
+        SimFramework::Input<float> m_InBrakePressure;
         SimFramework::Output<float> m_OutEngineSpeed;
         SimFramework::Output<float> m_OutTyreSpeed;
+        SimFramework::Output<float> m_OutPosition;
+        SimFramework::Output<float> m_OutVelocity;
 
-        // Blocks - Model
+        // Blocks - System
         Clutch m_Clutch;
+        Tyre m_Tyre;
 
         // Subsystems
         Engine m_Engine;
         Transmission m_Transmission;
+        VehicleDynamics m_VehicleDynamics;
     };
 
 }; // namespace Models
