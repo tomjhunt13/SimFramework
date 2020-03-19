@@ -160,7 +160,9 @@ namespace Models {
     };
 
 
-    Engine::Engine(std::string engineJSON, float initialSpeed, float J, float b)
+    Engine::Engine(std::string engineJSON, float initialSpeed, float J, float b) :
+            m_SEngineSpeed_("Engine Speed SS Output"), m_SEngineTorque("Engine Map Torque"), m_STorqueInput("Engine Torque Vec"),
+            m_BEngineMap("Engine Map"), m_BTorqueVector("Engine Torque Vec"), m_BInertia("Engine"), m_BMask("Engine Mask")
     {
         // Set engine table
         SimFramework::Table3D engineTable = SimFramework::ReadTableJSON(engineJSON, "speed", "throttle", "torque");
@@ -168,16 +170,16 @@ namespace Models {
 
         // Set state space matrices
         Eigen::Matrix<float, 1, 1> A;
-        A << -b;
+        A << -b / J;
 
-        Eigen::Matrix<float, 1, 1> B;
-        B << 1.f / J;
+        Eigen::Matrix<float, 1, 2> B;
+        B << 1.f / J, -1.f / J;
 
         Eigen::Matrix<float, 1, 1> C;
         C << 1.f;
 
-        Eigen::Matrix<float, 1, 1> D;
-        D << 1.f;
+        Eigen::Matrix<float, 1, 2> D;
+        D << 0.f, 0.f;
 
         this->m_BInertia.SetMatrices(A, B, C, D);
 
@@ -194,8 +196,8 @@ namespace Models {
     {
         // Configure blocks
         this->m_BEngineMap.Configure(outEngineSpeed, inThrottle, &(this->m_SEngineTorque));
-        this->m_BSum.Configure({&(this->m_SEngineTorque), inLoadTorque}, &(this->m_SResultantTorque), {1.f, -1.f});
-        this->m_BInertia.Configure(&(this->m_SResultantTorque), &(this->m_SEngineSpeed_));
+        this->m_BTorqueVector.Configure({&(this->m_SEngineTorque), inLoadTorque}, &(this->m_STorqueInput));
+        this->m_BInertia.Configure(&(this->m_STorqueInput), &(this->m_SEngineSpeed_));
         this->m_BMask.Configure(&(this->m_SEngineSpeed_), {outEngineSpeed}, {0});
     };
 
@@ -204,7 +206,7 @@ namespace Models {
         // Construct system
         return {{},
                 {&(this->m_BInertia)},
-                {&(this->m_BMask), &(this->m_BEngineMap), &(this->m_BSum)},
+                {&(this->m_BMask), &(this->m_BEngineMap), &(this->m_BTorqueVector)},
                 {},
                 {}};
     };

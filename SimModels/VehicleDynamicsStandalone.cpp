@@ -2,7 +2,7 @@
 
 namespace Models {
 
-    VehicleDynamicsStandalone::VehicleDynamicsStandalone(VehicleDynamicsParams params) : System(0.1), m_SysVehicleDynamics(params.InitialPosition, params.InitialVelocity, params.Mass, params.Cd, params.A, params.rho)
+    VehicleDynamicsStandalone::VehicleDynamicsStandalone(VehicleDynamicsParams parameters) : System(0.1), m_SysVehicleDynamics(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho)
     {
         // Configure blocks
         this->m_TyreForce.Configure(&(this->m_STyre), 0.f);

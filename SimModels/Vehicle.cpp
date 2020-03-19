@@ -5,7 +5,8 @@ namespace Models {
 
     Vehicle::Vehicle(VehicleParameters parameters)
         : System(0.001),
-          m_Engine(parameters.EngineJSON, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant) {
+          m_Engine(parameters.EngineJSON, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant),
+          m_VehicleDynamics(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho){
 
 
         // Configure subsytems

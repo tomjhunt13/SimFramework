@@ -135,14 +135,14 @@ namespace Models {
 
     private:
         // Signals
-        SimFramework::Signal<Eigen::Matrix<float, 1, 1>> m_SEngineSpeed_;
+        SimFramework::Signal<Eigen::Vector<float, 1>> m_SEngineSpeed_;
         SimFramework::Signal<float> m_SEngineTorque;
-        SimFramework::Signal<float> m_SResultantTorque;
+        SimFramework::Signal<Eigen::Vector2f> m_STorqueInput;
 
         // Blocks
         SimFramework::LookupTable2D m_BEngineMap;
-        SimFramework::SummingJunction<float> m_BSum;
-        SimFramework::StateSpace<float, Eigen::Matrix<float, 1, 1>, 1, 1, 1> m_BInertia;
+        SimFramework::Vectorise<float, Eigen::Vector2f> m_BTorqueVector;
+        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector<float, 1>, 2, 1, 1> m_BInertia;
         SimFramework::Mask<Eigen::Matrix<float, 1, 1>, float> m_BMask;
     };
 

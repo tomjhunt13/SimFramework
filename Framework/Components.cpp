@@ -57,6 +57,8 @@ namespace SimFramework {
     };
 
 
+    LookupTable2D::LookupTable2D(std::string name) : Function(name) {};
+
     void LookupTable2D::Configure(Signal<float>* x, Signal<float>* y, Signal<float>* out)
     {
         this->m_X = x;

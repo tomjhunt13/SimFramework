@@ -28,7 +28,12 @@ namespace Models {
         // Tyre
 
         // Vehicle
-        float mass = 1000;
+        float InitialPosition = 0.f;
+        float InitialVelocity = 0.f;
+        float Mass = 1000.f;
+        float Cd = 0.3;
+        float A = 2.5;
+        float rho = 1.225;
     };
 
     struct VehicleBlocks

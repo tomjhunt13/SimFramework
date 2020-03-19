@@ -201,6 +201,8 @@ namespace SimFramework {
     template <typename SignalType>
     class SummingJunction : public Function {
     public:
+        SummingJunction(std::string name = "Summing Junction") : Function(name) {};
+
         void Configure(std::vector<Signal<SignalType>*> inputSignals,
                        Signal<SignalType>* outputSignal,
                        std::vector<float> weights)
@@ -421,6 +423,7 @@ namespace SimFramework {
     class LookupTable2D : public Function
     {
     public:
+        LookupTable2D(std::string name = "LookupTable2D");
         void Configure(Signal<float>* x, Signal<float>* y, Signal<float>* out);
         void SetTable(Table3D& table);
 

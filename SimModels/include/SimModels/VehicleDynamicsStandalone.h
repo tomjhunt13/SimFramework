@@ -28,7 +28,7 @@ namespace Models {
 
     class VehicleDynamicsStandalone : public SimFramework::System {
     public:
-        VehicleDynamicsStandalone(VehicleDynamicsParams params);
+        VehicleDynamicsStandalone(VehicleDynamicsParams parameters);
         VehicleDynamicsBlocks Blocks();
 
     private:

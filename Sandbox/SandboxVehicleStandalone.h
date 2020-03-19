@@ -7,10 +7,10 @@
 
 void SandboxVehicleStandalone()
 {
-    Models::VehicleDynamicsParams params;
-    params.InitialVelocity = 100;
+    Models::VehicleDynamicsParams parameters;
+    parameters.InitialVelocity = 100;
 
-    Models::VehicleDynamicsStandalone vehicle(params);
+    Models::VehicleDynamicsStandalone vehicle(parameters);
 
     Models::VehicleDynamicsBlocks blocks = vehicle.Blocks();
 

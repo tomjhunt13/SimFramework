@@ -13,7 +13,7 @@ void SandboxEngine()
 
     std::string engineJSON = "/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json";
 
-    Models::EngineStandalone eng(engineJSON, 200);
+    Models::EngineStandalone eng(engineJSON, 300);
 
     Models::EngineBlocks blocks = eng.Blocks();
     eng.Initialise(0.f);
