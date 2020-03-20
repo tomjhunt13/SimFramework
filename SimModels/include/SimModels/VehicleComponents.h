@@ -8,10 +8,10 @@
 
 namespace Models {
 
-    class Clutch : public SimFramework::Function
+    class CentrifugalClutch : public SimFramework::Function
     {
     public:
-        Clutch(std::string = "Clutch");
+        CentrifugalClutch(std::string = "CentrifugalClutch");
 
         void Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* outClutchTorque);
 
@@ -99,7 +99,7 @@ namespace Models {
 
     class DiscBrake : public SimFramework::Function
     {
-        // TODO: currently brake pressure is a value between 0 and 1. Should consider putting gain outside
+        // TODO: currently brake pressure is a value between 0 and 1. Should consider putting gain as variable
     public:
         void Configure(SimFramework::Signal<float>* inBrakePressure, SimFramework::Signal<float>* inWheelSpeed, SimFramework::Signal<float>* outBrakeTorque);
         void SetParameters(float mu=0.9, float R=0.15, float D=0.01, int N=2);
@@ -120,6 +120,35 @@ namespace Models {
         SimFramework::Signal<float>* m_BrakePressure;
         SimFramework::Signal<float>* m_WheelSpeed;
         SimFramework::Signal<float>* m_BrakeTorque;
+    };
+
+
+    class VehicleController : public SimFramework::Subsystem
+    {
+    public:
+        VehicleController(float clutchLagTime=1.f);
+
+        void Configure(SimFramework::Signal<float>* inDemandThrottle, SimFramework::Signal<float>* inClutchTorque,
+                       SimFramework::Signal<float>* outThrottleAugmented, SimFramework::Signal<float>* outClutchTorqueAugmented);
+
+        void Trigger();
+
+        SimFramework::BlockList Blocks() override;
+
+    private:
+        // Signals
+        SimFramework::Signal<Eigen::Vector<float, 2>> m_SInputVec;
+        SimFramework::Signal<Eigen::Vector<float, 2>> m_SConstVec;
+        SimFramework::Signal<Eigen::Vector<float, 2>> m_SAugmentedVec;
+        SimFramework::Signal<float> m_SParamSignal;
+
+        // Blocks
+        SimFramework::Vectorise<float, Eigen::Vector<float, 2>> m_BVectorise;
+        SimFramework::ConstantBlock<Eigen::Vector<float, 2>> m_BConst;
+        LinearTrigger m_BTrigger;
+        SimFramework::LinearBlend<Eigen::Vector<float, 2>> m_BBlend;
+        SimFramework::Mask<Eigen::Vector<float, 2>, float> m_BMask;
+
     };
 
 

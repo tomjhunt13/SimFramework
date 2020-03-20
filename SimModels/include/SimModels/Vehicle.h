@@ -79,7 +79,7 @@ namespace Models {
         SimFramework::Output<float> m_OutVelocity;
 
         // Blocks - System
-        Clutch m_Clutch;
+        CentrifugalClutch m_Clutch;
         Tyre m_Tyre;
 
         // Subsystems

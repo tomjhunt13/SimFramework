@@ -11,6 +11,8 @@ namespace SimFramework {
     template <typename SignalType>
     class ConstantBlock : public Source {
     public:
+        ConstantBlock(std::string name="Constant") : Source(name) {};
+
         void Configure(Signal<SignalType>* outputSignal, SignalType value)
         {
             this->m_OutputSignal = outputSignal;
@@ -446,6 +448,8 @@ namespace SimFramework {
     class LinearBlend : public Function
     {
     public:
+        LinearBlend(std::string name="Linear Blend") : Function(name) {};
+
         void Configure(Signal<InputType>* input1, Signal<InputType>* input2, Signal<float>* alpha, Signal<InputType>* output)
         {
             this->m_Input1 = input1;
