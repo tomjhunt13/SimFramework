@@ -2,6 +2,34 @@
 
 namespace Models {
 
+    Clutch::Clutch(std::string name) : Function(name) {};
+
+    void Clutch::Configure(
+            SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* inTransmissionSpeed,
+            SimFramework::Signal<float>* inClutchStiffness, SimFramework::Signal<float>* outClutchTorque)
+    {
+        this->m_InEngineSpeed = inEngineSpeed;
+        this->m_InTransmissionSpeed = inTransmissionSpeed;
+        this->m_InClutchStiffness = inClutchStiffness;
+        this->m_OutClutchTorque = outClutchTorque;
+    };
+
+    std::vector<SimFramework::SignalBase*> Clutch::InputSignals()
+    {
+        return {this->m_InEngineSpeed, this->m_InTransmissionSpeed, this->m_InClutchStiffness};
+    };
+
+    std::vector<SimFramework::SignalBase*> Clutch::OutputSignals()
+    {
+        return {this->m_OutClutchTorque};
+    };
+
+    void Clutch::Update()
+    {
+        this->m_OutClutchTorque->Write(this->m_InClutchStiffness->Read() * (this->m_InEngineSpeed->Read() - this->m_InTransmissionSpeed->Read()));
+    };
+
+
     CentrifugalClutch::CentrifugalClutch(std::string name) : Function(name) {};
 
     void CentrifugalClutch::Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* outClutchTorque)
@@ -172,21 +200,22 @@ namespace Models {
     };
 
 
-    VehicleController::VehicleController(float clutchLagTime) :
+    VehicleController::VehicleController(float clutchLagTime, float clutchStiffness) : m_ParamClutchStiffness(clutchStiffness),
             m_SInputVec("Controller Input Vector"), m_SConstVec("Controller Constant Vector"), m_SAugmentedVec("Controller Augmented Vector"), m_SParamSignal("Controller Parameter Signal"),
             m_BVectorise("Controller Input Vector"), m_BConst("Controller Constant Vector"), m_BTrigger(0.f, clutchLagTime, "Controller"), m_BBlend("Controller"), m_BMask("Controller")
     {};
 
     void VehicleController::Configure(
-            SimFramework::Signal<float>* inDemandThrottle, SimFramework::Signal<float>* inClutchTorque,
-            SimFramework::Signal<float>* outThrottleAugmented, SimFramework::Signal<float>* outClutchTorqueAugmented)
+            SimFramework::Signal<float>* inDemandThrottle,
+            SimFramework::Signal<float>* outThrottleAugmented, SimFramework::Signal<float>* outClutchStiffness)
     {
         // Configure Blocks
-        this->m_BVectorise.Configure({inDemandThrottle, inClutchTorque}, &(this->m_SInputVec));
+        this->m_BClutchStiffness.Configure(&(this->m_SClutchStiffness), this->m_ParamClutchStiffness);
+        this->m_BVectorise.Configure({inDemandThrottle, &(this->m_SClutchStiffness)}, &(this->m_SInputVec));
         this->m_BConst.Configure(&(this->m_SConstVec), {0, 0});
         this->m_BTrigger.Configure(&(this->m_SParamSignal));
         this->m_BBlend.Configure(&(this->m_SInputVec), &(this->m_SConstVec), &(this->m_SParamSignal), &(this->m_SAugmentedVec));
-        this->m_BMask.Configure(&(this->m_SAugmentedVec), {outThrottleAugmented, outClutchTorqueAugmented}, {0, 1});
+        this->m_BMask.Configure(&(this->m_SAugmentedVec), {outThrottleAugmented, outClutchStiffness}, {0, 1});
     };
 
     void VehicleController::Trigger()
@@ -196,7 +225,7 @@ namespace Models {
 
     SimFramework::BlockList VehicleController::Blocks()
     {
-        return {{&(this->m_BTrigger), &(this->m_BConst)},
+        return {{&(this->m_BTrigger), &(this->m_BConst), &(this->m_BClutchStiffness)},
                 {},
                 {&(this->m_BBlend), &(this->m_BVectorise), &(this->m_BMask)},
                 {},

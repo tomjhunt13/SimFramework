@@ -25,6 +25,7 @@ namespace Models {
         float GearshiftLag = 1.f;
 
         // Clutch
+        float ClutchStiffness = 1000.f;
 
         // Transmission
 
@@ -68,7 +69,7 @@ namespace Models {
         SimFramework::Signal<float> m_SEngineSpeed;
         SimFramework::Signal<float> m_SClutchSpeed;
         SimFramework::Signal<float> m_SClutchTorque;
-        SimFramework::Signal<float> m_SClutchTorqueAugmented;
+        SimFramework::Signal<float> m_SClutchStiffness;
         SimFramework::Signal<float> m_STyreForce;
         SimFramework::Signal<float> m_STyreTorque;
         SimFramework::Signal<float> m_STyreSpeed;
@@ -84,7 +85,7 @@ namespace Models {
         SimFramework::Output<float> m_OutVelocity;
 
         // Blocks - System
-        CentrifugalClutch m_Clutch;
+        Clutch m_Clutch;
         Tyre m_Tyre;
 
         // Subsystems

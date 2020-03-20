@@ -8,6 +8,27 @@
 
 namespace Models {
 
+    class Clutch : public SimFramework::Function
+    {
+    public:
+        Clutch(std::string name = "Clutch");
+
+        void Configure(
+                SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* inTransmissionSpeed,
+                SimFramework::Signal<float>* inClutchStiffness, SimFramework::Signal<float>* outClutchTorque);
+
+        std::vector<SimFramework::SignalBase*> InputSignals() override;
+        std::vector<SimFramework::SignalBase*> OutputSignals() override;
+        void Update() override;
+
+    private:
+        // Signals
+        SimFramework::Signal<float>* m_InEngineSpeed;
+        SimFramework::Signal<float>* m_InTransmissionSpeed;
+        SimFramework::Signal<float>* m_InClutchStiffness;
+        SimFramework::Signal<float>* m_OutClutchTorque;
+    };
+
     class CentrifugalClutch : public SimFramework::Function
     {
     public:
@@ -126,17 +147,21 @@ namespace Models {
     class VehicleController : public SimFramework::Subsystem
     {
     public:
-        VehicleController(float clutchLagTime=1.f);
+        VehicleController(float clutchLagTime=1.f, float clutchStiffness=1000.f);
 
-        void Configure(SimFramework::Signal<float>* inDemandThrottle, SimFramework::Signal<float>* inClutchTorque,
-                       SimFramework::Signal<float>* outThrottleAugmented, SimFramework::Signal<float>* outClutchTorqueAugmented);
+        void Configure(SimFramework::Signal<float>* inDemandThrottle,
+                       SimFramework::Signal<float>* outThrottleAugmented, SimFramework::Signal<float>* outClutchStiffness);
 
         void Trigger();
 
         SimFramework::BlockList Blocks() override;
 
     private:
+        // Parameters
+        float m_ParamClutchStiffness;
+
         // Signals
+        SimFramework::Signal<float> m_SClutchStiffness;
         SimFramework::Signal<Eigen::Vector<float, 2>> m_SInputVec;
         SimFramework::Signal<Eigen::Vector<float, 2>> m_SConstVec;
         SimFramework::Signal<Eigen::Vector<float, 2>> m_SAugmentedVec;
@@ -144,6 +169,7 @@ namespace Models {
 
         // Blocks
         SimFramework::Vectorise<float, Eigen::Vector<float, 2>> m_BVectorise;
+        SimFramework::ConstantBlock<float> m_BClutchStiffness;
         SimFramework::ConstantBlock<Eigen::Vector<float, 2>> m_BConst;
         LinearTrigger m_BTrigger;
         SimFramework::LinearBlend<Eigen::Vector<float, 2>> m_BBlend;
