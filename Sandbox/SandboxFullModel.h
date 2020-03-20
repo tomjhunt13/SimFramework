@@ -9,6 +9,8 @@ void SandboxFullModel()
 {
     // Set up system
     Models::VehicleParameters vehicleParameters;
+    vehicleParameters.GearshiftLag = 2.f;
+    vehicleParameters.A = 3.f;
 
     Models::Vehicle vehicle(vehicleParameters);
     Models::VehicleBlocks blocks = vehicle.Blocks();

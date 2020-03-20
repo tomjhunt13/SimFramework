@@ -21,6 +21,9 @@ namespace Models {
         float EngineInertia = 1.f;
         float EngineViscousConstant = 0.05;
 
+        // Controller
+        float GearshiftLag = 1.f;
+
         // Clutch
 
         // Transmission
@@ -60,10 +63,12 @@ namespace Models {
     private:
         // Signals
         SimFramework::Signal<float> m_SThrottle;
+        SimFramework::Signal<float> m_SThrottleAugmented;
         SimFramework::Signal<float> m_SBrake;
         SimFramework::Signal<float> m_SEngineSpeed;
         SimFramework::Signal<float> m_SClutchSpeed;
         SimFramework::Signal<float> m_SClutchTorque;
+        SimFramework::Signal<float> m_SClutchTorqueAugmented;
         SimFramework::Signal<float> m_STyreForce;
         SimFramework::Signal<float> m_STyreTorque;
         SimFramework::Signal<float> m_STyreSpeed;
@@ -83,6 +88,7 @@ namespace Models {
         Tyre m_Tyre;
 
         // Subsystems
+        VehicleController m_Controller;
         Engine m_Engine;
         Transmission m_Transmission;
         VehicleDynamics m_VehicleDynamics;

@@ -202,17 +202,12 @@ namespace Models {
         float m_EffectiveInertia = 1.f;
 
         // Signals
-        SimFramework::Signal<float> m_SConst;
-        SimFramework::Signal<float> m_STrig;
-        SimFramework::Signal<float> m_SAugmented;
         SimFramework::Signal<Eigen::Vector3f> m_STorqueVec;
         SimFramework::Signal<Eigen::Vector2f> m_SSpeeds;
         SimFramework::Signal<float> m_SBrakeTorque;
 
         // Blocks
         DiscBrake m_BDiscBrake;
-        SimFramework::LinearBlend<float> m_BBlend;
-        LinearTrigger m_BTrig;
         SimFramework::ConstantBlock<float> m_BConst;
         SimFramework::Vectorise<float, Eigen::Vector3f> m_BVec;
         SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 1, 2> m_BStates;

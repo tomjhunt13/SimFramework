@@ -3,14 +3,15 @@
 
 namespace Models {
 
-    Vehicle::Vehicle(VehicleParameters parameters)
-        : System(0.001),
-          m_Engine(parameters.EngineJSON, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant),
-          m_VehicleDynamics(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho){
+    Vehicle::Vehicle(VehicleParameters parameters) : System(0.001),
+        m_Controller(parameters.GearshiftLag),
+        m_Engine(parameters.EngineJSON, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant),
+        m_VehicleDynamics(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho){
 
 
-        // Configure subsytems
-        this->m_Engine.Configure(&(this->m_SThrottle), &(this->m_SClutchTorque), &(this->m_SEngineSpeed));
+        // Configure subsystems
+        this->m_Controller.Configure(&(this->m_SThrottle), &(this->m_SClutchTorque), &(this->m_SThrottleAugmented), &(this->m_SClutchTorqueAugmented));
+        this->m_Engine.Configure(&(this->m_SThrottleAugmented), &(this->m_SClutchTorqueAugmented), &(this->m_SEngineSpeed));
         this->m_Transmission.Configure(&(this->m_SClutchTorque), &(this->m_STyreTorque), &(this->m_SBrake),
                                        &(this->m_SClutchSpeed), &(this->m_STyreSpeed));
         this->m_VehicleDynamics.Configure(&(this->m_STyreForce), &(this->m_SCarPosition), &(this->m_SCarSpeed));
@@ -32,18 +33,20 @@ namespace Models {
                                         {},
                                         {&(this->m_Clutch), &(this->m_Tyre)},
                                         {&(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity)},
-                                        {&(this->m_Engine),         &(this->m_Transmission), &(this->m_VehicleDynamics)}};
+                                        {&(this->m_Controller), &(this->m_Engine),         &(this->m_Transmission), &(this->m_VehicleDynamics)}};
         this->RegisterBlocks(list);
 
     };
 
     void Vehicle::ShiftUp()
     {
+        this->m_Controller.Trigger();
         this->m_Transmission.ShiftUp();
     };
 
     void Vehicle::ShiftDown()
     {
+        this->m_Controller.Trigger();
         this->m_Transmission.ShiftDown();
     };
 

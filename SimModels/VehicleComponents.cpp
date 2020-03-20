@@ -196,14 +196,11 @@ namespace Models {
 
     SimFramework::BlockList VehicleController::Blocks()
     {
-        SimFramework::BlockList list = {
-                {&(this->m_BTrigger), &(this->m_BConst)},
+        return {{&(this->m_BTrigger), &(this->m_BConst)},
                 {},
                 {&(this->m_BBlend), &(this->m_BVectorise), &(this->m_BMask)},
                 {},
                 {}};
-
-        return list;
     };
 
 
@@ -276,10 +273,7 @@ namespace Models {
 
         // Configure blocks
         this->m_BDiscBrake.Configure(inBrakePressure, outTyreSpeed, &(this->m_SBrakeTorque));
-        this->m_BBlend.Configure(inClutchTorque, &(this->m_SConst), &(this->m_STrig), &(this->m_SAugmented));
-        this->m_BTrig.Configure(&(this->m_STrig));
-        this->m_BConst.Configure(&(this->m_SConst), 0);
-        this->m_BVec.Configure({&(this->m_SAugmented),  inTyreTorque, &(this->m_SBrakeTorque)}, &(this->m_STorqueVec));
+        this->m_BVec.Configure({inClutchTorque,  inTyreTorque, &(this->m_SBrakeTorque)}, &(this->m_STorqueVec));
         this->m_BStates.Configure(&(this->m_STorqueVec), &(this->m_SSpeeds));
         this->m_BStates.SetInitialConditions(initState);
         this->m_BMask.Configure(&(this->m_SSpeeds), {outClutchSpeed, outTyreSpeed}, {0, 1});
@@ -287,9 +281,9 @@ namespace Models {
 
     SimFramework::BlockList Transmission::Blocks()
     {
-        return {{&(this->m_BConst), &(this->m_BTrig)},
+        return {{},
                 {&(this->m_BStates)},
-                {&(this->m_BBlend), &(this->m_BVec), &(this->m_BMask), &(this->m_BDiscBrake)},
+                {&(this->m_BVec), &(this->m_BMask), &(this->m_BDiscBrake)},
                 {},
                 {}};
     };
@@ -306,9 +300,6 @@ namespace Models {
         // Else increment gear
         this->m_GearIndex += 1;
 
-        // Trigger trigger  block
-        this->m_BTrig.Trigger();
-
         // Change gear
         this->SetGearRatio(this->m_GearIndex);
 
@@ -323,9 +314,6 @@ namespace Models {
 
         // Else decrement gear
         this->m_GearIndex -= 1;
-
-        // Trigger trigger block
-        this->m_BTrig.Trigger();
 
         // Change gear
         this->SetGearRatio(this->m_GearIndex);
