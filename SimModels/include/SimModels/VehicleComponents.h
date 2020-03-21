@@ -72,7 +72,7 @@ namespace Models {
                        SimFramework::Signal<float>* outForce,
                        SimFramework::Signal<float>* outTorque);
 
-        void SetParameters(float radius=0.2, float Fz=5000,  float B=10, float C=1.9, float D=1, float E=0.97);
+        void SetParameters(float radius=0.2, float Fz=15000,  float B=10, float C=1.9, float D=1, float E=0.97);
 
         std::vector<SimFramework::SignalBase*> InputSignals() override;
         std::vector<SimFramework::SignalBase*> OutputSignals() override;
@@ -206,8 +206,8 @@ namespace Models {
     class Transmission : public SimFramework::Subsystem {
 
     public:
-        void ShiftUp();
-        void ShiftDown();
+        bool ShiftUp();
+        bool ShiftDown();
         int CurrentGear();
 
         void Configure(
@@ -223,7 +223,7 @@ namespace Models {
         void SetGearRatio(int gearIndex);
 
         // Parameters
-        std::vector<float> m_Ratios = {0.5, 1.f, 1.5, 2.f, 3.f};
+        std::vector<float> m_Ratios = {0.07, 0.14, 0.23, 0.32, 0.41, 0.5};
         int m_GearIndex;
         float m_EffectiveInertia = 1.f;
 

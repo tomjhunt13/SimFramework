@@ -9,10 +9,12 @@ void SandboxFullModel()
 {
     // Set up system
     Models::VehicleParameters vehicleParameters;
-    vehicleParameters.Mass = 200.f;
-    vehicleParameters.GearshiftLag = 0.5;
-    vehicleParameters.A = 3.f;
-    vehicleParameters.ClutchStiffness = 10.f;
+    vehicleParameters.Mass = 1500.f;
+    vehicleParameters.GearshiftLag = 0.75;
+    vehicleParameters.A = 2.f;
+    vehicleParameters.ClutchStiffness = 100.f;
+    vehicleParameters.EngineViscousConstant = 0.05;
+    vehicleParameters.EngineInertia = 0.2f;
 
     Models::Vehicle vehicle(vehicleParameters);
     Models::VehicleBlocks blocks = vehicle.Blocks();
@@ -31,7 +33,7 @@ void SandboxFullModel()
     int counter = 1;
     for (float t = 0.f; t <= 200.f; t += dt) {
 
-        if (counter % 300 == 0)
+        if (counter % 100 == 0)
         {
             if (counter < 1500)
             {

@@ -25,7 +25,7 @@ namespace Models {
         float GearshiftLag = 1.f;
 
         // Clutch
-        float ClutchStiffness = 1000.f;
+        float ClutchStiffness = 100.f;
 
         // Transmission
 

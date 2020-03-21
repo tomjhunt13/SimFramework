@@ -318,12 +318,12 @@ namespace Models {
     };
 
 
-    void Transmission::ShiftUp()
+    bool Transmission::ShiftUp()
     {
         // Ignore if in top gear
         if (this->m_GearIndex == this->m_Ratios.size() - 1)
         {
-            return;
+            return false;
         }
 
         // Else increment gear
@@ -332,13 +332,15 @@ namespace Models {
         // Change gear
         this->SetGearRatio(this->m_GearIndex);
 
+        return true;
     };
-    void Transmission::ShiftDown()
+
+    bool Transmission::ShiftDown()
     {
         // Ignore if in bottom gear
         if (this->m_GearIndex == 0)
         {
-            return;
+            return false;
         }
 
         // Else decrement gear
@@ -346,6 +348,8 @@ namespace Models {
 
         // Change gear
         this->SetGearRatio(this->m_GearIndex);
+
+        return true;
     };
 
     void Transmission::SetGearRatio(int gearIndex)

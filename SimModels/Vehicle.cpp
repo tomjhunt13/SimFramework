@@ -3,7 +3,7 @@
 
 namespace Models {
 
-    Vehicle::Vehicle(VehicleParameters parameters) : System(0.001),
+    Vehicle::Vehicle(VehicleParameters parameters) : System(0.0025),
         m_Controller(parameters.GearshiftLag, parameters.ClutchStiffness),
         m_Engine(parameters.EngineJSON, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant),
         m_VehicleDynamics(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho){
@@ -40,14 +40,18 @@ namespace Models {
 
     void Vehicle::ShiftUp()
     {
-        this->m_Controller.Trigger();
-        this->m_Transmission.ShiftUp();
+        if (this->m_Transmission.ShiftUp())
+        {
+            this->m_Controller.Trigger();
+        }
     };
 
     void Vehicle::ShiftDown()
     {
-        this->m_Controller.Trigger();
-        this->m_Transmission.ShiftDown();
+        if (this->m_Transmission.ShiftDown())
+        {
+            this->m_Controller.Trigger();
+        };
     };
 
     int Vehicle::CurrentGear() const
