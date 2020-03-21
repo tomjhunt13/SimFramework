@@ -33,7 +33,7 @@ namespace Models {
     class ClutchLowSpeedEngagement : public SimFramework::Function
     {
     public:
-        ClutchLowSpeedEngagement(float threshold = 20.f, std::string name = "Clutch Low Speed Engagement");
+        ClutchLowSpeedEngagement(float threshold = 1.f, std::string name = "Clutch Low Speed Engagement");
 
         void Configure(SimFramework::Signal<float>* inTransmissionSpeed, SimFramework::Signal<float>* outEngagement);
         std::vector<SimFramework::SignalBase*> InputSignals() override;
@@ -173,7 +173,7 @@ namespace Models {
     public:
         VehicleController(float clutchLagTime=1.f, float clutchStiffness=1000.f);
 
-        void Configure(SimFramework::Signal<float>* inDemandThrottle,
+        void Configure(SimFramework::Signal<float>* inDemandThrottle, SimFramework::Signal<float>* inTransmissionSpeed,
                        SimFramework::Signal<float>* outThrottleAugmented, SimFramework::Signal<float>* outClutchStiffness);
 
         void Trigger();
@@ -182,22 +182,28 @@ namespace Models {
 
     private:
         // Parameters
-        float m_ParamClutchStiffness;
+        float m_ClutchStiffness;
 
         // Signals
-        SimFramework::Signal<float> m_SClutchStiffness;
-        SimFramework::Signal<Eigen::Vector<float, 2>> m_SInputVec;
-        SimFramework::Signal<Eigen::Vector<float, 2>> m_SConstVec;
-        SimFramework::Signal<Eigen::Vector<float, 2>> m_SAugmentedVec;
-        SimFramework::Signal<float> m_SParamSignal;
+        SimFramework::Signal<float> m_SConstClutchStiffness;
+        SimFramework::Signal<float> m_SConstZero;
+        SimFramework::Signal<float> m_SEngagementSignal;
+        SimFramework::Signal<float> m_SLowSpeedEngangement;
+        SimFramework::Signal<float> m_STriggerSignal;
 
-        // Blocks
-        SimFramework::Vectorise<float, Eigen::Vector<float, 2>> m_BVectorise;
-        SimFramework::ConstantBlock<float> m_BClutchStiffness;
-        SimFramework::ConstantBlock<Eigen::Vector<float, 2>> m_BConst;
-        LinearTrigger m_BTrigger;
-        SimFramework::LinearBlend<Eigen::Vector<float, 2>> m_BBlend;
-        SimFramework::Mask<Eigen::Vector<float, 2>, float> m_BMask;
+        // Blocks - Blending functions
+        SimFramework::LinearBlend<float> m_BBlendClutchLowSpeed;
+        SimFramework::LinearBlend<float> m_BBlendThrottle;
+        SimFramework::LinearBlend<float> m_BBlendClutchGearShift;
+
+        // Blocks - Blend parameters
+        LinearTrigger m_BGearChangeTrigger;
+        ClutchLowSpeedEngagement m_BLowSpeedEngagement;
+
+        // Blocks - Constants
+        SimFramework::ConstantBlock<float> m_BConstZero;
+        SimFramework::ConstantBlock<float> m_BClutchStiffnessMax;
+
 
     };
 

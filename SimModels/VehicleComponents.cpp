@@ -237,34 +237,32 @@ namespace Models {
     };
 
 
-    VehicleController::VehicleController(float clutchLagTime, float clutchStiffness) : m_ParamClutchStiffness(clutchStiffness),
-            m_SInputVec("Controller Input Vector"), m_SConstVec("Controller Constant Vector"), m_SAugmentedVec("Controller Augmented Vector"), m_SParamSignal("Controller Parameter Signal"),
-            m_BVectorise("Controller Input Vector"), m_BConst("Controller Constant Vector"), m_BTrigger(0.f, clutchLagTime, "Controller"), m_BBlend("Controller"), m_BMask("Controller")
-    {};
+    VehicleController::VehicleController(float clutchLagTime, float clutchStiffness) : m_ClutchStiffness(clutchStiffness) {};
 
     void VehicleController::Configure(
-            SimFramework::Signal<float>* inDemandThrottle,
+            SimFramework::Signal<float>* inDemandThrottle, SimFramework::Signal<float>* inTransmissionSpeed,
             SimFramework::Signal<float>* outThrottleAugmented, SimFramework::Signal<float>* outClutchStiffness)
     {
         // Configure Blocks
-        this->m_BClutchStiffness.Configure(&(this->m_SClutchStiffness), this->m_ParamClutchStiffness);
-        this->m_BVectorise.Configure({inDemandThrottle, &(this->m_SClutchStiffness)}, &(this->m_SInputVec));
-        this->m_BConst.Configure(&(this->m_SConstVec), {0, 0});
-        this->m_BTrigger.Configure(&(this->m_SParamSignal));
-        this->m_BBlend.Configure(&(this->m_SInputVec), &(this->m_SConstVec), &(this->m_SParamSignal), &(this->m_SAugmentedVec));
-        this->m_BMask.Configure(&(this->m_SAugmentedVec), {outThrottleAugmented, outClutchStiffness}, {0, 1});
+        this->m_BBlendClutchLowSpeed.Configure(&(this->m_SConstZero), &(this->m_SConstClutchStiffness), &(this->m_SEngagementSignal), &(this->m_SLowSpeedEngangement));
+        this->m_BBlendThrottle.Configure(inDemandThrottle, &(this->m_SConstZero), &(this->m_STriggerSignal), outThrottleAugmented);
+        this->m_BBlendClutchGearShift.Configure(&(this->m_SLowSpeedEngangement), &(this->m_SConstZero), &(this->m_STriggerSignal), outClutchStiffness);
+        this->m_BGearChangeTrigger.Configure(&(this->m_STriggerSignal));
+        this->m_BLowSpeedEngagement.Configure(inTransmissionSpeed, &(this->m_SEngagementSignal));
+        this->m_BConstZero.Configure(&(this->m_SConstZero), 0.f);
+        this->m_BClutchStiffnessMax.Configure(&(this->m_SConstClutchStiffness), this->m_ClutchStiffness);
     };
 
     void VehicleController::Trigger()
     {
-        this->m_BTrigger.Trigger();
+        this->m_BGearChangeTrigger.Trigger();
     };
 
     SimFramework::BlockList VehicleController::Blocks()
     {
-        return {{&(this->m_BTrigger), &(this->m_BConst), &(this->m_BClutchStiffness)},
+        return {{&(this->m_BGearChangeTrigger), &(this->m_BConstZero), &(this->m_BClutchStiffnessMax)},
                 {},
-                {&(this->m_BBlend), &(this->m_BVectorise), &(this->m_BMask)},
+                {&(this->m_BBlendClutchLowSpeed), &(this->m_BBlendThrottle), &(this->m_BBlendClutchGearShift), &(m_BLowSpeedEngagement)},
                 {},
                 {}};
     };

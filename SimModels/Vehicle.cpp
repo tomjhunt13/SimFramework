@@ -10,7 +10,7 @@ namespace Models {
 
 
         // Configure subsystems
-        this->m_Controller.Configure(&(this->m_SThrottle), &(this->m_SThrottleAugmented), &(this->m_SClutchStiffness));
+        this->m_Controller.Configure(&(this->m_SThrottle), &(this->m_SClutchSpeed), &(this->m_SThrottleAugmented), &(this->m_SClutchStiffness));
         this->m_Engine.Configure(&(this->m_SThrottleAugmented), &(this->m_SClutchTorque), &(this->m_SEngineSpeed));
         this->m_Transmission.Configure(&(this->m_SClutchTorque), &(this->m_STyreTorque), &(this->m_SBrake),
                                        &(this->m_SClutchSpeed), &(this->m_STyreSpeed));
