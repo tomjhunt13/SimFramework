@@ -29,6 +29,27 @@ namespace Models {
         SimFramework::Signal<float>* m_OutClutchTorque;
     };
 
+
+    class ClutchLowSpeedEngagement : public SimFramework::Function
+    {
+    public:
+        ClutchLowSpeedEngagement(float threshold = 20.f, std::string name = "Clutch Low Speed Engagement");
+
+        void Configure(SimFramework::Signal<float>* inTransmissionSpeed, SimFramework::Signal<float>* outEngagement);
+        std::vector<SimFramework::SignalBase*> InputSignals() override;
+        std::vector<SimFramework::SignalBase*> OutputSignals() override;
+        void Update() override;
+
+    private:
+        // Parameters
+        float m_Threshold;
+
+        // Signals
+        SimFramework::Signal<float>* m_InTransmissionSpeed;
+        SimFramework::Signal<float>* m_OutEngagement;
+    };
+
+
     class CentrifugalClutch : public SimFramework::Function
     {
     public:
@@ -142,6 +163,9 @@ namespace Models {
         SimFramework::Signal<float>* m_WheelSpeed;
         SimFramework::Signal<float>* m_BrakeTorque;
     };
+
+
+
 
 
     class VehicleController : public SimFramework::Subsystem

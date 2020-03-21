@@ -30,6 +30,43 @@ namespace Models {
     };
 
 
+    ClutchLowSpeedEngagement::ClutchLowSpeedEngagement(float threshold, std::string name) : Function(name), m_Threshold(threshold) {};
+
+    void ClutchLowSpeedEngagement::Configure(SimFramework::Signal<float>* inTransmissionSpeed, SimFramework::Signal<float>* outEngagement)
+    {
+        this->m_InTransmissionSpeed = inTransmissionSpeed;
+        this->m_OutEngagement = outEngagement;
+    };
+
+    std::vector<SimFramework::SignalBase*> ClutchLowSpeedEngagement::InputSignals()
+    {
+        return {this->m_InTransmissionSpeed};
+    };
+
+    std::vector<SimFramework::SignalBase*> ClutchLowSpeedEngagement::OutputSignals()
+    {
+        return {this->m_OutEngagement};
+    };
+
+    void ClutchLowSpeedEngagement::Update()
+    {
+        float speed = this->m_InTransmissionSpeed->Read();
+        float engagement = 1;
+
+        if (speed <= 0)
+        {
+            engagement = 0;
+        }
+
+        else if (speed <= this->m_Threshold)
+        {
+            engagement = std::abs(speed / this->m_Threshold);
+        };
+
+        this->m_OutEngagement->Write(engagement);
+    };
+
+
     CentrifugalClutch::CentrifugalClutch(std::string name) : Function(name) {};
 
     void CentrifugalClutch::Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* outClutchTorque)
