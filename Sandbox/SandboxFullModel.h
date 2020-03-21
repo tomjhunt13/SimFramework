@@ -18,9 +18,9 @@ void SandboxFullModel()
 
     Models::Vehicle vehicle(vehicleParameters);
     Models::VehicleBlocks blocks = vehicle.Blocks();
-    blocks.InThrottle->WriteValue(1.f);
+    blocks.InThrottle->WriteValue(0.f);
     vehicle.Initialise(0);
-    blocks.InThrottle->WriteValue(1.f);
+    blocks.InThrottle->WriteValue(0.f);
 
 
     // Set up file writing
@@ -33,15 +33,22 @@ void SandboxFullModel()
     int counter = 1;
     for (float t = 0.f; t <= 200.f; t += dt) {
 
-        if (counter % 100 == 0)
+        if (counter == 200)
         {
-            if (counter < 1500)
+            blocks.InThrottle->WriteValue(1.f);
+        }
+
+        if (counter % 400 == 0)
+        {
+            if (counter < 2500)
             {
                 vehicle.ShiftUp();
             }
 
             else
             {
+                blocks.InThrottle->WriteValue(0.05);
+
                 vehicle.ShiftDown();
             }
         }

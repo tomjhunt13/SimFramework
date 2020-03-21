@@ -33,19 +33,25 @@ namespace Models {
     class ClutchLowSpeedEngagement : public SimFramework::Function
     {
     public:
-        ClutchLowSpeedEngagement(float threshold = 1.f, std::string name = "Clutch Low Speed Engagement");
+        ClutchLowSpeedEngagement(float threshold = 50.f, std::string name = "Clutch Low Speed Engagement");
 
-        void Configure(SimFramework::Signal<float>* inTransmissionSpeed, SimFramework::Signal<float>* outEngagement);
+        void Configure(
+                SimFramework::Signal<float>* inTransmissionSpeed, SimFramework::Signal<float>* inThrottle,
+                SimFramework::Signal<float>* outEngagement);
+
         std::vector<SimFramework::SignalBase*> InputSignals() override;
         std::vector<SimFramework::SignalBase*> OutputSignals() override;
         void Update() override;
 
     private:
         // Parameters
-        float m_Threshold;
+        float m_SpeedThreshold;
+        float m_ThrottleThreshold = 0.02;
+        bool m_Accelerating;
 
         // Signals
         SimFramework::Signal<float>* m_InTransmissionSpeed;
+        SimFramework::Signal<float>* m_InThrottle;
         SimFramework::Signal<float>* m_OutEngagement;
     };
 

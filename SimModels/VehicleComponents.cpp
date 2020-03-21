@@ -30,11 +30,15 @@ namespace Models {
     };
 
 
-    ClutchLowSpeedEngagement::ClutchLowSpeedEngagement(float threshold, std::string name) : Function(name), m_Threshold(threshold) {};
+    ClutchLowSpeedEngagement::ClutchLowSpeedEngagement(float threshold, std::string name) :
+        Function(name), m_SpeedThreshold(threshold), m_Accelerating(false) {};
 
-    void ClutchLowSpeedEngagement::Configure(SimFramework::Signal<float>* inTransmissionSpeed, SimFramework::Signal<float>* outEngagement)
+    void ClutchLowSpeedEngagement::Configure(
+            SimFramework::Signal<float>* inTransmissionSpeed, SimFramework::Signal<float>* inThrottle,
+            SimFramework::Signal<float>* outEngagement)
     {
         this->m_InTransmissionSpeed = inTransmissionSpeed;
+        this->m_InThrottle = inThrottle;
         this->m_OutEngagement = outEngagement;
     };
 
@@ -50,18 +54,35 @@ namespace Models {
 
     void ClutchLowSpeedEngagement::Update()
     {
+        float throttle = this->m_InThrottle->Read();
         float speed = this->m_InTransmissionSpeed->Read();
+
+        this->m_Accelerating = (throttle < this->m_ThrottleThreshold) ? false : true;
+
         float engagement = 1;
+
+
+        if (speed > this->m_SpeedThreshold)
+        {
+            engagement = 1;
+        };
 
         if (speed <= 0)
         {
             engagement = 0;
         }
 
-        else if (speed <= this->m_Threshold)
+
+        if ((speed < this->m_SpeedThreshold) && this->m_Accelerating)
         {
-            engagement = std::abs(speed / this->m_Threshold);
+            engagement = std::abs(speed / this->m_SpeedThreshold) * 0.5 + 0.5;
         };
+
+        if ((speed < this->m_SpeedThreshold) && !(this->m_Accelerating))
+        {
+            engagement = 0;
+        };
+
 
         this->m_OutEngagement->Write(engagement);
     };
@@ -248,7 +269,7 @@ namespace Models {
         this->m_BBlendThrottle.Configure(inDemandThrottle, &(this->m_SConstZero), &(this->m_STriggerSignal), outThrottleAugmented);
         this->m_BBlendClutchGearShift.Configure(&(this->m_SLowSpeedEngangement), &(this->m_SConstZero), &(this->m_STriggerSignal), outClutchStiffness);
         this->m_BGearChangeTrigger.Configure(&(this->m_STriggerSignal));
-        this->m_BLowSpeedEngagement.Configure(inTransmissionSpeed, &(this->m_SEngagementSignal));
+        this->m_BLowSpeedEngagement.Configure(inTransmissionSpeed, inDemandThrottle, &(this->m_SEngagementSignal));
         this->m_BConstZero.Configure(&(this->m_SConstZero), 0.f);
         this->m_BClutchStiffnessMax.Configure(&(this->m_SConstClutchStiffness), this->m_ClutchStiffness);
     };
