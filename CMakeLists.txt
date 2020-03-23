@@ -33,7 +33,7 @@ include_directories(SimModels/include)
 add_custom_command(TARGET SimModels POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E copy
         "$<TARGET_FILE:Framework>"
-        "${CMAKE_SOURCE_DIR}/Binaries/${OSName}/$<TARGET_FILE_NAME:Framework>"
+        "${CMAKE_SOURCE_DIR}/Binaries/${OSName}/$<TARGET_FILE_NAME:SimModels>"
         COMMENT "Copying to output directory")
 
 # Sandbox

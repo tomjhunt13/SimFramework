@@ -490,7 +490,7 @@ namespace SimFramework {
             this->m_SignalCopy = initialValue;
         }
 
-        ValueType ReadValue()
+        const ValueType ReadValue() const
         {
             return this->m_SignalCopy;
         };

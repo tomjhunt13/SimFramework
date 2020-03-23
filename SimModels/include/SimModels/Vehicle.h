@@ -49,6 +49,8 @@ namespace Models {
         float rho = 1.225;
     };
 
+
+    // TODO: dont return blocks for IO, have IO method taking in input struct and returning output struct
     struct VehicleBlocks
     {
         SimFramework::Input<float>* InThrottle;
