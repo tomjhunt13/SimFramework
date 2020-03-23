@@ -3,8 +3,10 @@
 
 namespace Models {
 
-    EngineStandalone::EngineStandalone(std::string engineJSON, float initialSpeed, float J, float b) : System(0.001), m_SysEngine(engineJSON, initialSpeed, J, b)
+    EngineStandalone::EngineStandalone(std::string engineJSON, float initialSpeed, float J, float b) : System(0.001)
     {
+        this->m_SysEngine.SetParameters(engineJSON, initialSpeed, J, b);
+
         // Configure blocks
         this->m_BThrottle.Configure(&(this->m_SThrottle), 0.f);
         this->m_BLoad.Configure(&(this->m_SLoadTorque), 0.f);

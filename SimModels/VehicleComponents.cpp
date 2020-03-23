@@ -112,11 +112,13 @@ namespace Models {
         this->m_OutClutchTorque->Write(this->m_TorqueCapacity * ( speed * speed - this->m_EngagementSpeed * this->m_EngagementSpeed));
     };
 
-    LinearTrigger::LinearTrigger(float defaultValue, float t_end, std::string name) : SimFramework::TriggerFunction(name)
+    LinearTrigger::LinearTrigger(std::string name) : SimFramework::TriggerFunction(name) {};
+
+    void LinearTrigger::SetParameters(float defaultValue, float t_end)
     {
         this->m_Default = defaultValue;
         this->t_end = 1.f;
-    };
+    }
 
     float LinearTrigger::Evaluate(float t) {
         return 1.f * (this->t_end - t) / (this->t_end);
@@ -188,7 +190,14 @@ namespace Models {
     };
 
 
-    AeroDrag::AeroDrag(std::string name, float Cd, float A, float rho) : Function(name), Cd(Cd), A(A), rho(rho) {};
+    AeroDrag::AeroDrag(std::string name) : Function(name) {};
+
+    void AeroDrag::SetParameters(float Cd, float A, float rho)
+    {
+        this->Cd = Cd;
+        this->A = A;
+        this->rho = rho;
+    }
 
     void AeroDrag::Configure(SimFramework::Signal<float>* inSpeed, SimFramework::Signal<float>* outForce)
     {
@@ -222,14 +231,15 @@ namespace Models {
         this->SetParameters();
     };
 
-    void DiscBrake::SetParameters(float mu, float R, float D, int N)
+    void DiscBrake::SetParameters(float mu, float R, float D, float maxBrakePressure, int N)
     {
         this->mu = mu;
         this->R = R;
         this->D = D;
+        this->maxBrakePressure = maxBrakePressure;
         this->N = N;
 
-        this->m_BrakeConstant = (mu * SimFramework::pi() * D * D * R * N) / (4);
+        this->m_BrakeConstant = (mu * SimFramework::pi() * D * D * R * N * maxBrakePressure); // For all four wheels
     };
 
     std::vector<SimFramework::SignalBase*> DiscBrake::InputSignals()
@@ -245,7 +255,7 @@ namespace Models {
     void DiscBrake::Update()
     {
         float speed = this->m_WheelSpeed->Read();
-        float brakeMagnitude = this->m_BrakeConstant * this->m_BrakePressure->Read() * 6000000.f * 4.f;
+        float brakeMagnitude = this->m_BrakeConstant * this->m_BrakePressure->Read();
 
         if (speed >= 0.f)
         {
@@ -258,7 +268,12 @@ namespace Models {
     };
 
 
-    VehicleController::VehicleController(float clutchLagTime, float clutchStiffness) : m_ClutchStiffness(clutchStiffness) {};
+
+    void VehicleController::SetParameters(float clutchLagTime, float clutchStiffness)
+    {
+        this->m_ClutchStiffness = clutchStiffness;
+        this->m_BGearChangeTrigger.SetParameters(0.f, clutchLagTime);
+    }
 
     void VehicleController::Configure(
             SimFramework::Signal<float>* inDemandThrottle, SimFramework::Signal<float>* inTransmissionSpeed,
@@ -289,9 +304,11 @@ namespace Models {
     };
 
 
-    Engine::Engine(std::string engineJSON, float initialSpeed, float J, float b) :
+    Engine::Engine() :
             m_SEngineSpeed_("Engine Speed SS Output"), m_SEngineTorque("Engine Map Torque"), m_STorqueInput("Engine Torque Vec"),
-            m_BEngineMap("Engine Map"), m_BTorqueVector("Engine Torque Vec"), m_BInertia("Engine"), m_BMask("Engine Mask")
+            m_BEngineMap("Engine Map"), m_BTorqueVector("Engine Torque Vec"), m_BInertia("Engine"), m_BMask("Engine Mask") {};
+
+    void Engine::SetParameters(std::string engineJSON, float initialSpeed, float J, float b)
     {
         // Set engine table
         SimFramework::Table3D engineTable = SimFramework::ReadTableJSON(engineJSON, "speed", "throttle", "torque");
@@ -340,6 +357,15 @@ namespace Models {
                 {}};
     };
 
+
+    void Transmission::SetParameters(
+            std::vector<float> gearRatios, float effectiveInertia,
+            float Mu, float R, float D, float maxBrakePressure, int N)
+    {
+        this->m_Ratios = gearRatios;
+        this->m_EffectiveInertia = effectiveInertia;
+        this->m_BDiscBrake.SetParameters(Mu, R, D, maxBrakePressure, N);
+    }
 
     void Transmission::Configure(
             SimFramework::Signal<float>* inClutchTorque,
@@ -431,10 +457,12 @@ namespace Models {
     }
 
 
-    VehicleDynamics::VehicleDynamics(float initialPosition, float initialVelocity, float mass, float Cd, float A, float rho) :
+    VehicleDynamics::VehicleDynamics() :
         m_SAeroDrag("Drag"), m_SGravity("Const Gravity"), m_SForceVec("Vehicle Force Input"), m_SStatesVec("Vehicle States"),
-        m_BAeroDrag("Drag", Cd, A, rho), m_BVectorise("Vehicle Force Input"), m_BStateSpace("Vehicle Dynamics"), m_BMask("Vehicle Dynamics")
-    {
+        m_BAeroDrag("Drag"), m_BVectorise("Vehicle Force Input"), m_BStateSpace("Vehicle Dynamics"), m_BMask("Vehicle Dynamics")
+    {};
+
+    void VehicleDynamics::SetParameters(float initialPosition, float initialVelocity, float mass, float Cd, float A, float rho) {
         // Set up state matrices
         Eigen::Matrix<float, 2, 2> matA;
         matA << 0.f, 1.f, 0.f, 0.f;
@@ -456,6 +484,8 @@ namespace Models {
         // TODO: gravity properly
         this->m_SGravity.Write(0);
     };
+
+
 
 
     void VehicleDynamics::Configure(

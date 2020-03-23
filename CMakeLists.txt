@@ -18,6 +18,11 @@ include_directories(ThirdParty/googletest/googletest/include)
 # Framework
 add_library(Framework STATIC Framework/include/SimFramework/Framework.h Framework/Framework.cpp Framework/include/SimFramework/Components.h Framework/Components.cpp Framework/include/SimFramework/Interpolation.h Framework/Interpolation.cpp Framework/include/SimFramework/Utilities.h Framework/Utilities.cpp SimModels/VehicleDynamicsStandalone.cpp SimModels/include/SimModels/VehicleDynamicsStandalone.h)
 include_directories(Framework/include)
+add_custom_command(TARGET Framework POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E copy
+        "$<TARGET_FILE:Framework>"
+        "Binaries/$<CONFIGURATION>/$<TARGET_FILE_NAME:Framework>"
+        COMMENT "Copying to output directory")
 
 # SimModels
 add_library(SimModels STATIC SimModels/MassSpringDamper1D.cpp SimModels/include/SimModels/MassSpringDamper1D.h SimModels/EngineStandalone.cpp SimModels/include/SimModels/EngineStandalone.h SimModels/TransmissionStandalone.cpp SimModels/include/SimModels/TransmissionStandalone.h SimModels/Vehicle.cpp SimModels/include/SimModels/Vehicle.h SimModels/VehicleComponents.cpp SimModels/include/SimModels/VehicleComponents.h)

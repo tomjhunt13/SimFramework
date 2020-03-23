@@ -6,11 +6,11 @@
 
 int main() {
 
-    SandboxFullModel();
+//    SandboxFullModel();
 //    SandboxMassSpringDamper();
 //    SandboxEngine();
 //    SandboxTransmission();
-//    SandboxVehicleStandalone();
+    SandboxVehicleStandalone();
 
     return 0;
 }

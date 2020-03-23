@@ -3,12 +3,8 @@
 
 namespace Models {
 
-    Vehicle::Vehicle(VehicleParameters parameters) : System(0.0025),
-        m_Controller(parameters.GearshiftLag, parameters.ClutchStiffness),
-        m_Engine(parameters.EngineJSON, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant),
-        m_VehicleDynamics(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho){
-
-
+    Vehicle::Vehicle() : System(0.0025)
+    {
         // Configure subsystems
         this->m_Controller.Configure(&(this->m_SThrottle), &(this->m_SClutchSpeed), &(this->m_SThrottleAugmented), &(this->m_SClutchStiffness));
         this->m_Engine.Configure(&(this->m_SThrottleAugmented), &(this->m_SClutchTorque), &(this->m_SEngineSpeed));
@@ -35,8 +31,17 @@ namespace Models {
                                         {&(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity)},
                                         {&(this->m_Controller), &(this->m_Engine),         &(this->m_Transmission), &(this->m_VehicleDynamics)}};
         this->RegisterBlocks(list);
-
     };
+
+    void Vehicle::SetParameters(Models::VehicleParameters parameters) {
+
+        this->m_Controller.SetParameters(parameters.GearshiftLag, parameters.ClutchStiffness);
+        this->m_Engine.SetParameters(parameters.EngineJSON, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant);
+        this->m_Transmission.SetParameters(parameters.GearRatios, parameters.TransmissionInertia, parameters.BrakeFrictionCoefficient, parameters.BrakeRadius, parameters.BrakeCylinderDiameter, parameters.MaxBrakePressure, parameters.BrakeCylindersPerWheel);
+        this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho);
+    };
+
+
 
     void Vehicle::ShiftUp()
     {

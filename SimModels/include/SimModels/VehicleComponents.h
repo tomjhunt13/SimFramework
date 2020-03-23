@@ -84,7 +84,9 @@ namespace Models {
 
     class LinearTrigger : public SimFramework::TriggerFunction {
     public:
-        LinearTrigger(float defaultValue = 0.f, float t_end = 1.f, std::string name = "Linear Trigger");
+        LinearTrigger(std::string name = "Linear Trigger");
+        void SetParameters(float defaultValue = 0.f, float t_end = 1.f);
+
         float Evaluate(float t);
     };
 
@@ -126,7 +128,9 @@ namespace Models {
     class AeroDrag : public SimFramework::Function
     {
     public:
-        AeroDrag(std::string name="Aero Drag", float Cd=0.3, float A=2.5, float rho=1.225);
+        AeroDrag(std::string name="Aero Drag");
+
+        void SetParameters(float Cd=0.3, float A=2.5, float rho=1.225);
 
         void Configure(SimFramework::Signal<float>* inSpeed, SimFramework::Signal<float>* outForce);
         std::vector<SimFramework::SignalBase*> InputSignals() override;
@@ -147,10 +151,9 @@ namespace Models {
 
     class DiscBrake : public SimFramework::Function
     {
-        // TODO: currently brake pressure is a value between 0 and 1. Should consider putting gain as variable
     public:
         void Configure(SimFramework::Signal<float>* inBrakePressure, SimFramework::Signal<float>* inWheelSpeed, SimFramework::Signal<float>* outBrakeTorque);
-        void SetParameters(float mu=0.9, float R=0.15, float D=0.01, int N=2);
+        void SetParameters(float mu=0.9, float R=0.15, float D=0.01, float maxBrakePressure=50000, int N=2);
 
         std::vector<SimFramework::SignalBase*> InputSignals() override;
         std::vector<SimFramework::SignalBase*> OutputSignals() override;
@@ -162,6 +165,7 @@ namespace Models {
         float R;    // Average radius of pad
         float D;    // Diameter of cylinder
         int N;      // Number of cylinders
+        float maxBrakePressure;
         float m_BrakeConstant;
 
         // Signals
@@ -177,7 +181,7 @@ namespace Models {
     class VehicleController : public SimFramework::Subsystem
     {
     public:
-        VehicleController(float clutchLagTime=1.f, float clutchStiffness=1000.f);
+        void SetParameters(float clutchLagTime=1.f, float clutchStiffness=1000.f);
 
         void Configure(SimFramework::Signal<float>* inDemandThrottle, SimFramework::Signal<float>* inTransmissionSpeed,
                        SimFramework::Signal<float>* outThrottleAugmented, SimFramework::Signal<float>* outClutchStiffness);
@@ -216,7 +220,9 @@ namespace Models {
 
     class Engine : public SimFramework::Subsystem {
     public:
-        Engine(std::string engineJSON="/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json", float initialSpeed=200.f, float J=1.f, float b=0.05);
+        Engine();
+
+        void SetParameters(std::string engineJSON="/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json", float initialSpeed=200.f, float J=1.f, float b=0.05);
 
         void Configure(
                 SimFramework::Signal<float>* inThrottle,
@@ -240,8 +246,11 @@ namespace Models {
 
 
     class Transmission : public SimFramework::Subsystem {
-
     public:
+        void SetParameters(
+                std::vector<float> gearRatios = {0.07, 0.14, 0.23, 0.32, 0.41, 0.5}, float effectiveInertia = 1.f,
+                float Mu=0.9, float R=0.15, float D=0.01, float maxBrakePressure=50000, int N=2);
+
         bool ShiftUp();
         bool ShiftDown();
         int CurrentGear();
@@ -259,9 +268,9 @@ namespace Models {
         void SetGearRatio(int gearIndex);
 
         // Parameters
-        std::vector<float> m_Ratios = {0.07, 0.14, 0.23, 0.32, 0.41, 0.5};
+        std::vector<float> m_Ratios;
         int m_GearIndex;
-        float m_EffectiveInertia = 1.f;
+        float m_EffectiveInertia;
 
         // Signals
         SimFramework::Signal<Eigen::Vector3f> m_STorqueVec;
@@ -280,7 +289,9 @@ namespace Models {
     class VehicleDynamics : public SimFramework::Subsystem
     {
     public:
-        VehicleDynamics(float initialPosition=0.f, float initialVelocity=0.f, float mass=1000.f, float Cd=0.3, float A=2.5, float rho=1.225);
+        VehicleDynamics();
+
+        void SetParameters(float initialPosition=0.f, float initialVelocity=0.f, float mass=1000.f, float Cd=0.3, float A=2.5, float rho=1.225);
 
         void Configure(
                 SimFramework::Signal<float>* inTyreForce,

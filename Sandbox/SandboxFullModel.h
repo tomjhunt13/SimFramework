@@ -16,7 +16,8 @@ void SandboxFullModel()
     vehicleParameters.EngineViscousConstant = 0.05;
     vehicleParameters.EngineInertia = 0.2f;
 
-    Models::Vehicle vehicle(vehicleParameters);
+    Models::Vehicle vehicle;
+    vehicle.SetParameters(vehicleParameters);
     Models::VehicleBlocks blocks = vehicle.Blocks();
     blocks.InThrottle->WriteValue(0.f);
     vehicle.Initialise(0);
