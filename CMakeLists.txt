@@ -3,6 +3,8 @@ project(Framework)
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(OSName Mac)
+
 # eigen
 add_subdirectory(ThirdParty/eigen)
 include_directories(ThirdParty/eigen)
@@ -21,13 +23,18 @@ include_directories(Framework/include)
 add_custom_command(TARGET Framework POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E copy
         "$<TARGET_FILE:Framework>"
-        "Binaries/$<CONFIGURATION>/$<TARGET_FILE_NAME:Framework>"
+        "${CMAKE_SOURCE_DIR}/Binaries/${OSName}/$<TARGET_FILE_NAME:Framework>"
         COMMENT "Copying to output directory")
 
 # SimModels
 add_library(SimModels STATIC SimModels/MassSpringDamper1D.cpp SimModels/include/SimModels/MassSpringDamper1D.h SimModels/EngineStandalone.cpp SimModels/include/SimModels/EngineStandalone.h SimModels/TransmissionStandalone.cpp SimModels/include/SimModels/TransmissionStandalone.h SimModels/Vehicle.cpp SimModels/include/SimModels/Vehicle.h SimModels/VehicleComponents.cpp SimModels/include/SimModels/VehicleComponents.h)
 target_link_libraries(SimModels Framework)
 include_directories(SimModels/include)
+add_custom_command(TARGET SimModels POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E copy
+        "$<TARGET_FILE:Framework>"
+        "${CMAKE_SOURCE_DIR}/Binaries/${OSName}/$<TARGET_FILE_NAME:Framework>"
+        COMMENT "Copying to output directory")
 
 # Sandbox
 add_executable(Sandbox Sandbox/main.cpp Sandbox/SandboxTransmission.h Sandbox/SandboxMassSpringDamper.h Sandbox/SandboxEngine.h Sandbox/SandboxVehicleStandalone.h Sandbox/SandboxFullModel.h)
