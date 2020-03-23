@@ -32,7 +32,7 @@ target_link_libraries(SimModels Framework)
 include_directories(SimModels/include)
 add_custom_command(TARGET SimModels POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E copy
-        "$<TARGET_FILE:Framework>"
+        "$<TARGET_FILE:SimModels>"
         "${CMAKE_SOURCE_DIR}/Binaries/${OSName}/$<TARGET_FILE_NAME:SimModels>"
         COMMENT "Copying to output directory")
 
