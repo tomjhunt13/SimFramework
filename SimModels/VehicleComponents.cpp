@@ -378,7 +378,7 @@ namespace Models {
         // TODO: decide where to put this
         //  Initial speed and gear ratio
         this->m_GearIndex = 0;
-        this->SetGearRatio(this->m_GearIndex);
+//        this->SetGearRatio(this->m_GearIndex);
         Eigen::Vector<float, 1> initState;
         initState << 0;
 
