@@ -365,6 +365,8 @@ namespace Models {
         this->m_Ratios = gearRatios;
         this->m_EffectiveInertia = effectiveInertia;
         this->m_BDiscBrake.SetParameters(Mu, R, D, maxBrakePressure, N);
+        this->SetGearRatio(0);
+
     }
 
     void Transmission::Configure(
@@ -378,7 +380,6 @@ namespace Models {
         // TODO: decide where to put this
         //  Initial speed and gear ratio
         this->m_GearIndex = 0;
-//        this->SetGearRatio(this->m_GearIndex);
         Eigen::Vector<float, 1> initState;
         initState << 0;
 
