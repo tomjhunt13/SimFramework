@@ -61,7 +61,7 @@ namespace Models {
 
     int Vehicle::CurrentGear() const
     {
-        return this->CurrentGear();
+        return this->m_Transmission.CurrentGear();
     };
 
     const VehicleBlocks Vehicle::Blocks()

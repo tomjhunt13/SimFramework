@@ -441,10 +441,10 @@ namespace Models {
         A << 0.f;
 
         Eigen::Matrix<float, 1,3> B;
-        B << 1.f / this->m_EffectiveInertia, - this->m_Ratios[this->m_GearIndex] / this->m_EffectiveInertia, this->m_Ratios[this->m_GearIndex] / this->m_EffectiveInertia;
+        B << 1.f / this->m_EffectiveInertia, - this->m_Ratios[gearIndex] / this->m_EffectiveInertia, this->m_Ratios[gearIndex] / this->m_EffectiveInertia;
 
         Eigen::Matrix<float, 2, 1> C;
-        C << 1.f, this->m_Ratios[this->m_GearIndex];
+        C << 1.f, this->m_Ratios[gearIndex];
 
         Eigen::Matrix<float, 2, 3> D;
         D << 0.f, 0.f, 0.f, 0.f, 0.f, 0.f;
@@ -452,7 +452,7 @@ namespace Models {
         this->m_BStates.SetMatrices(A, B, C, D);
     }
 
-    int Transmission::CurrentGear()
+    int Transmission::CurrentGear() const
     {
         return this->m_GearIndex + 1;
     }

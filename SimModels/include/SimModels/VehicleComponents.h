@@ -253,7 +253,7 @@ namespace Models {
 
         bool ShiftUp();
         bool ShiftDown();
-        int CurrentGear();
+        int CurrentGear() const;
 
         void Configure(
                 SimFramework::Signal<float>* inClutchTorque,
