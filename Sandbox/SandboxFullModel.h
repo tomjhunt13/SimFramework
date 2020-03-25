@@ -11,7 +11,7 @@ void SandboxFullModel()
     Models::VehicleParameters vehicleParameters;
     vehicleParameters.Mass = 1500.f;
     vehicleParameters.GearshiftLag = 0.75;
-    vehicleParameters.A = 2.f;
+    vehicleParameters.A = 2.5;
     vehicleParameters.ClutchStiffness = 100.f;
     vehicleParameters.EngineViscousConstant = 0.05;
     vehicleParameters.EngineInertia = 0.2f;
