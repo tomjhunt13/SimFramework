@@ -1,8 +1,6 @@
 #ifndef SIMINTERFACE_CONSTANTBLOCK_H
 #define SIMINTERFACE_CONSTANTBLOCK_H
 
-#include <iostream> // TODO: remove
-
 #include <vector>
 #include "Eigen/Dense"
 #include "Framework.h"
@@ -15,16 +13,15 @@ namespace SimFramework {
     public:
         ConstantBlock(std::string name="Constant") : Source(name) {};
 
-        void Configure(Signal<SignalType>* outputSignal, SignalType value)
+        void Configure(const SignalType& value)
         {
-//            this->m_OutputSignal = outputSignal;
             this->m_Value = value;
         }
 
-        void SetValue(const SignalType& value)
+        const Signal<SignalType>* OutSignal() const
         {
-            this->m_Value = value;
-        }
+            return &(this->m_OutputSignal);
+        };
 
         std::vector<SignalBase*> InputSignals() override
         {
@@ -35,11 +32,6 @@ namespace SimFramework {
         {
             return {&(this->m_OutputSignal)};
         }
-
-        const Signal<SignalType>* OutSignal() const
-        {
-            return &(this->m_OutputSignal);
-        };
 
         void Initialise(float t_0) override
         {
@@ -58,11 +50,20 @@ namespace SimFramework {
     class Input : public Source
     {
     public:
-        void Configure(Signal<ValueType>* outSignal, ValueType initialValue)
+        void Configure(ValueType initialValue)
         {
-            this->m_Signal = outSignal;
             this->m_SignalValue = initialValue;
         }
+
+        const Signal<ValueType>* OutSignal() const
+        {
+            return &(this->m_Signal);
+        }
+
+        void WriteValue(ValueType value)
+        {
+            this->m_SignalValue = value;
+        };
 
         std::vector<SignalBase*> InputSignals() override
         {
@@ -71,13 +72,8 @@ namespace SimFramework {
 
         std::vector<SignalBase*> OutputSignals() override
         {
-            return {this->m_Signal};
+            return {&(this->m_Signal)};
         }
-
-        void WriteValue(ValueType value)
-        {
-            this->m_SignalValue = value;
-        };
 
         void Initialise(float t_0) override
         {
@@ -86,11 +82,11 @@ namespace SimFramework {
 
         void Update(float dt) override
         {
-            this->m_Signal->Write(this->m_SignalValue);
+            this->m_Signal.Write(this->m_SignalValue);
         };
 
     private:
-        Signal<ValueType>* m_Signal;
+        Signal<ValueType> m_Signal;
         ValueType m_SignalValue;
     };
 
@@ -100,8 +96,9 @@ namespace SimFramework {
     public:
         TriggerFunction(std::string name = "Trigger Function");
 
-        void Configure(Signal<float>* outputSignal);
         void Trigger();
+        const Signal<float>* OutSignal() const;
+
         virtual float Evaluate(float t) = 0;
 
         std::vector<SignalBase*> InputSignals() override;
@@ -118,7 +115,7 @@ namespace SimFramework {
         bool m_State;
 
         // Signals
-        Signal<float>* m_Output;
+        Signal<float> m_Output;
     };
 
 
@@ -128,16 +125,15 @@ namespace SimFramework {
     public:
         StateSpace(std::string name = "State Space") : DynamicSystem(name) {};
 
-        void Configure(Signal<InputType>* inputSignal, Signal<OutputType>* outputSignal)
+        void Configure(const Signal<InputType>* inputSignal)
         {
             this->m_InputSignal = inputSignal;
-            this->m_OutputSignal = outputSignal;
-        }
+        };
 
-        void SetInitialConditions(const Eigen::Vector<float, StateLength>& initialValue)
+        void SetInitialConditions(Eigen::Vector<float, StateLength>& initialValue)
         {
             this->m_InitialValue = initialValue;
-        }
+        };
 
         void SetMatrices(const Eigen::Matrix<float, StateLength, StateLength>& A,
                          const Eigen::Matrix<float, StateLength, InputLength>& B,
@@ -148,26 +144,28 @@ namespace SimFramework {
             this->m_B = B;
             this->m_C = C;
             this->m_D = D;
+        };
 
-            std::cout << "A: " << this->m_A << ", B: " << this->m_B << ", C: " << this->m_C << ", D: " << this->m_D << std::endl;
-
-        }
+        const Signal<OutputType>* OutSignal() const
+        {
+            return &(this->m_OutputSignal);
+        };
 
         std::vector<SignalBase*> InputSignals() override
         {
-            return {this->m_InputSignal};
+            return {}; //this->m_InputSignal};
         }
 
         std::vector<SignalBase*> OutputSignals() override
         {
-            return {this->m_OutputSignal};
+            return {&(this->m_OutputSignal)};
         }
 
         void Initialise(float t_0) override
         {
             this->t_n = t_0;
             this->m_States = this->m_InitialValue;
-            this->m_OutputSignal->Write(this->m_C * this->m_States);
+            this->m_OutputSignal.Write(this->m_C * this->m_States);
         };
 
         void ReadInputs() override
@@ -183,8 +181,7 @@ namespace SimFramework {
             this->t_n = this->t_n + dt;
 
             // Output equation
-            this->m_OutputSignal->Write(this->m_C * this->m_States + this->m_D * this->m_InputCopy);
-
+            this->m_OutputSignal.Write(this->m_C * this->m_States + this->m_D * this->m_InputCopy);
         };
 
         Eigen::Vector<float, StateLength> Derivative(float t, const Eigen::Vector<float, StateLength>& x) override
@@ -195,8 +192,8 @@ namespace SimFramework {
     private:
 
         // Signals
-        Signal<InputType>* m_InputSignal;
-        Signal<OutputType>* m_OutputSignal;
+        const Signal<InputType>* m_InputSignal;
+        Signal<OutputType> m_OutputSignal;
 
         // Work copies
         float t_n;
@@ -217,30 +214,33 @@ namespace SimFramework {
     public:
         SummingJunction(std::string name = "Summing Junction") : Function(name) {};
 
-        void Configure(std::vector<Signal<SignalType>*> inputSignals,
-                       Signal<SignalType>* outputSignal,
+        void Configure(std::vector<const Signal<SignalType>*> inputSignals,
                        std::vector<float> weights)
         {
             this->m_InputSignals = inputSignals;
-            this->m_OutputSignal = outputSignal;
             this->m_Weights = weights;
             this->m_InputCopies.resize(inputSignals.size());
             this->m_WeightedValues.resize(inputSignals.size());
         }
 
+        const Signal<SignalType>* OutSignal() const
+        {
+            return &(this->m_OutputSignal);
+        }
+
         std::vector<SignalBase*> InputSignals() override
         {
-            std::vector<SignalBase*> signals(this->m_InputSignals.size());
+            std::vector<const SignalBase*> signals(this->m_InputSignals.size());
             for (int i=0; i < this->m_InputSignals.size(); i++)
             {
                 signals[i] = m_InputSignals[i];
             }
-            return signals;
+            return {}; //signals;
         }
 
         std::vector<SignalBase*> OutputSignals() override
         {
-            return {this->m_OutputSignal};
+            return {&(this->m_OutputSignal)};
         }
 
         void Update() override
@@ -268,7 +268,7 @@ namespace SimFramework {
                 };
 
                 // Write output signal
-                this->m_OutputSignal->Write(output);
+                this->m_OutputSignal.Write(output);
             }
         };
 
@@ -277,8 +277,8 @@ namespace SimFramework {
         std::vector<float> m_Weights;
 
         // Signals
-        std::vector<Signal<SignalType>*> m_InputSignals;
-        Signal<SignalType>* m_OutputSignal;
+        std::vector<const Signal<SignalType>*> m_InputSignals;
+        Signal<SignalType> m_OutputSignal;
 
         // Work variables
         std::vector<SignalType> m_InputCopies;
@@ -292,26 +292,30 @@ namespace SimFramework {
     public:
         Vectorise(std::string name = "Vectorise") : Function(name) {};
 
-        void Configure(std::vector<Signal<InputType>*> inputs, Signal<OutputType>* output)
+        void Configure(std::vector<const Signal<InputType>*> inputs)
         {
             this->m_InputSignals = inputs;
-            this->m_OutputSignal = output;
             this->m_InputCopies.resize(inputs.size());
         }
 
+        const Signal<OutputType>* OutSignal() const
+        {
+            return &(this->m_OutputSignal);
+        };
+
         std::vector<SignalBase*> InputSignals() override
         {
-            std::vector<SignalBase*> signals(this->m_InputSignals.size());
+            std::vector<const SignalBase*> signals(this->m_InputSignals.size());
             for (int i=0; i < this->m_InputSignals.size(); i++)
             {
                 signals[i] = m_InputSignals[i];
             }
-            return signals;
+            return {}; // signals;
         }
 
         std::vector<SignalBase*> OutputSignals() override
         {
-            return {this->m_OutputSignal};
+            return {&(this->m_OutputSignal)};
         }
 
         void Update() override
@@ -329,13 +333,13 @@ namespace SimFramework {
             }
 
             // Write vector copy to output
-            this->m_OutputSignal->Write(this->m_OutputCopy);
+            this->m_OutputSignal.Write(this->m_OutputCopy);
         };
 
     private:
         // Signals
-        std::vector<Signal<InputType>*> m_InputSignals;
-        Signal<OutputType>* m_OutputSignal;
+        std::vector<const Signal<InputType>*> m_InputSignals;
+        Signal<OutputType> m_OutputSignal;
 
         // Work variables
         std::vector<InputType> m_InputCopies;
@@ -349,16 +353,24 @@ namespace SimFramework {
     public:
         Mask(std::string name = "Mask") : Function(name) {};
 
-        void Configure(Signal<InputType>* inputSignal, std::vector<Signal<OutputType>*> maskedSignals, std::vector<int> maskIndices)
+
+        // TODO: dont need maskIndices anymore
+        void Configure(const Signal<InputType>* inputSignal, std::vector<int> maskIndices)
         {
             this->m_InputSignal = inputSignal;
-            this->m_MaskedSignals = maskedSignals;
             this->m_MaskIndices = maskIndices;
+
+            this->m_MaskedSignals.resize(maskIndices.size());
         };
+
+        const Signal<OutputType>* OutSignal(int index) const
+        {
+            return &(this->m_MaskedSignals[index]);
+        }
 
         std::vector<SignalBase*> InputSignals() override
         {
-            return {this->m_InputSignal};
+            return {}; //this->m_InputSignal};
         }
 
         std::vector<SignalBase*> OutputSignals() override
@@ -366,7 +378,7 @@ namespace SimFramework {
             std::vector<SignalBase*> signals(this->m_MaskedSignals.size());
             for (int i=0; i < this->m_MaskedSignals.size(); i++)
             {
-                signals[i] = m_MaskedSignals[i];
+                signals[i] = &(this->m_MaskedSignals[i]);
             }
             return signals;
         }
@@ -379,7 +391,7 @@ namespace SimFramework {
             // Interate over vector elements and write value to masked signal
             for (int i = 0; i < this->m_MaskIndices.size(); i++)
             {
-                this->m_MaskedSignals[i]->Write(this->m_InputCopy[this->m_MaskIndices[i]]);
+                this->m_MaskedSignals[i].Write(this->m_InputCopy[this->m_MaskIndices[i]]);
             }
         };
 
@@ -388,43 +400,39 @@ namespace SimFramework {
         std::vector<int> m_MaskIndices;
 
         // Signals
-        Signal<InputType>* m_InputSignal;
-        std::vector<Signal<OutputType>*> m_MaskedSignals;
+        const Signal<InputType>* m_InputSignal;
+        std::vector<Signal<OutputType>> m_MaskedSignals;
 
         // Work variables
         InputType m_InputCopy;
     };
 
 
-    // TODO: Gain should have SetGain method
     template <typename InputType, typename ReturnType, typename GainType=float>
     class Gain : public Function
     {
     public:
 
-        void Configure(const Signal<InputType>* inputSignal, Signal<ReturnType>* outputSignal, GainType gain)
+        void Configure(const Signal<InputType>* inputSignal, GainType gain)
         {
             this->m_InputSignal = inputSignal;
-//            this->m_OutputSignal = outputSignal;
             this->m_Gain = gain;
         };
-
-        std::vector<SignalBase*> InputSignals() override
-        {
-            return {};
-                //this->m_InputSignal};
-        }
-
-        std::vector<SignalBase*> OutputSignals() override
-        {
-            return {};
-            //this->m_OutputSignal};
-        }
 
         const Signal<ReturnType>* OutSignal() const
         {
             return &(this->m_OutputSignal);
         };
+
+        std::vector<SignalBase*> InputSignals() override
+        {
+            return {}; // this->m_InputSignal};
+        }
+
+        std::vector<SignalBase*> OutputSignals() override
+        {
+            return {&(this->m_OutputSignal)};
+        }
 
         void Update() override
         {
@@ -445,7 +453,10 @@ namespace SimFramework {
     {
     public:
         LookupTable2D(std::string name = "LookupTable2D");
-        void Configure(Signal<float>* x, Signal<float>* y, Signal<float>* out);
+        void Configure(const Signal<float>* x, const Signal<float>* y);
+
+        const Signal<float>* OutSignal() const;
+
         void SetTable(Table3D& table);
 
         std::vector<SignalBase*> InputSignals() override;
@@ -457,9 +468,9 @@ namespace SimFramework {
         Table3D m_Table;
 
         // Signals
-        Signal<float>* m_X;
-        Signal<float>* m_Y;
-        Signal<float>* m_Out;
+        const Signal<float>* m_X;
+        const Signal<float>* m_Y;
+        Signal<float> m_Out;
     };
 
 
@@ -469,36 +480,40 @@ namespace SimFramework {
     public:
         LinearBlend(std::string name="Linear Blend") : Function(name) {};
 
-        void Configure(Signal<InputType>* input1, Signal<InputType>* input2, Signal<float>* alpha, Signal<InputType>* output)
+        void Configure(const Signal<InputType>* input1, const Signal<InputType>* input2, const Signal<float>* alpha)
         {
             this->m_Input1 = input1;
             this->m_Input2 = input2;
             this->m_Alpha = alpha;
-            this->m_Output = output;
         }
+
+        const Signal<InputType>* OutSignal() const
+        {
+            return &(this->m_Output);
+        };
 
         std::vector<SignalBase*> InputSignals() override
         {
-            return {this->m_Input1, this->m_Input2, this->m_Alpha};
+            return {}; //this->m_Input1, this->m_Input2, this->m_Alpha};
         }
 
         std::vector<SignalBase*> OutputSignals() override
         {
-            return {this->m_Output};
+            return {&(this->m_Output)};
         }
 
         void Update() override
         {
             float alpha = this->m_Alpha->Read();
-            this->m_Output->Write((1 - alpha) * this->m_Input1->Read() + alpha * this->m_Input2->Read());
+            this->m_Output.Write((1 - alpha) * this->m_Input1->Read() + alpha * this->m_Input2->Read());
         };
 
     private:
         // Signals
-        Signal<InputType>* m_Input1;
-        Signal<InputType>* m_Input2;
-        Signal<float>* m_Alpha;
-        Signal<InputType>* m_Output;
+        const Signal<InputType>* m_Input1;
+        const Signal<InputType>* m_Input2;
+        const Signal<float>* m_Alpha;
+        Signal<InputType> m_Output;
     };
 
 
@@ -506,7 +521,7 @@ namespace SimFramework {
     class Output : public Sink
     {
     public:
-        void Configure(Signal<ValueType>* inSignal, ValueType initialValue)
+        void Configure(const Signal<ValueType>* inSignal, const ValueType& initialValue)
         {
             this->m_Signal = inSignal;
             this->m_SignalCopy = initialValue;
@@ -519,7 +534,7 @@ namespace SimFramework {
 
         std::vector<SignalBase*> InputSignals() override
         {
-            return {this->m_Signal};
+            return {};//this->m_Signal};
         }
 
         std::vector<SignalBase*> OutputSignals() override
@@ -533,7 +548,7 @@ namespace SimFramework {
         };
 
     private:
-        Signal<ValueType>* m_Signal;
+        const Signal<ValueType>* m_Signal;
         ValueType m_SignalCopy;
     };
 

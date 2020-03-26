@@ -8,8 +8,8 @@ namespace Models {
         this->m_SysEngine.SetParameters(engineJSON, initialSpeed, J, b);
 
         // Configure blocks
-        this->m_BThrottle.Configure(&(this->m_SThrottle), 0.f);
-        this->m_BLoad.Configure(&(this->m_SLoadTorque), 0.f);
+//        this->m_BThrottle.Configure(&(this->m_SThrottle), 0.f);
+//        this->m_BLoad.Configure(&(this->m_SLoadTorque), 0.f);
         this->m_BEngineSpeed.Configure(&(this->m_SEngineSpeed), 0.f);
 
         // Configure engine

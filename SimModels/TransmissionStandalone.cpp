@@ -6,9 +6,9 @@ namespace Models {
     TransmissionStandalone::TransmissionStandalone() {
 
         // Configure blocks
-        this->m_BClutchIn.Configure(&(this->m_SClutchIn), 0.f);
-        this->m_BTyreIn.Configure(&(this->m_STyreIn), 0.f);
-        this->m_BBrakePressure.Configure(&(this->m_SBrakePressureIn), 0.f);
+//        this->m_BClutchIn.Configure(&(this->m_SClutchIn), 0.f);
+//        this->m_BTyreIn.Configure(&(this->m_STyreIn), 0.f);
+//        this->m_BBrakePressure.Configure(&(this->m_SBrakePressureIn), 0.f);
         this->m_BOutClutch.Configure(&(this->m_SClutchOut), 0.f);
         this->m_BOutTyre.Configure(&(this->m_STyreOut), 0.f);
 

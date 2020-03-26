@@ -22,12 +22,12 @@ namespace Models {
         Eigen::Vector2f initialState = {0.05, 0.f};
 
         // Configure Blocks
-        this->m_Input.Configure(&(this->m_InputForce), 0);
-        this->m_Gain.Configure(&(this->m_MassStates), &(this->m_SpringDamperForce_Vec), gainMatrix);
-        this->m_Mask1.Configure(&(this->m_SpringDamperForce_Vec), {&(this->m_SpringDamperForce)}, {0});
-        this->m_SumForces.Configure({&(this->m_SpringDamperForce), &(this->m_InputForce)}, &(this->m_SummedForce), {-1.f, 1.f});
-        this->m_MassBlock.Configure(&(this->m_SummedForce), &(this->m_MassStates));
-        this->m_Mask2.Configure(&(this->m_MassStates), {&(this->m_MassPosition), &(this->m_MassVelocity)}, {0, 1});
+        this->m_Input.Configure(0.f);
+        this->m_Gain.Configure(&(this->m_MassStates), gainMatrix);
+        this->m_Mask1.Configure(&(this->m_SpringDamperForce_Vec), {0});
+        this->m_SumForces.Configure({&(this->m_SpringDamperForce), &(this->m_InputForce)}, {-1.f, 1.f});
+        this->m_MassBlock.Configure(this->m_SumForces.OutSignal());
+        this->m_Mask2.Configure(this->m_MassBlock.OutSignal(), {0, 1});
         this->m_PositionOutputBlock.Configure(&(this->m_MassPosition), initialState[0]);
         this->m_VelocityOutputBlock.Configure(&(this->m_MassVelocity), initialState[1]);
 

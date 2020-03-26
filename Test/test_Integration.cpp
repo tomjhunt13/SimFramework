@@ -7,7 +7,7 @@
 class Linear : public SimFramework::Integrable<float>
 {
 public:
-    float Derivative(float t, float x) override
+    float Derivative(float t, const float& x) override
     {
         return 4.f;
     };
@@ -18,7 +18,7 @@ class Quadratic : public SimFramework::Integrable<float>
 {
 public:
 
-    float Derivative(float t, float x) override
+    float Derivative(float t, const float& x) override
     {
         return 2 * 3 * x + 2;
     };
@@ -29,7 +29,7 @@ public:
 class LinearVector : public SimFramework::Integrable<Eigen::Vector2f>
 {
 public:
-    Eigen::Vector2f Derivative(float t, Eigen::Vector2f x) override
+    Eigen::Vector2f Derivative(float t, const Eigen::Vector2f& x) override
     {
         return {4.f, 3.f};
     };

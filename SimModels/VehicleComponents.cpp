@@ -8,28 +8,34 @@ namespace Models {
     Clutch::Clutch(std::string name) : Function(name) {};
 
     void Clutch::Configure(
-            SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* inTransmissionSpeed,
-            SimFramework::Signal<float>* inClutchStiffness, SimFramework::Signal<float>* outClutchTorque)
+            const SimFramework::Signal<float>* inEngineSpeed,
+            const SimFramework::Signal<float>* inTransmissionSpeed,
+            const SimFramework::Signal<float>* inClutchStiffness)
     {
         this->m_InEngineSpeed = inEngineSpeed;
         this->m_InTransmissionSpeed = inTransmissionSpeed;
         this->m_InClutchStiffness = inClutchStiffness;
-        this->m_OutClutchTorque = outClutchTorque;
     };
+
+    const SimFramework::Signal<float>* Clutch::OutClutchTorque() const
+    {
+        return &(this->m_OutClutchTorque);
+    };
+
 
     std::vector<SimFramework::SignalBase*> Clutch::InputSignals()
     {
-        return {this->m_InEngineSpeed, this->m_InTransmissionSpeed, this->m_InClutchStiffness};
+        return {}; //this->m_InEngineSpeed, this->m_InTransmissionSpeed, this->m_InClutchStiffness};
     };
 
     std::vector<SimFramework::SignalBase*> Clutch::OutputSignals()
     {
-        return {this->m_OutClutchTorque};
+        return {&(this->m_OutClutchTorque)};
     };
 
     void Clutch::Update()
     {
-        this->m_OutClutchTorque->Write(this->m_InClutchStiffness->Read() * (this->m_InEngineSpeed->Read() - this->m_InTransmissionSpeed->Read()));
+        this->m_OutClutchTorque.Write(this->m_InClutchStiffness->Read() * (this->m_InEngineSpeed->Read() - this->m_InTransmissionSpeed->Read()));
     };
 
 
@@ -37,22 +43,27 @@ namespace Models {
         Function(name), m_SpeedThreshold(threshold), m_Accelerating(false) {};
 
     void ClutchLowSpeedEngagement::Configure(
-            SimFramework::Signal<float>* inTransmissionSpeed, SimFramework::Signal<float>* inThrottle,
-            SimFramework::Signal<float>* outEngagement)
+            const SimFramework::Signal<float>* inTransmissionSpeed,
+            const SimFramework::Signal<float>* inThrottle)
     {
         this->m_InTransmissionSpeed = inTransmissionSpeed;
         this->m_InThrottle = inThrottle;
-        this->m_OutEngagement = outEngagement;
     };
+
+    const SimFramework::Signal<float>* ClutchLowSpeedEngagement::OutEngagement() const
+    {
+        return &(this->m_OutEngagement);
+    };
+
 
     std::vector<SimFramework::SignalBase*> ClutchLowSpeedEngagement::InputSignals()
     {
-        return {this->m_InTransmissionSpeed};
+        return {}; //this->m_InTransmissionSpeed};
     };
 
     std::vector<SimFramework::SignalBase*> ClutchLowSpeedEngagement::OutputSignals()
     {
-        return {this->m_OutEngagement};
+        return {&(this->m_OutEngagement)};
     };
 
     void ClutchLowSpeedEngagement::Update()
@@ -89,33 +100,33 @@ namespace Models {
         };
 
 
-        this->m_OutEngagement->Write(engagement);
+        this->m_OutEngagement.Write(engagement);
     };
 
 
-    CentrifugalClutch::CentrifugalClutch(std::string name) : Function(name) {};
-
-    void CentrifugalClutch::Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* outClutchTorque)
-    {
-        this->m_InEngineSpeed = inEngineSpeed;
-        this->m_OutClutchTorque = outClutchTorque;
-    };
-
-    std::vector<SimFramework::SignalBase*> CentrifugalClutch::InputSignals()
-    {
-        return {this->m_InEngineSpeed};
-    }
-
-    std::vector<SimFramework::SignalBase*> CentrifugalClutch::OutputSignals()
-    {
-        return {this->m_OutClutchTorque};
-    }
-
-    void CentrifugalClutch::Update()
-    {
-        float speed = SimFramework::RadiansPerSecondToRPM(this->m_InEngineSpeed->Read()) / 1000.f;
-        this->m_OutClutchTorque->Write(this->m_TorqueCapacity * ( speed * speed - this->m_EngagementSpeed * this->m_EngagementSpeed));
-    };
+//    CentrifugalClutch::CentrifugalClutch(std::string name) : Function(name) {};
+//
+//    void CentrifugalClutch::Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* outClutchTorque)
+//    {
+//        this->m_InEngineSpeed = inEngineSpeed;
+//        this->m_OutClutchTorque = outClutchTorque;
+//    };
+//
+//    std::vector<SimFramework::SignalBase*> CentrifugalClutch::InputSignals()
+//    {
+//        return {this->m_InEngineSpeed};
+//    }
+//
+//    std::vector<SimFramework::SignalBase*> CentrifugalClutch::OutputSignals()
+//    {
+//        return {this->m_OutClutchTorque};
+//    }
+//
+//    void CentrifugalClutch::Update()
+//    {
+//        float speed = SimFramework::RadiansPerSecondToRPM(this->m_InEngineSpeed->Read()) / 1000.f;
+//        this->m_OutClutchTorque->Write(this->m_TorqueCapacity * ( speed * speed - this->m_EngagementSpeed * this->m_EngagementSpeed));
+//    };
 
     LinearTrigger::LinearTrigger(std::string name) : SimFramework::TriggerFunction(name) {};
 
@@ -133,15 +144,11 @@ namespace Models {
     Tyre::Tyre(std::string name) : Function(name) {};
 
 
-    void Tyre::Configure(SimFramework::Signal<float> *inRotationalSpeed,
-                         SimFramework::Signal<float> *inLinearSpeed,
-                         SimFramework::Signal<float> *outForce,
-                         SimFramework::Signal<float> *outTorque)
+    void Tyre::Configure(const SimFramework::Signal<float> *inRotationalSpeed,
+                         const SimFramework::Signal<float> *inLinearSpeed)
      {
         this->m_RotationalSpeed = inRotationalSpeed;
         this->m_LinearSpeed = inLinearSpeed;
-        this->m_Force = outForce;
-        this->m_Torque = outTorque;
 
         this->SetParameters();
      }
@@ -157,9 +164,19 @@ namespace Models {
         this->E = E;
      }
 
+    const SimFramework::Signal<float>*  Tyre::OutForce() const
+    {
+        return &(this->m_Force);
+    };
+
+    const SimFramework::Signal<float>*  Tyre::OutTorque() const
+    {
+        return &(this->m_Torque);
+    };
+
     std::vector<SimFramework::SignalBase*> Tyre::InputSignals()
     {
-        return {&(this->m_RotationalSpeed), &(this->m_LinearSpeed)};
+        return {};//&(this->m_RotationalSpeed), &(this->m_LinearSpeed)};
     };
 
     std::vector<SimFramework::SignalBase*> Tyre::OutputSignals()
@@ -190,8 +207,8 @@ namespace Models {
         float Fx = this->Fz * this->D * std::sin(this->C * std::atan(this->B * k - this->E * (this->B * k - std::atan(this->B * k))));
 
         // Write result to output signals
-        this->m_Force->Write(Fx);
-        this->m_Torque->Write(Fx * this->radius);
+        this->m_Force.Write(Fx);
+        this->m_Torque.Write(Fx * this->radius);
     };
 
 
@@ -204,26 +221,31 @@ namespace Models {
         this->rho = rho;
     }
 
-    void AeroDrag::Configure(SimFramework::Signal<float>* inSpeed, SimFramework::Signal<float>* outForce)
+    void AeroDrag::Configure(const SimFramework::Signal<float>* inSpeed)
     {
         this->m_Speed = inSpeed;
-        this->m_Force = outForce;
     };
+
+    const SimFramework::Signal<float>* AeroDrag::OutForce() const
+    {
+        return &(this->m_Force);
+    };
+
 
     std::vector<SimFramework::SignalBase*> AeroDrag::InputSignals()
     {
-        return {this->m_Speed};
+        return {};//this->m_Speed};
     };
 
     std::vector<SimFramework::SignalBase*> AeroDrag::OutputSignals()
     {
-        return {this->m_Force};
+        return {&(this->m_Force)};
     };
 
     void AeroDrag::Update()
     {
         float speed = this->m_Speed->Read();
-        this->m_Force->Write(0.5 * this->rho * this->A * this->Cd * speed * speed);
+        this->m_Force.Write(0.5 * this->rho * this->A * this->Cd * speed * speed);
     };
 
 
@@ -285,13 +307,14 @@ namespace Models {
             SimFramework::Signal<float>* outThrottleAugmented, SimFramework::Signal<float>* outClutchStiffness)
     {
         // Configure Blocks
-        this->m_BBlendClutchLowSpeed.Configure(&(this->m_SConstZero), &(this->m_SConstClutchStiffness), &(this->m_SEngagementSignal), &(this->m_SLowSpeedEngangement));
-        this->m_BBlendThrottle.Configure(inDemandThrottle, &(this->m_SConstZero), &(this->m_STriggerSignal), outThrottleAugmented);
-        this->m_BBlendClutchGearShift.Configure(&(this->m_SLowSpeedEngangement), &(this->m_SConstZero), &(this->m_STriggerSignal), outClutchStiffness);
-        this->m_BGearChangeTrigger.Configure(&(this->m_STriggerSignal));
-        this->m_BLowSpeedEngagement.Configure(inTransmissionSpeed, inDemandThrottle, &(this->m_SEngagementSignal));
-        this->m_BConstZero.Configure(&(this->m_SConstZero), 0.f);
-        this->m_BClutchStiffnessMax.Configure(&(this->m_SConstClutchStiffness), this->m_ClutchStiffness);
+        this->m_BBlendClutchLowSpeed.Configure(&(this->m_SConstZero), &(this->m_SConstClutchStiffness), &(this->m_SEngagementSignal));
+        this->m_BBlendThrottle.Configure(inDemandThrottle, &(this->m_SConstZero), &(this->m_STriggerSignal));
+        this->m_BBlendClutchGearShift.Configure(&(this->m_SLowSpeedEngangement), &(this->m_SConstZero), &(this->m_STriggerSignal));
+        this->m_BLowSpeedEngagement.Configure(inTransmissionSpeed, inDemandThrottle);
+        this->m_BConstZero.Configure(0.f);
+
+
+//        this->m_BClutchStiffnessMax.Configure(&(this->m_SConstClutchStiffness), this->m_ClutchStiffness);
     };
 
     void VehicleController::Trigger()
@@ -346,10 +369,10 @@ namespace Models {
             SimFramework::Signal<float>* outEngineSpeed)
     {
         // Configure blocks
-        this->m_BEngineMap.Configure(outEngineSpeed, inThrottle, &(this->m_SEngineTorque));
-        this->m_BTorqueVector.Configure({&(this->m_SEngineTorque), inLoadTorque}, &(this->m_STorqueInput));
-        this->m_BInertia.Configure(&(this->m_STorqueInput), &(this->m_SEngineSpeed_));
-        this->m_BMask.Configure(&(this->m_SEngineSpeed_), {outEngineSpeed}, {0});
+        this->m_BEngineMap.Configure(outEngineSpeed, inThrottle);
+        this->m_BTorqueVector.Configure({&(this->m_SEngineTorque), inLoadTorque});
+        this->m_BInertia.Configure(&(this->m_STorqueInput));
+        this->m_BMask.Configure(&(this->m_SEngineSpeed_), {0});
     };
 
     SimFramework::BlockList Engine::Blocks()
@@ -390,10 +413,10 @@ namespace Models {
 
         // Configure blocks
         this->m_BDiscBrake.Configure(inBrakePressure, outTyreSpeed, &(this->m_SBrakeTorque));
-        this->m_BVec.Configure({inClutchTorque,  inTyreTorque, &(this->m_SBrakeTorque)}, &(this->m_STorqueVec));
-        this->m_BStates.Configure(&(this->m_STorqueVec), &(this->m_SSpeeds));
+        this->m_BVec.Configure({inClutchTorque,  inTyreTorque, &(this->m_SBrakeTorque)});
+        this->m_BStates.Configure(&(this->m_STorqueVec));
         this->m_BStates.SetInitialConditions(initState);
-        this->m_BMask.Configure(&(this->m_SSpeeds), {outClutchSpeed, outTyreSpeed}, {0, 1});
+        this->m_BMask.Configure(&(this->m_SSpeeds), {0, 1});
     };
 
     SimFramework::BlockList Transmission::Blocks()
@@ -502,10 +525,10 @@ namespace Models {
             SimFramework::Signal<float>* outVehicleVelocity)
     {
         // Configure blocks
-        this->m_BAeroDrag.Configure(outVehicleVelocity, &(this->m_SAeroDrag));
-        this->m_BVectorise.Configure({inTyreForce, &(this->m_SAeroDrag), &(this->m_SGravity)}, &(this->m_SForceVec));
-        this->m_BStateSpace.Configure(&(this->m_SForceVec), &(this->m_SStatesVec));
-        this->m_BMask.Configure(&(this->m_SStatesVec), {outVehiclePosition, outVehicleVelocity}, {0, 1});
+        this->m_BAeroDrag.Configure(outVehicleVelocity);
+        this->m_BVectorise.Configure({inTyreForce, &(this->m_SAeroDrag), &(this->m_SGravity)});
+        this->m_BStateSpace.Configure(&(this->m_SForceVec));
+        this->m_BMask.Configure(&(this->m_SStatesVec), {0, 1});
 
 
     };

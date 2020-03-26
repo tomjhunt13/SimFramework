@@ -13,13 +13,12 @@ namespace Models {
         this->m_VehicleDynamics.Configure(&(this->m_STyreForce), &(this->m_SCarPosition), &(this->m_SCarSpeed));
 
         // Configure model blocks
-        this->m_Clutch.Configure(&(this->m_SEngineSpeed), &(this->m_SClutchSpeed), &(this->m_SClutchStiffness), &(this->m_SClutchTorque));
-        this->m_Tyre.Configure(&(this->m_STyreSpeed), &(this->m_SCarSpeed), &(this->m_STyreForce),
-                               &(this->m_STyreTorque));
+        this->m_Clutch.Configure(&(this->m_SEngineSpeed), &(this->m_SClutchSpeed), &(this->m_SClutchStiffness));
+        this->m_Tyre.Configure(&(this->m_STyreSpeed), &(this->m_SCarSpeed));
 
         // Configure IO blocks
-        this->m_InThrottle.Configure(&(this->m_SThrottle), 0.f);
-        this->m_InBrakePressure.Configure(&(this->m_SBrake), 0.f);
+//        this->m_InThrottle.Configure(&(this->m_SThrottle), 0.f);
+//        this->m_InBrakePressure.Configure(&(this->m_SBrake), 0.f);
         this->m_OutEngineSpeed.Configure(&(this->m_SEngineSpeed), 0.f);
         this->m_OutTyreSpeed.Configure(&(this->m_STyreSpeed), 0.f);
         this->m_OutPosition.Configure(&(this->m_SCarPosition), 0.f);

@@ -12,9 +12,13 @@
 
 int main() {
 
-    SimFramework::ConstantBlock<float> cnst;
-    cnst.SetValue(2.4);
+    SimFramework::Input<float> cnst;
+    cnst.Configure(2.4);
     cnst.Initialise(0.f);
+
+    cnst.WriteValue(4.f);
+    cnst.Update(0.f);
+
 
     SimFramework::Gain<float, float> g;
 

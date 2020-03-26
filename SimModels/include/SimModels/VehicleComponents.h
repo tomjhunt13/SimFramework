@@ -14,8 +14,11 @@ namespace Models {
         Clutch(std::string name = "Clutch");
 
         void Configure(
-                SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* inTransmissionSpeed,
-                SimFramework::Signal<float>* inClutchStiffness, SimFramework::Signal<float>* outClutchTorque);
+                const SimFramework::Signal<float>* inEngineSpeed,
+                const SimFramework::Signal<float>* inTransmissionSpeed,
+                const SimFramework::Signal<float>* inClutchStiffness);
+
+        const SimFramework::Signal<float>* OutClutchTorque() const;
 
         std::vector<SimFramework::SignalBase*> InputSignals() override;
         std::vector<SimFramework::SignalBase*> OutputSignals() override;
@@ -23,10 +26,10 @@ namespace Models {
 
     private:
         // Signals
-        SimFramework::Signal<float>* m_InEngineSpeed;
-        SimFramework::Signal<float>* m_InTransmissionSpeed;
-        SimFramework::Signal<float>* m_InClutchStiffness;
-        SimFramework::Signal<float>* m_OutClutchTorque;
+        const SimFramework::Signal<float>* m_InEngineSpeed;
+        const SimFramework::Signal<float>* m_InTransmissionSpeed;
+        const SimFramework::Signal<float>* m_InClutchStiffness;
+        SimFramework::Signal<float> m_OutClutchTorque;
     };
 
 
@@ -35,9 +38,9 @@ namespace Models {
     public:
         ClutchLowSpeedEngagement(float threshold = 50.f, std::string name = "Clutch Low Speed Engagement");
 
-        void Configure(
-                SimFramework::Signal<float>* inTransmissionSpeed, SimFramework::Signal<float>* inThrottle,
-                SimFramework::Signal<float>* outEngagement);
+        void Configure(const SimFramework::Signal<float>* inTransmissionSpeed, const SimFramework::Signal<float>* inThrottle);
+
+        const SimFramework::Signal<float>* OutEngagement() const;
 
         std::vector<SimFramework::SignalBase*> InputSignals() override;
         std::vector<SimFramework::SignalBase*> OutputSignals() override;
@@ -50,36 +53,37 @@ namespace Models {
         bool m_Accelerating;
 
         // Signals
-        SimFramework::Signal<float>* m_InTransmissionSpeed;
-        SimFramework::Signal<float>* m_InThrottle;
-        SimFramework::Signal<float>* m_OutEngagement;
+        const SimFramework::Signal<float>* m_InTransmissionSpeed;
+        const SimFramework::Signal<float>* m_InThrottle;
+        SimFramework::Signal<float> m_OutEngagement;
     };
 
-
-    class CentrifugalClutch : public SimFramework::Function
-    {
-    public:
-        CentrifugalClutch(std::string = "CentrifugalClutch");
-
-        void Configure(SimFramework::Signal<float>* inEngineSpeed, SimFramework::Signal<float>* outClutchTorque);
-
-        std::vector<SimFramework::SignalBase*> InputSignals() override;
-        std::vector<SimFramework::SignalBase*> OutputSignals() override;
-        void Update() override;
-
-    private:
-        // Parameters
-        float m_EngagementSpeed = 1.5f; // [1000 rev/min]
-        float m_TorqueCapacity = 30.f; // [Nm @ engagement speed]
-
-        // Signals
-        SimFramework::Signal<float>* m_InEngineSpeed;
-        SimFramework::Signal<float>* m_OutClutchTorque;
-
-        // Copies
-        float m_InSpeedCopy;
-        float m_OutTorqueCopy;
-    };
+// TODO: Remove
+//
+//    class CentrifugalClutch : public SimFramework::Function
+//    {
+//    public:
+//        CentrifugalClutch(std::string = "CentrifugalClutch");
+//
+//        void Configure(SimFramework::Signal<float>* inEngineSpeed);
+//
+//        std::vector<SimFramework::SignalBase*> InputSignals() override;
+//        std::vector<SimFramework::SignalBase*> OutputSignals() override;
+//        void Update() override;
+//
+//    private:
+//        // Parameters
+//        float m_EngagementSpeed = 1.5f; // [1000 rev/min]
+//        float m_TorqueCapacity = 30.f; // [Nm @ engagement speed]
+//
+//        // Signals
+//        SimFramework::Signal<float>* m_InEngineSpeed;
+//        SimFramework::Signal<float>* m_OutClutchTorque;
+//
+//        // Copies
+//        float m_InSpeedCopy;
+//        float m_OutTorqueCopy;
+//    };
 
 
     class LinearTrigger : public SimFramework::TriggerFunction {
@@ -96,10 +100,11 @@ namespace Models {
     public:
         Tyre(std::string name = "Tyre");
 
-        void Configure(SimFramework::Signal<float>* inRotationalSpeed,
-                       SimFramework::Signal<float>* inLinearSpeed,
-                       SimFramework::Signal<float>* outForce,
-                       SimFramework::Signal<float>* outTorque);
+        void Configure(const SimFramework::Signal<float>* inRotationalSpeed,
+                       const SimFramework::Signal<float>* inLinearSpeed);
+
+        const SimFramework::Signal<float>*  OutForce() const;
+        const SimFramework::Signal<float>*  OutTorque() const;
 
         void SetParameters(float radius=0.2, float Fz=15000,  float B=10, float C=1.9, float D=1, float E=0.97);
 
@@ -118,10 +123,10 @@ namespace Models {
         float V_threshold = 0.001;
 
         // Signals
-        SimFramework::Signal<float>* m_RotationalSpeed;
-        SimFramework::Signal<float>* m_LinearSpeed;
-        SimFramework::Signal<float>* m_Force;
-        SimFramework::Signal<float>* m_Torque;
+        const SimFramework::Signal<float>* m_RotationalSpeed;
+        const SimFramework::Signal<float>* m_LinearSpeed;
+        SimFramework::Signal<float> m_Force;
+        SimFramework::Signal<float> m_Torque;
     };
 
 
@@ -132,7 +137,10 @@ namespace Models {
 
         void SetParameters(float Cd=0.3, float A=2.5, float rho=1.225);
 
-        void Configure(SimFramework::Signal<float>* inSpeed, SimFramework::Signal<float>* outForce);
+        void Configure(const SimFramework::Signal<float>* inSpeed);
+
+        const SimFramework::Signal<float>* OutForce() const;
+
         std::vector<SimFramework::SignalBase*> InputSignals() override;
         std::vector<SimFramework::SignalBase*> OutputSignals() override;
         void Update() override;
@@ -144,8 +152,8 @@ namespace Models {
         float rho;
 
         // Signals
-        SimFramework::Signal<float>* m_Speed;
-        SimFramework::Signal<float>* m_Force;
+        const SimFramework::Signal<float>* m_Speed;
+        SimFramework::Signal<float> m_Force;
     };
 
 
