@@ -6,20 +6,19 @@ namespace Models {
     TransmissionStandalone::TransmissionStandalone() {
 
         // Configure blocks
-//        this->m_BClutchIn.Configure(&(this->m_SClutchIn), 0.f);
-//        this->m_BTyreIn.Configure(&(this->m_STyreIn), 0.f);
-//        this->m_BBrakePressure.Configure(&(this->m_SBrakePressureIn), 0.f);
-        this->m_BOutClutch.Configure(&(this->m_SClutchOut), 0.f);
-        this->m_BOutTyre.Configure(&(this->m_STyreOut), 0.f);
+        this->m_ClutchIn.Configure(0.f);
+        this->m_TyreIn.Configure(0.f);
+        this->m_BrakePressure.Configure(0.f);
+        this->m_OutClutch.Configure(this->m_Transmission.OutClutchSpeed(), 0.f);
+        this->m_OutTyre.Configure(this->m_Transmission.OutTyreSpeed(), 0.f);
 
         // Configure subsystems
-        this->m_Transmission.Configure(&(this->m_SClutchIn), &(this->m_STyreIn), &(this->m_SBrakePressureIn),
-                                       &(this->m_SClutchOut), &(this->m_STyreOut));
+        this->m_Transmission.Configure(this->m_ClutchIn.OutSignal(), this->m_TyreIn.OutSignal(), this->m_BrakePressure.OutSignal());
 
-        SimFramework::BlockList list = {{&(this->m_BClutchIn), &(this->m_BTyreIn), &(this->m_BBrakePressure)},
+        SimFramework::BlockList list = {{&(this->m_ClutchIn), &(this->m_TyreIn), &(this->m_BrakePressure)},
                                         {},
                                         {},
-                                        {&(this->m_BOutTyre),  &(this->m_BOutClutch)},
+                                        {&(this->m_OutTyre),  &(this->m_OutClutch)},
                                         {&(this->m_Transmission)}};
 
         this->RegisterBlocks(list);
@@ -43,7 +42,7 @@ namespace Models {
     };
 
     TransmissionBlocks TransmissionStandalone::Blocks() {
-        return {&(this->m_BClutchIn), &(this->m_BTyreIn), &(this->m_BBrakePressure), &(this->m_BOutClutch), &(this->m_BOutTyre)};
+        return {&(this->m_ClutchIn), &(this->m_TyreIn), &(this->m_BrakePressure), &(this->m_OutClutch), &(this->m_OutTyre)};
     };
 
     int TransmissionStandalone::CurrentGear()

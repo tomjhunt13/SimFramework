@@ -400,38 +400,45 @@ namespace Models {
     {
         this->m_Ratios = gearRatios;
         this->m_EffectiveInertia = effectiveInertia;
-        this->m_BDiscBrake.SetParameters(Mu, R, D, maxBrakePressure, N);
+        this->m_DiscBrake.SetParameters(Mu, R, D, maxBrakePressure, N);
+
+        // Initialise dynamic variables and initial conditions
         this->m_GearIndex = 0;
         this->SetGearRatio();
 
+        Eigen::Vector<float, 1> initialConditions;
+        initialConditions << 0.f;
+        this->m_States.SetInitialConditions(initialConditions);
     }
 
     void Transmission::Configure(
-            SimFramework::Signal<float>* inClutchTorque,
-            SimFramework::Signal<float>* inTyreTorque,
-            SimFramework::Signal<float>* inBrakePressure,
-            SimFramework::Signal<float>* outClutchSpeed,
-            SimFramework::Signal<float>* outTyreSpeed)
+            const SimFramework::Signal<float>* inClutchTorque,
+            const SimFramework::Signal<float>* inTyreTorque,
+            const SimFramework::Signal<float>* inBrakePressure)
     {
-
-        // TODO: decide where to put this
-        //  Initial speed and gear ratio
-        Eigen::Vector<float, 1> initState;
-        initState << 0;
-
         // Configure blocks
-        this->m_BDiscBrake.Configure(inBrakePressure, outTyreSpeed);
-        this->m_BVec.Configure({inClutchTorque,  inTyreTorque, &(this->m_SBrakeTorque)});
-        this->m_BStates.Configure(&(this->m_STorqueVec));
-        this->m_BStates.SetInitialConditions(initState);
-        this->m_BMask.Configure(&(this->m_SSpeeds));
+        this->m_DiscBrake.Configure(inBrakePressure, this->OutTyreSpeed());
+        this->m_TorqueVector.Configure({inClutchTorque, inTyreTorque, this->m_DiscBrake.OutTorque()});
+        this->m_States.Configure(this->m_TorqueVector.OutSignal());
+        this->m_StateMask.Configure(this->m_States.OutSignal());
     };
+
+    const SimFramework::Signal<float>* Transmission::OutClutchSpeed() const
+    {
+        return this->m_StateMask.OutSignal(0);
+    };
+
+    const SimFramework::Signal<float>* Transmission::OutTyreSpeed() const
+    {
+        return this->m_StateMask.OutSignal(1);
+    };
+
 
     SimFramework::BlockList Transmission::Blocks()
     {
         return {{},
-                {&(this->m_BStates)},
-                {&(this->m_BVec), &(this->m_BMask), &(this->m_BDiscBrake)},
+                {&(this->m_States)},
+                {&(this->m_TorqueVector), &(this->m_StateMask), &(this->m_DiscBrake)},
                 {},
                 {}};
     };
@@ -487,7 +494,7 @@ namespace Models {
 
         std::cout << "A: " << A << ", B: " << B << ", C: " << C << ", D: " << D << std::endl;
 
-        this->m_BStates.SetMatrices(A, B, C, D);
+        this->m_States.SetMatrices(A, B, C, D);
     }
 
     int Transmission::CurrentGear() const

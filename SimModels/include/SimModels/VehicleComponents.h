@@ -262,11 +262,12 @@ namespace Models {
         int CurrentGear() const;
 
         void Configure(
-                SimFramework::Signal<float>* inClutchTorque,
-                SimFramework::Signal<float>* inTyreTorque,
-                SimFramework::Signal<float>* inBrakePressure,
-                SimFramework::Signal<float>* outClutchSpeed,
-                SimFramework::Signal<float>* outTyreSpeed);
+                const SimFramework::Signal<float>* inClutchTorque,
+                const SimFramework::Signal<float>* inTyreTorque,
+                const SimFramework::Signal<float>* inBrakePressure);
+
+        const SimFramework::Signal<float>* OutClutchSpeed() const;
+        const SimFramework::Signal<float>* OutTyreSpeed() const;
 
         SimFramework::BlockList Blocks() override;
 
@@ -278,17 +279,12 @@ namespace Models {
         int m_GearIndex;
         float m_EffectiveInertia;
 
-        // Signals
-        SimFramework::Signal<Eigen::Vector3f> m_STorqueVec;
-        SimFramework::Signal<Eigen::Vector2f> m_SSpeeds;
-        SimFramework::Signal<float> m_SBrakeTorque;
 
         // Blocks
-        DiscBrake m_BDiscBrake;
-        SimFramework::ConstantBlock<float> m_BConst;
-        SimFramework::Vectorise<float, Eigen::Vector3f> m_BVec;
-        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 1, 2> m_BStates;
-        SimFramework::Mask<Eigen::Vector2f, float, 2> m_BMask;
+        DiscBrake m_DiscBrake;
+        SimFramework::Vectorise<float, Eigen::Vector3f> m_TorqueVector;
+        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 1, 2> m_States;
+        SimFramework::Mask<Eigen::Vector2f, float, 2> m_StateMask;
     };
 
 

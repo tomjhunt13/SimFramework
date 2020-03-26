@@ -41,19 +41,13 @@ namespace Models {
         int CurrentGear();
 
     private:
-        // Signals
-        SimFramework::Signal<float> m_SClutchIn;
-        SimFramework::Signal<float> m_STyreIn;
-        SimFramework::Signal<float> m_SBrakePressureIn;
-        SimFramework::Signal<float> m_SClutchOut;
-        SimFramework::Signal<float> m_STyreOut;
 
         // Blocks
-        SimFramework::Input<float> m_BClutchIn;
-        SimFramework::Input<float> m_BTyreIn;
-        SimFramework::Input<float> m_BBrakePressure;
-        SimFramework::Output<float> m_BOutClutch;
-        SimFramework::Output<float> m_BOutTyre;
+        SimFramework::Input<float> m_ClutchIn;
+        SimFramework::Input<float> m_TyreIn;
+        SimFramework::Input<float> m_BrakePressure;
+        SimFramework::Output<float> m_OutClutch;
+        SimFramework::Output<float> m_OutTyre;
 
         // Subsytems
         Transmission m_Transmission;

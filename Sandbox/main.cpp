@@ -8,8 +8,8 @@
 int main() {
 
 //    SandboxMassSpringDamper();
-    SandboxEngine();
-//    SandboxTransmission();
+//    SandboxEngine();
+    SandboxTransmission();
 //    SandboxVehicleStandalone();
 //    SandboxFullModel();
 

@@ -130,7 +130,7 @@ namespace SimFramework {
             this->m_InputSignal = inputSignal;
         };
 
-        void SetInitialConditions(Eigen::Vector<float, StateLength>& initialValue)
+        void SetInitialConditions(const Eigen::Vector<float, StateLength>& initialValue)
         {
             this->m_InitialValue = initialValue;
         };
