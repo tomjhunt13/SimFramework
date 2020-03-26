@@ -23,12 +23,12 @@ namespace SimFramework {
             return &(this->m_OutputSignal);
         };
 
-        std::vector<SignalBase*> InputSignals() override
+        std::vector<const SignalBase*> InputSignals() const override
         {
             return {};
         }
 
-        std::vector<SignalBase*> OutputSignals() override
+        std::vector<const SignalBase*> OutputSignals() const override
         {
             return {&(this->m_OutputSignal)};
         }
@@ -65,12 +65,12 @@ namespace SimFramework {
             this->m_SignalValue = value;
         };
 
-        std::vector<SignalBase*> InputSignals() override
+        std::vector<const SignalBase*> InputSignals() const override
         {
             return {};
         }
 
-        std::vector<SignalBase*> OutputSignals() override
+        std::vector<const SignalBase*> OutputSignals() const override
         {
             return {&(this->m_Signal)};
         }
@@ -101,8 +101,8 @@ namespace SimFramework {
 
         virtual float Evaluate(float t) = 0;
 
-        std::vector<SignalBase*> InputSignals() override;
-        std::vector<SignalBase*> OutputSignals() override;
+        std::vector<const SignalBase*> InputSignals() const override;
+        std::vector<const SignalBase*> OutputSignals() const override;
         void Initialise(float t_0) override;
         void Update(float dt) override;
 
@@ -151,12 +151,12 @@ namespace SimFramework {
             return &(this->m_OutputSignal);
         };
 
-        std::vector<SignalBase*> InputSignals() override
+        std::vector<const SignalBase*> InputSignals() const override
         {
-            return {}; //this->m_InputSignal};
+            return {this->m_InputSignal};
         }
 
-        std::vector<SignalBase*> OutputSignals() override
+        std::vector<const SignalBase*> OutputSignals() const override
         {
             return {&(this->m_OutputSignal)};
         }
@@ -228,17 +228,17 @@ namespace SimFramework {
             return &(this->m_OutputSignal);
         }
 
-        std::vector<SignalBase*> InputSignals() override
+        std::vector<const SignalBase*> InputSignals() const override
         {
             std::vector<const SignalBase*> signals(this->m_InputSignals.size());
             for (int i=0; i < this->m_InputSignals.size(); i++)
             {
                 signals[i] = m_InputSignals[i];
             }
-            return {}; //signals;
+            return {signals};
         }
 
-        std::vector<SignalBase*> OutputSignals() override
+        std::vector<const SignalBase*> OutputSignals() const override
         {
             return {&(this->m_OutputSignal)};
         }
@@ -303,17 +303,17 @@ namespace SimFramework {
             return &(this->m_OutputSignal);
         };
 
-        std::vector<SignalBase*> InputSignals() override
+        std::vector<const SignalBase*> InputSignals() const override
         {
             std::vector<const SignalBase*> signals(this->m_InputSignals.size());
             for (int i=0; i < this->m_InputSignals.size(); i++)
             {
                 signals[i] = m_InputSignals[i];
             }
-            return {}; // signals;
+            return {signals};
         }
 
-        std::vector<SignalBase*> OutputSignals() override
+        std::vector<const SignalBase*> OutputSignals() const override
         {
             return {&(this->m_OutputSignal)};
         }
@@ -356,8 +356,6 @@ namespace SimFramework {
         void Configure(const Signal<InputType>* inputSignal)
         {
             this->m_InputSignal = inputSignal;
-
-//            this->m_MaskedSignals.resize(inputSignal.size());
         };
 
         const Signal<OutputType>* OutSignal(int index) const
@@ -365,14 +363,14 @@ namespace SimFramework {
             return &(this->m_MaskedSignals[index]);
         }
 
-        std::vector<SignalBase*> InputSignals() override
+        std::vector<const SignalBase*> InputSignals() const override
         {
-            return {}; //this->m_InputSignal};
+            return {this->m_InputSignal};
         }
 
-        std::vector<SignalBase*> OutputSignals() override
+        std::vector<const SignalBase*> OutputSignals() const override
         {
-            std::vector<SignalBase*> signals(this->m_MaskedSignals.size());
+            std::vector<const SignalBase*> signals(this->m_MaskedSignals.size());
             for (int i=0; i < this->m_MaskedSignals.size(); i++)
             {
                 signals[i] = &(this->m_MaskedSignals[i]);
@@ -418,12 +416,12 @@ namespace SimFramework {
             return &(this->m_OutputSignal);
         };
 
-        std::vector<SignalBase*> InputSignals() override
+        std::vector<const SignalBase*> InputSignals() const override
         {
-            return {}; // this->m_InputSignal};
+            return {this->m_InputSignal};
         }
 
-        std::vector<SignalBase*> OutputSignals() override
+        std::vector<const SignalBase*> OutputSignals() const override
         {
             return {&(this->m_OutputSignal)};
         }
@@ -453,8 +451,8 @@ namespace SimFramework {
 
         void SetTable(Table3D& table);
 
-        std::vector<SignalBase*> InputSignals() override;
-        std::vector<SignalBase*> OutputSignals() override;
+        std::vector<const SignalBase*> InputSignals() const override;
+        std::vector<const SignalBase*> OutputSignals() const override;
         void Update() override;
 
     private:
@@ -486,12 +484,12 @@ namespace SimFramework {
             return &(this->m_Output);
         };
 
-        std::vector<SignalBase*> InputSignals() override
+        std::vector<const SignalBase*> InputSignals() const override
         {
-            return {}; //this->m_Input1, this->m_Input2, this->m_Alpha};
+            return {this->m_Input1, this->m_Input2, this->m_Alpha};
         }
 
-        std::vector<SignalBase*> OutputSignals() override
+        std::vector<const SignalBase*> OutputSignals() const override
         {
             return {&(this->m_Output)};
         }
@@ -526,12 +524,12 @@ namespace SimFramework {
             return this->m_SignalCopy;
         };
 
-        std::vector<SignalBase*> InputSignals() override
+        std::vector<const SignalBase*> InputSignals() const override
         {
-            return {};//this->m_Signal};
+            return {this->m_Signal};
         }
 
-        std::vector<SignalBase*> OutputSignals() override
+        std::vector<const SignalBase*> OutputSignals() const override
         {
             return {};
         }

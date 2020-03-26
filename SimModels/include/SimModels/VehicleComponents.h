@@ -20,8 +20,8 @@ namespace Models {
 
         const SimFramework::Signal<float>* OutClutchTorque() const;
 
-        std::vector<SimFramework::SignalBase*> InputSignals() override;
-        std::vector<SimFramework::SignalBase*> OutputSignals() override;
+        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
+        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
         void Update() override;
 
     private:
@@ -42,8 +42,8 @@ namespace Models {
 
         const SimFramework::Signal<float>* OutEngagement() const;
 
-        std::vector<SimFramework::SignalBase*> InputSignals() override;
-        std::vector<SimFramework::SignalBase*> OutputSignals() override;
+        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
+        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
         void Update() override;
 
     private:
@@ -67,8 +67,8 @@ namespace Models {
 //
 //        void Configure(SimFramework::Signal<float>* inEngineSpeed);
 //
-//        std::vector<SimFramework::SignalBase*> InputSignals() override;
-//        std::vector<SimFramework::SignalBase*> OutputSignals() override;
+//        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
+//        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
 //        void Update() override;
 //
 //    private:
@@ -108,8 +108,8 @@ namespace Models {
 
         void SetParameters(float radius=0.2, float Fz=15000,  float B=10, float C=1.9, float D=1, float E=0.97);
 
-        std::vector<SimFramework::SignalBase*> InputSignals() override;
-        std::vector<SimFramework::SignalBase*> OutputSignals() override;
+        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
+        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
         void Update() override;
 
     private:
@@ -141,8 +141,8 @@ namespace Models {
 
         const SimFramework::Signal<float>* OutForce() const;
 
-        std::vector<SimFramework::SignalBase*> InputSignals() override;
-        std::vector<SimFramework::SignalBase*> OutputSignals() override;
+        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
+        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
         void Update() override;
 
     private:
@@ -160,11 +160,13 @@ namespace Models {
     class DiscBrake : public SimFramework::Function
     {
     public:
-        void Configure(SimFramework::Signal<float>* inBrakePressure, SimFramework::Signal<float>* inWheelSpeed, SimFramework::Signal<float>* outBrakeTorque);
+        void Configure(const SimFramework::Signal<float>* inBrakePressure, const SimFramework::Signal<float>* inWheelSpeed);
         void SetParameters(float mu=0.9, float R=0.15, float D=0.01, float maxBrakePressure=50000, int N=2);
 
-        std::vector<SimFramework::SignalBase*> InputSignals() override;
-        std::vector<SimFramework::SignalBase*> OutputSignals() override;
+        const SimFramework::Signal<float>* OutTorque() const;
+
+        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
+        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
         void Update() override;
 
     private:
@@ -177,9 +179,9 @@ namespace Models {
         float m_BrakeConstant;
 
         // Signals
-        SimFramework::Signal<float>* m_BrakePressure;
-        SimFramework::Signal<float>* m_WheelSpeed;
-        SimFramework::Signal<float>* m_BrakeTorque;
+        const SimFramework::Signal<float>* m_BrakePressure;
+        const SimFramework::Signal<float>* m_WheelSpeed;
+        SimFramework::Signal<float> m_BrakeTorque;
     };
 
 

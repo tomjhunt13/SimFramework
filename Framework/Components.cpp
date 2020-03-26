@@ -16,12 +16,12 @@ namespace SimFramework {
     };
 
 
-    std::vector<SignalBase*> TriggerFunction::InputSignals()
+    std::vector<const SignalBase*> TriggerFunction::InputSignals() const
     {
         return {};
     }
 
-    std::vector<SignalBase*> TriggerFunction::OutputSignals()
+    std::vector<const SignalBase*> TriggerFunction::OutputSignals() const
     {
         return {&(this->m_Output)};
     }
@@ -75,12 +75,12 @@ namespace SimFramework {
         this->m_Table = table;
     }
 
-    std::vector<SignalBase*> LookupTable2D::InputSignals()
+    std::vector<const SignalBase*> LookupTable2D::InputSignals() const
     {
-        return {}; // this->m_X, this->m_Y};
+        return {this->m_X, this->m_Y};
     }
 
-    std::vector<SignalBase*> LookupTable2D::OutputSignals()
+    std::vector<const SignalBase*> LookupTable2D::OutputSignals() const
     {
         return {&(this->m_Out)};
     }

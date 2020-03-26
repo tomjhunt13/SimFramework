@@ -41,8 +41,8 @@ namespace SimFramework {
 
         virtual ~Block() {};
 
-        virtual std::vector<SignalBase*> InputSignals() = 0;
-        virtual std::vector<SignalBase*> OutputSignals() = 0;
+        virtual std::vector<const SignalBase*> InputSignals() const = 0;
+        virtual std::vector<const SignalBase*> OutputSignals() const = 0;
 
     private:
         std::string m_Name;
@@ -168,7 +168,7 @@ namespace SimFramework {
 
     namespace Internal {
 
-        std::map<SignalBase*, std::vector<Function*>> FunctionInputs(std::vector<Function*> functions);
+        std::map<const SignalBase*, std::vector<Function*>> FunctionInputs(std::vector<Function*> functions);
         std::vector<std::vector<int>> AdjacencyList(std::vector<Function*> functions);
         std::vector<int> TopologicalSort(std::vector<std::vector<int>> adjacencyList);
         std::vector<Function*> SortFunctions(std::vector<Function*> functions);

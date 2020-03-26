@@ -23,12 +23,12 @@ namespace Models {
     };
 
 
-    std::vector<SimFramework::SignalBase*> Clutch::InputSignals()
+    std::vector<const SimFramework::SignalBase*> Clutch::InputSignals() const
     {
-        return {}; //this->m_InEngineSpeed, this->m_InTransmissionSpeed, this->m_InClutchStiffness};
+        return {this->m_InEngineSpeed, this->m_InTransmissionSpeed, this->m_InClutchStiffness};
     };
 
-    std::vector<SimFramework::SignalBase*> Clutch::OutputSignals()
+    std::vector<const SimFramework::SignalBase*> Clutch::OutputSignals() const
     {
         return {&(this->m_OutClutchTorque)};
     };
@@ -56,12 +56,12 @@ namespace Models {
     };
 
 
-    std::vector<SimFramework::SignalBase*> ClutchLowSpeedEngagement::InputSignals()
+    std::vector<const SimFramework::SignalBase*> ClutchLowSpeedEngagement::InputSignals() const
     {
-        return {}; //this->m_InTransmissionSpeed};
+        return {this->m_InTransmissionSpeed};
     };
 
-    std::vector<SimFramework::SignalBase*> ClutchLowSpeedEngagement::OutputSignals()
+    std::vector<const SimFramework::SignalBase*> ClutchLowSpeedEngagement::OutputSignals() const
     {
         return {&(this->m_OutEngagement)};
     };
@@ -174,12 +174,12 @@ namespace Models {
         return &(this->m_Torque);
     };
 
-    std::vector<SimFramework::SignalBase*> Tyre::InputSignals()
+    std::vector<const SimFramework::SignalBase*> Tyre::InputSignals() const
     {
-        return {};//&(this->m_RotationalSpeed), &(this->m_LinearSpeed)};
+        return {&(this->m_RotationalSpeed), &(this->m_LinearSpeed)};
     };
 
-    std::vector<SimFramework::SignalBase*> Tyre::OutputSignals()
+    std::vector<const SimFramework::SignalBase*> Tyre::OutputSignals() const
     {
         return {&(this->m_Force), &(this->m_Torque)};
     };
@@ -232,12 +232,12 @@ namespace Models {
     };
 
 
-    std::vector<SimFramework::SignalBase*> AeroDrag::InputSignals()
+    std::vector<const  SimFramework::SignalBase*> AeroDrag::InputSignals() const
     {
-        return {};//this->m_Speed};
+        return {this->m_Speed};
     };
 
-    std::vector<SimFramework::SignalBase*> AeroDrag::OutputSignals()
+    std::vector<const SimFramework::SignalBase*> AeroDrag::OutputSignals() const
     {
         return {&(this->m_Force)};
     };
@@ -249,11 +249,10 @@ namespace Models {
     };
 
 
-    void DiscBrake::Configure(SimFramework::Signal<float>* inBrakePressure, SimFramework::Signal<float>* inWheelSpeed, SimFramework::Signal<float>* outBrakeTorque)
+    void DiscBrake::Configure(const SimFramework::Signal<float>* inBrakePressure, const SimFramework::Signal<float>* inWheelSpeed)
     {
         this->m_BrakePressure = inBrakePressure;
         this->m_WheelSpeed = inWheelSpeed;
-        this->m_BrakeTorque = outBrakeTorque;
 
         this->SetParameters();
     };
@@ -269,14 +268,20 @@ namespace Models {
         this->m_BrakeConstant = (mu * SimFramework::pi() * D * D * R * N * maxBrakePressure); // For all four wheels
     };
 
-    std::vector<SimFramework::SignalBase*> DiscBrake::InputSignals()
+    const SimFramework::Signal<float>* DiscBrake::OutTorque() const
+    {
+        return &(this->m_BrakeTorque);
+    };
+
+
+    std::vector<const SimFramework::SignalBase*> DiscBrake::InputSignals() const
     {
         return {this->m_BrakePressure};
     };
 
-    std::vector<SimFramework::SignalBase*> DiscBrake::OutputSignals()
+    std::vector<const SimFramework::SignalBase*> DiscBrake::OutputSignals() const
     {
-        return {this->m_BrakeTorque};
+        return {&(this->m_BrakeTorque)};
     };
 
     void DiscBrake::Update()
@@ -286,11 +291,11 @@ namespace Models {
 
         if (speed >= 0.f)
         {
-            this->m_BrakeTorque->Write(-1 * brakeMagnitude);
+            this->m_BrakeTorque.Write(-1 * brakeMagnitude);
         }
         else
         {
-            this->m_BrakeTorque->Write(brakeMagnitude);
+            this->m_BrakeTorque.Write(brakeMagnitude);
         };
     };
 
@@ -412,7 +417,7 @@ namespace Models {
         initState << 0;
 
         // Configure blocks
-        this->m_BDiscBrake.Configure(inBrakePressure, outTyreSpeed, &(this->m_SBrakeTorque));
+        this->m_BDiscBrake.Configure(inBrakePressure, outTyreSpeed);
         this->m_BVec.Configure({inClutchTorque,  inTyreTorque, &(this->m_SBrakeTorque)});
         this->m_BStates.Configure(&(this->m_STorqueVec));
         this->m_BStates.SetInitialConditions(initState);

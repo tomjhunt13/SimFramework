@@ -107,17 +107,17 @@ namespace SimFramework {
 
 
         // Given a vector functions, return map of signals to the functions they drive
-        std::map<SignalBase*, std::vector<Function*>> FunctionInputs(std::vector<Function*> functions)
+        std::map<const SignalBase*, std::vector<Function*>> FunctionInputs(std::vector<Function*> functions)
         {
 
-            std::map<SignalBase*, std::vector<Function*>> outputMap;
+            std::map<const SignalBase*, std::vector<Function*>> outputMap;
 
             // Iterate over functions
             for (Function* func : functions)
             {
 
                 // Iterate over input signals
-                for (SignalBase* sig : func->InputSignals())
+                for (const SignalBase* sig : func->InputSignals())
                 {
 
                     // If signal not already in map, create Function* vector
@@ -145,7 +145,7 @@ namespace SimFramework {
             }
 
             // Map of signals to their driving functions
-            std::map<SignalBase*, std::vector<Function*>> mapSigFunc = FunctionInputs(functions);
+            std::map<const SignalBase*, std::vector<Function*>> mapSigFunc = FunctionInputs(functions);
 
             std::vector<std::vector<int>> outputList(functions.size());
 
@@ -153,7 +153,7 @@ namespace SimFramework {
             for (int i=0; i < functions.size(); i++)
             {
                 // Get outputs
-                for (SignalBase* sig : functions[i]->OutputSignals())
+                for (const SignalBase* sig : functions[i]->OutputSignals())
                 {
                     if (mapSigFunc.count(sig) > 0)
                     {
