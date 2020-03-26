@@ -1,6 +1,8 @@
 #ifndef SIMINTERFACE_CONSTANTBLOCK_H
 #define SIMINTERFACE_CONSTANTBLOCK_H
 
+#include <iostream> // TODO: remove
+
 #include <vector>
 #include "Eigen/Dense"
 #include "Framework.h"
@@ -122,20 +124,23 @@ namespace SimFramework {
             this->m_OutputSignal = outputSignal;
         }
 
-        void SetInitialConditions(Eigen::Vector<float, StateLength> initialValue)
+        void SetInitialConditions(const Eigen::Vector<float, StateLength>& initialValue)
         {
             this->m_InitialValue = initialValue;
         }
 
-        void SetMatrices(Eigen::Matrix<float, StateLength, StateLength> A,
-                         Eigen::Matrix<float, StateLength, InputLength> B,
-                         Eigen::Matrix<float, OutputLength, StateLength> C,
-                         Eigen::Matrix<float, OutputLength, InputLength> D)
+        void SetMatrices(const Eigen::Matrix<float, StateLength, StateLength>& A,
+                         const Eigen::Matrix<float, StateLength, InputLength>& B,
+                         const Eigen::Matrix<float, OutputLength, StateLength>& C,
+                         const Eigen::Matrix<float, OutputLength, InputLength>& D)
         {
             this->m_A = A;
             this->m_B = B;
             this->m_C = C;
             this->m_D = D;
+
+            std::cout << "A: " << this->m_A << ", B: " << this->m_B << ", C: " << this->m_C << ", D: " << this->m_D << std::endl;
+
         }
 
         std::vector<SignalBase*> InputSignals() override
@@ -172,7 +177,7 @@ namespace SimFramework {
 
         };
 
-        Eigen::Vector<float, StateLength> Derivative(float t, Eigen::Vector<float, StateLength> x) override
+        Eigen::Vector<float, StateLength> Derivative(float t, const Eigen::Vector<float, StateLength>& x) override
         {
             return this->m_A * this->m_States + this->m_B * this->m_InputCopy;
         };

@@ -8,6 +8,20 @@
 
 namespace Models {
 
+    struct TransmissionParameters
+    {
+        // Transmission
+        std::vector<float> GearRatios = {0.07, 0.14, 0.23, 0.32, 0.41, 0.5};
+        float TransmissionInertia = 1.f;
+
+        // Brake
+        float BrakeFrictionCoefficient = 0.9;
+        float BrakeRadius = 0.15;
+        float BrakeCylinderDiameter = 0.01;
+        float MaxBrakePressure = 500000;
+        int BrakeCylindersPerWheel = 2;
+    };
+
     struct TransmissionBlocks {
         SimFramework::Input<float>* ClutchInBlock;
         SimFramework::Input<float>* TyreInBlock;
@@ -20,6 +34,7 @@ namespace Models {
 
     public:
         TransmissionStandalone();
+        void SetParameters(TransmissionParameters parameters);
         void ShiftUp();
         void ShiftDown();
         TransmissionBlocks Blocks();

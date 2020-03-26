@@ -39,6 +39,8 @@ namespace Models {
         this->m_Engine.SetParameters(parameters.EngineJSON, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant);
         this->m_Transmission.SetParameters(parameters.GearRatios, parameters.TransmissionInertia, parameters.BrakeFrictionCoefficient, parameters.BrakeRadius, parameters.BrakeCylinderDiameter, parameters.MaxBrakePressure, parameters.BrakeCylindersPerWheel);
         this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho);
+
+
     };
 
 

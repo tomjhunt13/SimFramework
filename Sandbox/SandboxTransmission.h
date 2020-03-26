@@ -9,7 +9,9 @@
 
 void SandboxTransmission()
 {
+    Models::TransmissionParameters p;
     Models::TransmissionStandalone transmission;
+    transmission.SetParameters(p);
 
     Models::TransmissionBlocks blocks = transmission.Blocks();
 

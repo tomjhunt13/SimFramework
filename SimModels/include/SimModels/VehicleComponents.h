@@ -265,7 +265,7 @@ namespace Models {
         SimFramework::BlockList Blocks() override;
 
     private:
-        void SetGearRatio(int gearIndex);
+        void SetGearRatio();
 
         // Parameters
         std::vector<float> m_Ratios;

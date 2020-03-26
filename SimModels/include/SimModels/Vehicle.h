@@ -9,7 +9,6 @@
 
 #include "SimModels/VehicleComponents.h"
 
-// TODO: Singleton with all vehicle parameters
 
 namespace Models {
 
@@ -50,7 +49,6 @@ namespace Models {
     };
 
 
-    // TODO: dont return blocks for IO, have IO method taking in input struct and returning output struct
     struct VehicleBlocks
     {
         SimFramework::Input<float>* InThrottle;

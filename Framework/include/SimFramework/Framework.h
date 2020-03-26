@@ -26,7 +26,7 @@ namespace SimFramework {
         Signal(std::string name = "Signal") : SignalBase(name) {};
 
         SignalType Read() const { return this->m_Value; };
-        void Write(SignalType value) { this->m_Value = value; };
+        void Write(const SignalType& value) { this->m_Value = value; };
 
     private:
         SignalType m_Value;
@@ -135,22 +135,17 @@ namespace SimFramework {
     };
 
 
-
-
-
-
-
     //-------- Dynamic system and integration
     template <typename DerivativeType>
     class Integrable {
     public:
-        virtual DerivativeType Derivative(float t, DerivativeType x) = 0;
+        virtual DerivativeType Derivative(float t, const DerivativeType& x) = 0;
     };
 
     class ForwardEuler {
     public:
         template<typename DerivativeType>
-        static DerivativeType Step(Integrable<DerivativeType>* block, float dt, float t_n, DerivativeType x_n)
+        static DerivativeType Step(Integrable<DerivativeType>* block, float dt, float t_n, const DerivativeType& x_n)
         {
             return x_n + dt * block->Derivative(t_n, x_n);
         };
@@ -159,7 +154,7 @@ namespace SimFramework {
     class RK4 {
     public:
         template<typename DerivativeType>
-        static DerivativeType Step(Integrable<DerivativeType>* block, float dt, float t_n, DerivativeType x_n)
+        static DerivativeType Step(Integrable<DerivativeType>* block, float dt, float t_n, const DerivativeType& x_n)
         {
             DerivativeType k1 = dt * block->Derivative(t_n, x_n);
             DerivativeType k2 = dt * block->Derivative(t_n + dt / 2.f, x_n + k1 / 2.f);

@@ -1,4 +1,7 @@
+#include <iostream> // TODO: remove
+
 #include "SimModels/VehicleComponents.h"
+
 
 namespace Models {
 
@@ -61,6 +64,8 @@ namespace Models {
 
         float engagement = 1;
 
+
+        // TODO: Tidy up!
 
         if (speed > this->m_SpeedThreshold)
         {
@@ -365,7 +370,8 @@ namespace Models {
         this->m_Ratios = gearRatios;
         this->m_EffectiveInertia = effectiveInertia;
         this->m_BDiscBrake.SetParameters(Mu, R, D, maxBrakePressure, N);
-        this->SetGearRatio(0);
+        this->m_GearIndex = 0;
+        this->SetGearRatio();
 
     }
 
@@ -379,7 +385,6 @@ namespace Models {
 
         // TODO: decide where to put this
         //  Initial speed and gear ratio
-        this->m_GearIndex = 0;
         Eigen::Vector<float, 1> initState;
         initState << 0;
 
@@ -413,7 +418,7 @@ namespace Models {
         this->m_GearIndex += 1;
 
         // Change gear
-        this->SetGearRatio(this->m_GearIndex);
+        this->SetGearRatio();
 
         return true;
     };
@@ -430,24 +435,26 @@ namespace Models {
         this->m_GearIndex -= 1;
 
         // Change gear
-        this->SetGearRatio(this->m_GearIndex);
+        this->SetGearRatio();
 
         return true;
     };
 
-    void Transmission::SetGearRatio(int gearIndex)
+    void Transmission::SetGearRatio()
     {
         Eigen::Matrix<float, 1, 1> A;
         A << 0.f;
 
-        Eigen::Matrix<float, 1,3> B;
-        B << 1.f / this->m_EffectiveInertia, - this->m_Ratios[gearIndex] / this->m_EffectiveInertia, this->m_Ratios[gearIndex] / this->m_EffectiveInertia;
+        Eigen::Matrix<float, 1, 3> B;
+        B << 1.f / this->m_EffectiveInertia, - this->m_Ratios[this->m_GearIndex] / this->m_EffectiveInertia, this->m_Ratios[this->m_GearIndex] / this->m_EffectiveInertia;
 
         Eigen::Matrix<float, 2, 1> C;
-        C << 1.f, this->m_Ratios[gearIndex];
+        C << 1.f, this->m_Ratios[this->m_GearIndex];
 
         Eigen::Matrix<float, 2, 3> D;
         D << 0.f, 0.f, 0.f, 0.f, 0.f, 0.f;
+
+        std::cout << "A: " << A << ", B: " << B << ", C: " << C << ", D: " << D << std::endl;
 
         this->m_BStates.SetMatrices(A, B, C, D);
     }
