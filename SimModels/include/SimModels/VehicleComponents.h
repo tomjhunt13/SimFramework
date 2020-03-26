@@ -295,25 +295,19 @@ namespace Models {
 
         void SetParameters(float initialPosition=0.f, float initialVelocity=0.f, float mass=1000.f, float Cd=0.3, float A=2.5, float rho=1.225);
 
-        void Configure(
-                SimFramework::Signal<float>* inTyreForce,
-                SimFramework::Signal<float>* outVehiclePosition,
-                SimFramework::Signal<float>* outVehicleVelocity);
+        void Configure(const SimFramework::Signal<float>* inTyreForce);
+
+        const SimFramework::Signal<float>* OutVehiclePosition() const;
+        const SimFramework::Signal<float>* OutVehicleVelocity() const;
 
         SimFramework::BlockList Blocks() override;
 
     private:
-        // Signals
-        SimFramework::Signal<float> m_SAeroDrag;
-        SimFramework::Signal<float> m_SGravity;
-        SimFramework::Signal<Eigen::Vector3f> m_SForceVec;
-        SimFramework::Signal<Eigen::Vector2f> m_SStatesVec;
-
         // Blocks
-        AeroDrag m_BAeroDrag;
-        SimFramework::Vectorise<float, Eigen::Vector3f> m_BVectorise;
-        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 2, 2> m_BStateSpace;
-        SimFramework::Mask<Eigen::Vector2f, float, 2> m_BMask;
+        AeroDrag m_AeroDrag;
+        SimFramework::Vectorise<float, Eigen::Vector2f> m_Vectorise;
+        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector2f, 2, 2, 2> m_StateSpace;
+        SimFramework::Mask<Eigen::Vector2f, float, 2> m_Mask;
 
     };
 

@@ -32,11 +32,6 @@ namespace Models {
         VehicleDynamicsBlocks Blocks();
 
     private:
-        // Signals
-        SimFramework::Signal<float> m_STyre;
-        SimFramework::Signal<float> m_SPos;
-        SimFramework::Signal<float> m_SVel;
-
         // Blocks
         SimFramework::Input<float> m_TyreForce;
         SimFramework::Output<float> m_VehiclePosition;

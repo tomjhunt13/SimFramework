@@ -503,57 +503,56 @@ namespace Models {
     }
 
 
-    VehicleDynamics::VehicleDynamics() :
-        m_SAeroDrag("Drag"), m_SGravity("Const Gravity"), m_SForceVec("Vehicle Force Input"), m_SStatesVec("Vehicle States"),
-        m_BAeroDrag("Drag"), m_BVectorise("Vehicle Force Input"), m_BStateSpace("Vehicle Dynamics"), m_BMask("Vehicle Dynamics")
-    {};
+    VehicleDynamics::VehicleDynamics() : m_AeroDrag("Drag"), m_Vectorise("Vehicle Force Input"), m_StateSpace("Vehicle Dynamics"), m_Mask("Vehicle Dynamics") {};
 
     void VehicleDynamics::SetParameters(float initialPosition, float initialVelocity, float mass, float Cd, float A, float rho) {
+
+        this->m_AeroDrag.SetParameters(Cd, A, rho);
+
         // Set up state matrices
         Eigen::Matrix<float, 2, 2> matA;
         matA << 0.f, 1.f, 0.f, 0.f;
 
-        Eigen::Matrix<float, 2, 3> B;
-        B << 0, 0, 0, 1.f / mass, -1.f / mass, 1.f / mass;
+        Eigen::Matrix<float, 2, 2> B;
+        B << 0, 0, 1.f / mass, -1.f / mass;
 
         Eigen::Matrix<float, 2, 2> C;
         C << 1.f, 0.f, 0.f, 1.f;
 
-        Eigen::Matrix<float, 2, 3> D;
-        D << 0.f, 0.f, 0.f, 0.f, 0.f, 0.f;
+        Eigen::Matrix<float, 2, 2> D;
+        D << 0.f, 0.f, 0.f, 0.f;
 
-        this->m_BStateSpace.SetMatrices(matA, B, C, D);
+        this->m_StateSpace.SetMatrices(matA, B, C, D);
         Eigen::Vector2f initialConditions = {initialPosition, initialVelocity};
-        this->m_BStateSpace.SetInitialConditions(initialConditions);
-
-
-        // TODO: gravity properly
-        this->m_SGravity.Write(0);
+        this->m_StateSpace.SetInitialConditions(initialConditions);
     };
 
 
-
-
-    void VehicleDynamics::Configure(
-            SimFramework::Signal<float>* inTyreForce,
-            SimFramework::Signal<float>* outVehiclePosition,
-            SimFramework::Signal<float>* outVehicleVelocity)
+    void VehicleDynamics::Configure(const SimFramework::Signal<float>* inTyreForce)
     {
         // Configure blocks
-        this->m_BAeroDrag.Configure(outVehicleVelocity);
-        this->m_BVectorise.Configure({inTyreForce, &(this->m_SAeroDrag), &(this->m_SGravity)});
-        this->m_BStateSpace.Configure(&(this->m_SForceVec));
-        this->m_BMask.Configure(&(this->m_SStatesVec));
+        this->m_AeroDrag.Configure(this->OutVehicleVelocity());
+        this->m_Vectorise.Configure({inTyreForce, this->m_AeroDrag.OutForce()});
+        this->m_StateSpace.Configure(this->m_Vectorise.OutSignal());
+        this->m_Mask.Configure(this->m_StateSpace.OutSignal());
+    };
 
+    const SimFramework::Signal<float>* VehicleDynamics::OutVehiclePosition() const
+    {
+        return this->m_Mask.OutSignal(0);
+    };
 
+    const SimFramework::Signal<float>* VehicleDynamics::OutVehicleVelocity() const
+    {
+        return this->m_Mask.OutSignal(1);
     };
 
     SimFramework::BlockList VehicleDynamics::Blocks()
     {
         return {
             {},
-            {&(this->m_BStateSpace)},
-            {&(this->m_BAeroDrag), &(this->m_BVectorise), &(this->m_BMask)},
+            {&(this->m_StateSpace)},
+            {&(this->m_AeroDrag), &(this->m_Vectorise), &(this->m_Mask)},
             {},
             {}};
     };
