@@ -337,15 +337,13 @@ namespace Models {
     };
 
 
-    Engine::Engine() :
-            m_SEngineSpeed_("Engine Speed SS Output"), m_SEngineTorque("Engine Map Torque"), m_STorqueInput("Engine Torque Vec"),
-            m_BEngineMap("Engine Map"), m_BTorqueVector("Engine Torque Vec"), m_BInertia("Engine"), m_BMask("Engine Mask") {};
+    Engine::Engine() : m_EngineMap("Engine Map"), m_TorqueVector("Engine Torque"), m_Inertia("Engine"), m_SpeedMask("Engine") {};
 
     void Engine::SetParameters(std::string engineJSON, float initialSpeed, float J, float b)
     {
         // Set engine table
         SimFramework::Table3D engineTable = SimFramework::ReadTableJSON(engineJSON, "speed", "throttle", "torque");
-        this->m_BEngineMap.SetTable(engineTable);
+        this->m_EngineMap.SetTable(engineTable);
 
         // Set state space matrices
         Eigen::Matrix<float, 1, 1> A;
@@ -360,32 +358,37 @@ namespace Models {
         Eigen::Matrix<float, 1, 2> D;
         D << 0.f, 0.f;
 
-        this->m_BInertia.SetMatrices(A, B, C, D);
+        this->m_Inertia.SetMatrices(A, B, C, D);
 
         // Initial engine speed
         Eigen::Matrix<float, 1, 1> init;
         init << initialSpeed;
-        this->m_BInertia.SetInitialConditions(init);
+        this->m_Inertia.SetInitialConditions(init);
     }
 
     void Engine::Configure(
-            SimFramework::Signal<float>* inThrottle,
-            SimFramework::Signal<float>* inLoadTorque,
-            SimFramework::Signal<float>* outEngineSpeed)
+            const SimFramework::Signal<float>* inThrottle,
+            const SimFramework::Signal<float>* inLoadTorque)
     {
         // Configure blocks
-        this->m_BEngineMap.Configure(outEngineSpeed, inThrottle);
-        this->m_BTorqueVector.Configure({&(this->m_SEngineTorque), inLoadTorque});
-        this->m_BInertia.Configure(&(this->m_STorqueInput));
-        this->m_BMask.Configure(&(this->m_SEngineSpeed_));
+        this->m_EngineMap.Configure(this->OutEngineSpeed(), inThrottle);
+        this->m_TorqueVector.Configure({this->m_EngineMap.OutSignal(), inLoadTorque});
+        this->m_Inertia.Configure(this->m_TorqueVector.OutSignal());
+        this->m_SpeedMask.Configure(this->m_Inertia.OutSignal());
     };
+
+    const SimFramework::Signal<float>* Engine::OutEngineSpeed() const
+    {
+        return this->m_SpeedMask.OutSignal(0);
+    };
+
 
     SimFramework::BlockList Engine::Blocks()
     {
         // Construct system
         return {{},
-                {&(this->m_BInertia)},
-                {&(this->m_BMask), &(this->m_BEngineMap), &(this->m_BTorqueVector)},
+                {&(this->m_Inertia)},
+                {&(this->m_SpeedMask), &(this->m_EngineMap), &(this->m_TorqueVector)},
                 {},
                 {}};
     };

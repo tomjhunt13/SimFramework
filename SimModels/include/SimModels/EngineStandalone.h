@@ -27,18 +27,13 @@ namespace Models {
         EngineBlocks Blocks();
 
     private:
-        // Signals
-        SimFramework::Signal<float> m_SThrottle;
-        SimFramework::Signal<float> m_SLoadTorque;
-        SimFramework::Signal<float> m_SEngineSpeed;
-
         // Blocks
-        SimFramework::Input<float> m_BThrottle;
-        SimFramework::Input<float> m_BLoad;
-        SimFramework::Output<float> m_BEngineSpeed;
+        SimFramework::Input<float> m_Throttle;
+        SimFramework::Input<float> m_Load;
+        SimFramework::Output<float> m_EngineSpeed;
 
         // Subsystems
-        Engine m_SysEngine;
+        Engine m_Engine;
     };
 
 } // namespace Models

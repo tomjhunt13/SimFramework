@@ -5,28 +5,28 @@ namespace Models {
 
     EngineStandalone::EngineStandalone(std::string engineJSON, float initialSpeed, float J, float b) : System(0.001)
     {
-        this->m_SysEngine.SetParameters(engineJSON, initialSpeed, J, b);
+        this->m_Engine.SetParameters(engineJSON, initialSpeed, J, b);
 
         // Configure blocks
-//        this->m_BThrottle.Configure(&(this->m_SThrottle), 0.f);
-//        this->m_BLoad.Configure(&(this->m_SLoadTorque), 0.f);
-        this->m_BEngineSpeed.Configure(&(this->m_SEngineSpeed), 0.f);
+        this->m_Throttle.Configure(0.f);
+        this->m_Load.Configure(0.f);
+        this->m_EngineSpeed.Configure(this->m_Engine.OutEngineSpeed(), 0.f);
 
         // Configure engine
-        this->m_SysEngine.Configure(&(this->m_SThrottle), &(this->m_SLoadTorque), &(this->m_SEngineSpeed));
+        this->m_Engine.Configure(this->m_Throttle.OutSignal(), this->m_Load.OutSignal());
 
         // Construct system
-        SimFramework::BlockList list = {{&(this->m_BThrottle), &(this->m_BLoad)},
+        SimFramework::BlockList list = {{&(this->m_Throttle), &(this->m_Load)},
                                         {},
                                         {},
-                                        {&(this->m_BEngineSpeed)},
-                                        {&(this->m_SysEngine)}};
+                                        {&(this->m_EngineSpeed)},
+                                        {&(this->m_Engine)}};
         this->RegisterBlocks(list);
     }
 
     EngineBlocks EngineStandalone::Blocks()
     {
-        return {&(this->m_BLoad), &(this->m_BThrottle), &(this->m_BEngineSpeed)};
+        return {&(this->m_Load), &(this->m_Throttle), &(this->m_EngineSpeed)};
     };
 
 

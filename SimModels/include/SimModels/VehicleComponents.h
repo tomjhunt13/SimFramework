@@ -235,23 +235,19 @@ namespace Models {
         void SetParameters(std::string engineJSON="/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json", float initialSpeed=200.f, float J=1.f, float b=0.05);
 
         void Configure(
-                SimFramework::Signal<float>* inThrottle,
-                SimFramework::Signal<float>* inLoadTorque,
-                SimFramework::Signal<float>* outEngineSpeed);
+                const SimFramework::Signal<float>* inThrottle,
+                const SimFramework::Signal<float>* inLoadTorque);
+
+        const SimFramework::Signal<float>* OutEngineSpeed() const;
 
         SimFramework::BlockList Blocks() override;
 
     private:
-        // Signals
-        SimFramework::Signal<Eigen::Vector<float, 1>> m_SEngineSpeed_;
-        SimFramework::Signal<float> m_SEngineTorque;
-        SimFramework::Signal<Eigen::Vector2f> m_STorqueInput;
-
         // Blocks
-        SimFramework::LookupTable2D m_BEngineMap;
-        SimFramework::Vectorise<float, Eigen::Vector2f> m_BTorqueVector;
-        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector<float, 1>, 2, 1, 1> m_BInertia;
-        SimFramework::Mask<Eigen::Matrix<float, 1, 1>, float, 1> m_BMask;
+        SimFramework::LookupTable2D m_EngineMap;
+        SimFramework::Vectorise<float, Eigen::Vector2f> m_TorqueVector;
+        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector<float, 1>, 2, 1, 1> m_Inertia;
+        SimFramework::Mask<Eigen::Matrix<float, 1, 1>, float, 1> m_SpeedMask;
     };
 
 
