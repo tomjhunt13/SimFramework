@@ -372,7 +372,7 @@ namespace Models {
         this->m_BEngineMap.Configure(outEngineSpeed, inThrottle);
         this->m_BTorqueVector.Configure({&(this->m_SEngineTorque), inLoadTorque});
         this->m_BInertia.Configure(&(this->m_STorqueInput));
-        this->m_BMask.Configure(&(this->m_SEngineSpeed_), {0});
+        this->m_BMask.Configure(&(this->m_SEngineSpeed_));
     };
 
     SimFramework::BlockList Engine::Blocks()
@@ -416,7 +416,7 @@ namespace Models {
         this->m_BVec.Configure({inClutchTorque,  inTyreTorque, &(this->m_SBrakeTorque)});
         this->m_BStates.Configure(&(this->m_STorqueVec));
         this->m_BStates.SetInitialConditions(initState);
-        this->m_BMask.Configure(&(this->m_SSpeeds), {0, 1});
+        this->m_BMask.Configure(&(this->m_SSpeeds));
     };
 
     SimFramework::BlockList Transmission::Blocks()
@@ -528,7 +528,7 @@ namespace Models {
         this->m_BAeroDrag.Configure(outVehicleVelocity);
         this->m_BVectorise.Configure({inTyreForce, &(this->m_SAeroDrag), &(this->m_SGravity)});
         this->m_BStateSpace.Configure(&(this->m_SForceVec));
-        this->m_BMask.Configure(&(this->m_SStatesVec), {0, 1});
+        this->m_BMask.Configure(&(this->m_SStatesVec));
 
 
     };

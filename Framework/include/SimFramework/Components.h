@@ -347,20 +347,17 @@ namespace SimFramework {
     };
 
 
-    template <typename InputType, typename OutputType>
+    template <typename InputType, typename OutputType, int InputLength>
     class Mask : public Function
     {
     public:
-        Mask(std::string name = "Mask") : Function(name) {};
+        Mask(std::string name = "Mask") : Function(name), m_MaskedSignals(InputLength) {};
 
-
-        // TODO: dont need maskIndices anymore
-        void Configure(const Signal<InputType>* inputSignal, std::vector<int> maskIndices)
+        void Configure(const Signal<InputType>* inputSignal)
         {
             this->m_InputSignal = inputSignal;
-            this->m_MaskIndices = maskIndices;
 
-            this->m_MaskedSignals.resize(maskIndices.size());
+//            this->m_MaskedSignals.resize(inputSignal.size());
         };
 
         const Signal<OutputType>* OutSignal(int index) const
@@ -389,16 +386,13 @@ namespace SimFramework {
             this->m_InputCopy = this->m_InputSignal->Read();
 
             // Interate over vector elements and write value to masked signal
-            for (int i = 0; i < this->m_MaskIndices.size(); i++)
+            for (int i = 0; i < this->m_MaskedSignals.size(); i++)
             {
-                this->m_MaskedSignals[i].Write(this->m_InputCopy[this->m_MaskIndices[i]]);
+                this->m_MaskedSignals[i].Write(this->m_InputCopy[i]);
             }
         };
 
     private:
-        // Parameters
-        std::vector<int> m_MaskIndices;
-
         // Signals
         const Signal<InputType>* m_InputSignal;
         std::vector<Signal<OutputType>> m_MaskedSignals;

@@ -24,10 +24,10 @@ namespace Models {
         // Configure Blocks
         this->m_Input.Configure(0.f);
         this->m_Gain.Configure(&(this->m_MassStates), gainMatrix);
-        this->m_Mask1.Configure(&(this->m_SpringDamperForce_Vec), {0});
+        this->m_Mask1.Configure(&(this->m_SpringDamperForce_Vec));
         this->m_SumForces.Configure({&(this->m_SpringDamperForce), &(this->m_InputForce)}, {-1.f, 1.f});
         this->m_MassBlock.Configure(this->m_SumForces.OutSignal());
-        this->m_Mask2.Configure(this->m_MassBlock.OutSignal(), {0, 1});
+        this->m_Mask2.Configure(this->m_MassBlock.OutSignal());
         this->m_PositionOutputBlock.Configure(&(this->m_MassPosition), initialState[0]);
         this->m_VelocityOutputBlock.Configure(&(this->m_MassVelocity), initialState[1]);
 

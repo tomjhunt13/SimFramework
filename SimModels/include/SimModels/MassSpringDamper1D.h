@@ -46,10 +46,10 @@ namespace Models {
         // Blocks
         SimFramework::Input<float> m_Input;
         SimFramework::Gain<Eigen::Vector2f, Eigen::Vector<float, 1>, Eigen::Matrix<float, 1, 2>> m_Gain;
-        SimFramework::Mask<Eigen::Vector<float, 1>, float> m_Mask1;
+        SimFramework::Mask<Eigen::Vector<float, 1>, float, 1> m_Mask1;
         SimFramework::SummingJunction<float> m_SumForces;
         SimFramework::StateSpace<float, Eigen::Vector2f, 1, 2, 2> m_MassBlock;
-        SimFramework::Mask<Eigen::Vector2f, float> m_Mask2;
+        SimFramework::Mask<Eigen::Vector2f, float, 2> m_Mask2;
         SimFramework::Output<float> m_PositionOutputBlock;
         SimFramework::Output<float> m_VelocityOutputBlock;
     };

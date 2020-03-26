@@ -492,13 +492,13 @@ TEST(Mask, Vec3_1Out_1) {
     SimFramework::Signal<Eigen::Vector3f> in;
 
     // Construct block
-    SimFramework::Mask<Eigen::Vector3f, float> mask;
+    SimFramework::Mask<Eigen::Vector3f, float, 3> mask;
 
     // Write input values
     in.Write({1.5, 3.5, 5.5});
 
     // Only output to out1
-    mask.Configure(&in, {0});
+    mask.Configure(&in);
     mask.Update();
     ASSERT_FLOAT_EQ(mask.OutSignal(0)->Read(), 1.5);
     ASSERT_FLOAT_EQ(mask.OutSignal(1)->Read(), 3.5);

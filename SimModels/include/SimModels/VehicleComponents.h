@@ -249,7 +249,7 @@ namespace Models {
         SimFramework::LookupTable2D m_BEngineMap;
         SimFramework::Vectorise<float, Eigen::Vector2f> m_BTorqueVector;
         SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector<float, 1>, 2, 1, 1> m_BInertia;
-        SimFramework::Mask<Eigen::Matrix<float, 1, 1>, float> m_BMask;
+        SimFramework::Mask<Eigen::Matrix<float, 1, 1>, float, 1> m_BMask;
     };
 
 
@@ -290,7 +290,7 @@ namespace Models {
         SimFramework::ConstantBlock<float> m_BConst;
         SimFramework::Vectorise<float, Eigen::Vector3f> m_BVec;
         SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 1, 2> m_BStates;
-        SimFramework::Mask<Eigen::Vector2f, float> m_BMask;
+        SimFramework::Mask<Eigen::Vector2f, float, 2> m_BMask;
     };
 
 
@@ -319,7 +319,7 @@ namespace Models {
         AeroDrag m_BAeroDrag;
         SimFramework::Vectorise<float, Eigen::Vector3f> m_BVectorise;
         SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 2, 2> m_BStateSpace;
-        SimFramework::Mask<Eigen::Vector2f, float> m_BMask;
+        SimFramework::Mask<Eigen::Vector2f, float, 2> m_BMask;
 
     };
 
