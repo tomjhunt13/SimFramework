@@ -74,19 +74,6 @@ namespace Models {
 
 
     private:
-        // Signals
-        SimFramework::Signal<float> m_SThrottle;
-        SimFramework::Signal<float> m_SThrottleAugmented;
-        SimFramework::Signal<float> m_SBrake;
-        SimFramework::Signal<float> m_SEngineSpeed;
-        SimFramework::Signal<float> m_SClutchSpeed;
-        SimFramework::Signal<float> m_SClutchTorque;
-        SimFramework::Signal<float> m_SClutchStiffness;
-        SimFramework::Signal<float> m_STyreForce;
-        SimFramework::Signal<float> m_STyreTorque;
-        SimFramework::Signal<float> m_STyreSpeed;
-        SimFramework::Signal<float> m_SCarPosition;
-        SimFramework::Signal<float> m_SCarSpeed;
 
         // Blocks - IO
         SimFramework::Input<float> m_InThrottle;

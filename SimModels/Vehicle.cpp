@@ -6,22 +6,22 @@ namespace Models {
     Vehicle::Vehicle() : System(0.0025)
     {
         // Configure subsystems
-        this->m_Controller.Configure(&(this->m_SThrottle), &(this->m_SClutchSpeed), &(this->m_SThrottleAugmented), &(this->m_SClutchStiffness));
-        this->m_Engine.Configure(&(this->m_SThrottleAugmented), &(this->m_SClutchTorque));
-        this->m_Transmission.Configure(&(this->m_SClutchTorque), &(this->m_STyreTorque), &(this->m_SBrake));
-        this->m_VehicleDynamics.Configure(&(this->m_STyreForce));
+        this->m_Controller.Configure(this->m_InThrottle.OutSignal(), this->m_Transmission.OutClutchSpeed());
+        this->m_Engine.Configure(this->m_Controller.OutAugmentedThrottle(), this->m_Clutch.OutClutchTorque());
+        this->m_Transmission.Configure(this->m_Clutch.OutClutchTorque(), this->m_Tyre.OutTorque(), this->m_InBrakePressure.OutSignal());
+        this->m_VehicleDynamics.Configure(this->m_Tyre.OutForce());
 
         // Configure model blocks
-        this->m_Clutch.Configure(&(this->m_SEngineSpeed), &(this->m_SClutchSpeed), &(this->m_SClutchStiffness));
-        this->m_Tyre.Configure(&(this->m_STyreSpeed), &(this->m_SCarSpeed));
+        this->m_Clutch.Configure(this->m_Engine.OutEngineSpeed(), this->m_Transmission.OutClutchSpeed(), this->m_Controller.OutClutchStiffness());
+        this->m_Tyre.Configure(this->m_Transmission.OutTyreSpeed(), this->m_VehicleDynamics.OutVehicleVelocity());
 
         // Configure IO blocks
-//        this->m_InThrottle.Configure(&(this->m_SThrottle), 0.f);
-//        this->m_InBrakePressure.Configure(&(this->m_SBrake), 0.f);
-        this->m_OutEngineSpeed.Configure(&(this->m_SEngineSpeed), 0.f);
-        this->m_OutTyreSpeed.Configure(&(this->m_STyreSpeed), 0.f);
-        this->m_OutPosition.Configure(&(this->m_SCarPosition), 0.f);
-        this->m_OutVelocity.Configure(&(this->m_SCarSpeed), 0.f);
+        this->m_InThrottle.Configure(0.f);
+        this->m_InBrakePressure.Configure(0.f);
+        this->m_OutEngineSpeed.Configure(this->m_Engine.OutEngineSpeed(), 0.f);
+        this->m_OutTyreSpeed.Configure(this->m_Transmission.OutTyreSpeed(), 0.f);
+        this->m_OutPosition.Configure(this->m_VehicleDynamics.OutVehiclePosition(), 0.f);
+        this->m_OutVelocity.Configure(this->m_VehicleDynamics.OutVehicleVelocity(), 0.f);
 
         SimFramework::BlockList list = {{&(this->m_InThrottle),     &(this->m_InBrakePressure)},
                                         {},

@@ -193,8 +193,10 @@ namespace Models {
     public:
         void SetParameters(float clutchLagTime=1.f, float clutchStiffness=1000.f);
 
-        void Configure(SimFramework::Signal<float>* inDemandThrottle, SimFramework::Signal<float>* inTransmissionSpeed,
-                       SimFramework::Signal<float>* outThrottleAugmented, SimFramework::Signal<float>* outClutchStiffness);
+        void Configure(const SimFramework::Signal<float>* inDemandThrottle, const SimFramework::Signal<float>* inTransmissionSpeed);
+
+        const SimFramework::Signal<float>* OutAugmentedThrottle() const;
+        const SimFramework::Signal<float>* OutClutchStiffness() const;
 
         void Trigger();
 
@@ -204,25 +206,18 @@ namespace Models {
         // Parameters
         float m_ClutchStiffness;
 
-        // Signals
-        SimFramework::Signal<float> m_SConstClutchStiffness;
-        SimFramework::Signal<float> m_SConstZero;
-        SimFramework::Signal<float> m_SEngagementSignal;
-        SimFramework::Signal<float> m_SLowSpeedEngangement;
-        SimFramework::Signal<float> m_STriggerSignal;
-
         // Blocks - Blending functions
-        SimFramework::LinearBlend<float> m_BBlendClutchLowSpeed;
-        SimFramework::LinearBlend<float> m_BBlendThrottle;
-        SimFramework::LinearBlend<float> m_BBlendClutchGearShift;
+        SimFramework::LinearBlend<float> m_BlendClutchLowSpeed;
+        SimFramework::LinearBlend<float> m_BlendThrottle;
+        SimFramework::LinearBlend<float> m_BlendClutchGearShift;
 
         // Blocks - Blend parameters
-        LinearTrigger m_BGearChangeTrigger;
-        ClutchLowSpeedEngagement m_BLowSpeedEngagement;
+        LinearTrigger m_GearChangeTrigger;
+        ClutchLowSpeedEngagement m_LowSpeedEngagement;
 
         // Blocks - Constants
-        SimFramework::ConstantBlock<float> m_BConstZero;
-        SimFramework::ConstantBlock<float> m_BClutchStiffnessMax;
+        SimFramework::ConstantBlock<float> m_ConstZero;
+        SimFramework::ConstantBlock<float> m_ClutchStiffnessMax;
 
 
     };

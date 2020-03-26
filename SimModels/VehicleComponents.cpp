@@ -304,34 +304,43 @@ namespace Models {
     void VehicleController::SetParameters(float clutchLagTime, float clutchStiffness)
     {
         this->m_ClutchStiffness = clutchStiffness;
-        this->m_BGearChangeTrigger.SetParameters(0.f, clutchLagTime);
+        this->m_GearChangeTrigger.SetParameters(0.f, clutchLagTime);
     }
 
     void VehicleController::Configure(
-            SimFramework::Signal<float>* inDemandThrottle, SimFramework::Signal<float>* inTransmissionSpeed,
-            SimFramework::Signal<float>* outThrottleAugmented, SimFramework::Signal<float>* outClutchStiffness)
+            const SimFramework::Signal<float>* inDemandThrottle,
+            const SimFramework::Signal<float>* inTransmissionSpeed)
     {
         // Configure Blocks
-        this->m_BBlendClutchLowSpeed.Configure(&(this->m_SConstZero), &(this->m_SConstClutchStiffness), &(this->m_SEngagementSignal));
-        this->m_BBlendThrottle.Configure(inDemandThrottle, &(this->m_SConstZero), &(this->m_STriggerSignal));
-        this->m_BBlendClutchGearShift.Configure(&(this->m_SLowSpeedEngangement), &(this->m_SConstZero), &(this->m_STriggerSignal));
-        this->m_BLowSpeedEngagement.Configure(inTransmissionSpeed, inDemandThrottle);
-        this->m_BConstZero.Configure(0.f);
+        this->m_BlendClutchLowSpeed.Configure(this->m_ConstZero.OutSignal(), this->m_ClutchStiffnessMax.OutSignal(), this->m_LowSpeedEngagement.OutEngagement());
+        this->m_BlendThrottle.Configure(inDemandThrottle, this->m_ConstZero.OutSignal(), this->m_GearChangeTrigger.OutSignal());
+        this->m_BlendClutchGearShift.Configure(this->m_LowSpeedEngagement.OutEngagement(), this->m_ConstZero.OutSignal(), this->m_GearChangeTrigger.OutSignal());
+        this->m_LowSpeedEngagement.Configure(inTransmissionSpeed, inDemandThrottle);
+        this->m_ConstZero.Configure(0.f);
+        this->m_ClutchStiffnessMax.Configure(this->m_ClutchStiffness);
+    };
 
 
-//        this->m_BClutchStiffnessMax.Configure(&(this->m_SConstClutchStiffness), this->m_ClutchStiffness);
+    const SimFramework::Signal<float>* VehicleController::OutAugmentedThrottle() const
+    {
+        return this->m_BlendThrottle.OutSignal();
+    };
+
+    const SimFramework::Signal<float>* VehicleController::OutClutchStiffness() const
+    {
+        return this->m_BlendClutchGearShift.OutSignal();
     };
 
     void VehicleController::Trigger()
     {
-        this->m_BGearChangeTrigger.Trigger();
+        this->m_GearChangeTrigger.Trigger();
     };
 
     SimFramework::BlockList VehicleController::Blocks()
     {
-        return {{&(this->m_BGearChangeTrigger), &(this->m_BConstZero), &(this->m_BClutchStiffnessMax)},
+        return {{&(this->m_GearChangeTrigger), &(this->m_ConstZero), &(this->m_ClutchStiffnessMax)},
                 {},
-                {&(this->m_BBlendClutchLowSpeed), &(this->m_BBlendThrottle), &(this->m_BBlendClutchGearShift), &(m_BLowSpeedEngagement)},
+                {&(this->m_BlendClutchLowSpeed), &(this->m_BlendThrottle), &(this->m_BlendClutchGearShift), &(m_LowSpeedEngagement)},
                 {},
                 {}};
     };
