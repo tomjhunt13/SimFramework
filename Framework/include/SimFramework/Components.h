@@ -17,7 +17,12 @@ namespace SimFramework {
 
         void Configure(Signal<SignalType>* outputSignal, SignalType value)
         {
-            this->m_OutputSignal = outputSignal;
+//            this->m_OutputSignal = outputSignal;
+            this->m_Value = value;
+        }
+
+        void SetValue(const SignalType& value)
+        {
             this->m_Value = value;
         }
 
@@ -28,18 +33,23 @@ namespace SimFramework {
 
         std::vector<SignalBase*> OutputSignals() override
         {
-            return {this->m_OutputSignal};
+            return {&(this->m_OutputSignal)};
         }
+
+        const Signal<SignalType>* OutSignal() const
+        {
+            return &(this->m_OutputSignal);
+        };
 
         void Initialise(float t_0) override
         {
-            this->m_OutputSignal->Write(this->m_Value);
+            this->m_OutputSignal.Write(this->m_Value);
         };
 
         void Update(float dt) override {};
 
     private:
-        Signal<SignalType>* m_OutputSignal;
+        Signal<SignalType> m_OutputSignal;
         SignalType m_Value;
     };
 
@@ -392,26 +402,33 @@ namespace SimFramework {
     {
     public:
 
-        void Configure(Signal<InputType>* inputSignal, Signal<ReturnType>* outputSignal, GainType gain)
+        void Configure(const Signal<InputType>* inputSignal, Signal<ReturnType>* outputSignal, GainType gain)
         {
             this->m_InputSignal = inputSignal;
-            this->m_OutputSignal = outputSignal;
+//            this->m_OutputSignal = outputSignal;
             this->m_Gain = gain;
         };
 
         std::vector<SignalBase*> InputSignals() override
         {
-            return {this->m_InputSignal};
+            return {};
+                //this->m_InputSignal};
         }
 
         std::vector<SignalBase*> OutputSignals() override
         {
-            return {this->m_OutputSignal};
+            return {};
+            //this->m_OutputSignal};
         }
+
+        const Signal<ReturnType>* OutSignal() const
+        {
+            return &(this->m_OutputSignal);
+        };
 
         void Update() override
         {
-            this->m_OutputSignal->Write(this->m_Gain * this->m_InputSignal->Read());
+            this->m_OutputSignal.Write(this->m_Gain * this->m_InputSignal->Read());
         };
 
     private:
@@ -419,8 +436,8 @@ namespace SimFramework {
         GainType m_Gain;
 
         // Signals
-        Signal<InputType>* m_InputSignal;
-        Signal<ReturnType>* m_OutputSignal;
+        const Signal<InputType>* m_InputSignal;
+        Signal<ReturnType> m_OutputSignal;
     };
 
 
