@@ -37,16 +37,20 @@ namespace Models {
                                         {}};
 
         this->RegisterBlocks(list);
-
-        this->LogSignal("Position", this->m_StateMask.OutSignal(0));
-        this->LogSignal("Velocity", this->m_StateMask.OutSignal(1));
-        this->LogSignal("Input Force", this->m_Input.OutSignal());
-        this->LogSignal("States(0),States(1)", this->m_StateSpace.OutSignal());
     }
 
     MassSpringDamperBlocks MassSpringDamper1D::Blocks()
     {
         return {&(this->m_Input), &(this->m_PositionOutputBlock), &(this->m_VelocityOutputBlock)};
     }
+
+    std::vector<std::pair<std::string, const SimFramework::SignalBase*>> MassSpringDamper1D::LogSignals()
+    {
+        return {{"Position", this->m_StateMask.OutSignal(0)},
+                {"Velocity", this->m_StateMask.OutSignal(1)},
+                {"Input Force", this->m_Input.OutSignal()},
+                {"States(0),States(1)", this->m_StateSpace.OutSignal()}};
+    };
+
 
 }; // namespace SimModels

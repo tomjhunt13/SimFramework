@@ -29,6 +29,7 @@ namespace Models {
                                         {&(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity)},
                                         {&(this->m_Controller), &(this->m_Engine),         &(this->m_Transmission), &(this->m_VehicleDynamics)}};
         this->RegisterBlocks(list);
+
     };
 
     void Vehicle::SetParameters(Models::VehicleParameters parameters) {

@@ -23,6 +23,8 @@ namespace Models {
         MassSpringDamperBlocks Blocks();
 
     private:
+        std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override;
+
 
         // Parameters
         float m_Mass;

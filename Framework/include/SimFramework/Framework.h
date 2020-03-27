@@ -132,12 +132,11 @@ namespace SimFramework {
 
     protected:
         void RegisterBlocks(BlockList& blocks);
-
-        // Data logging
-        void LogSignal(std::string name, const SignalBase* signal);
+        virtual std::vector<std::pair<std::string, const SignalBase*>> LogSignals() { return {}; };
 
     private:
         void Configure();
+        void LogOneSignal(std::string name, const SignalBase* signal);
         void UpdateLoggedSignals(float t);
 
         std::vector<Source*> m_Sources;

@@ -47,8 +47,11 @@ namespace SimFramework {
         this->m_t_n = t_0;
 
         // Update CSV Writer
+        for (auto pair : this->LogSignals())
+        {
+            this->LogOneSignal(pair.first, pair.second);
+        }
         this->m_CSV.SetHeader(this->m_LogNames);
-//        this->UpdateLoggedSignals(t_0);
     }
 
 
@@ -106,7 +109,7 @@ namespace SimFramework {
             // Log signals
             for (auto pair : subsys->LogSignals())
             {
-                this->LogSignal(pair.first, pair.second);
+                this->LogOneSignal(pair.first, pair.second);
             }
         }
     };
@@ -116,7 +119,7 @@ namespace SimFramework {
         this->m_CSV.SetOutputFilepath(outputCSVPath);
     };
 
-    void System::LogSignal(std::string name, const SignalBase* signal)
+    void System::LogOneSignal(std::string name, const SignalBase* signal)
     {
         this->m_LogNames.push_back(name);
         this->m_LogSignals.push_back(signal);
