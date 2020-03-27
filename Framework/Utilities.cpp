@@ -61,4 +61,48 @@ namespace SimFramework {
         return timesteps;
     };
 
+
+    template<typename ElementaryType>
+    static const std::string InternalToString(const ElementaryType &value) {
+        std::stringstream ss;
+        ss << value;
+        std::string formattedFloat = ss.str();
+
+        return formattedFloat;
+    };
+
+    const std::string ToString(const Eigen::VectorXf& vector)
+    {
+        std::string formattedVector = "";
+
+        for (auto element : vector)
+        {
+            std::stringstream ss;
+            ss << element;
+            formattedVector.append(ss.str() + ", ");
+        };
+
+        return formattedVector;
+    };
+
+    const std::string ToString(const float& value)
+    {
+        return InternalToString<float>(value);
+    }
+
+    const std::string ToString(const int& value)
+    {
+        return InternalToString<int>(value);
+    }
+
+    const std::string ToString(const bool& value)
+    {
+        return InternalToString<bool>(value);
+    }
+
+    const std::string ToString(const std::string& string)
+    {
+        return string;
+    };
+
 } // namespace SimFramework

@@ -23,50 +23,11 @@ namespace SimFramework {
     std::vector<float> TimeSteps(float tMin, float tMax, float dt);
 
 
-    namespace Internal {
-        template<typename ElementaryType>
-        static const std::string ToString(const ElementaryType &value) {
-            std::stringstream ss;
-            ss << value;
-            std::string formattedFloat = ss.str();
-
-            return formattedFloat;
-        };
-    }
-
-    static const std::string ToString(const Eigen::VectorXf& vector)
-    {
-        std::string formattedVector = "";
-
-        for (auto element : vector)
-        {
-            std::stringstream ss;
-            ss << element;
-            formattedVector.append(ss.str() + ", ");
-        };
-
-        return formattedVector;
-    };
-
-    static const std::string ToString(const float& value)
-    {
-        return Internal::ToString<float>(value);
-    }
-
-    static const std::string ToString(const int& value)
-    {
-        return Internal::ToString<int>(value);
-    }
-
-    static const std::string ToString(const bool& value)
-    {
-        return Internal::ToString<bool>(value);
-    }
-
-    static const std::string ToString(const std::string& string)
-    {
-        return string;
-    };
+    const std::string ToString(const Eigen::VectorXf& vector);
+    const std::string ToString(const float& value);
+    const std::string ToString(const int& value);
+    const std::string ToString(const bool& value);
+    const std::string ToString(const std::string& string);
 
 } // namespace SimFramework
 
