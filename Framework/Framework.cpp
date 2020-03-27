@@ -48,7 +48,7 @@ namespace SimFramework {
 
         // Update CSV Writer
         this->m_CSV.SetHeader(this->m_LogNames);
-        this->UpdateLoggedSignals(t_0);
+//        this->UpdateLoggedSignals(t_0);
     }
 
 

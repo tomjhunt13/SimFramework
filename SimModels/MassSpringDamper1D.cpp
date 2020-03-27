@@ -41,6 +41,7 @@ namespace Models {
         this->LogSignal("Position", this->m_StateMask.OutSignal(0));
         this->LogSignal("Velocity", this->m_StateMask.OutSignal(1));
         this->LogSignal("Input Force", this->m_Input.OutSignal());
+        this->LogSignal("States(0),States(1)", this->m_StateSpace.OutSignal());
     }
 
     MassSpringDamperBlocks MassSpringDamper1D::Blocks()

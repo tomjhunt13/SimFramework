@@ -11,7 +11,7 @@ void SandboxMassSpringDamper()
 {
     // Set up system
     Models::MassSpringDamper1D sys(1.f, 4.f, 0.2);
-    sys.SetLogOutputFile("tmpOut.csv");
+//    sys.SetLogOutputFile("tmpOut.csv");
     Models::MassSpringDamperBlocks blocks = sys.Blocks();
     sys.Initialise(0);
 

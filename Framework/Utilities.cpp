@@ -75,11 +75,16 @@ namespace SimFramework {
     {
         std::string formattedVector = "";
 
-        for (auto element : vector)
+        for (int i=0; i < vector.size(); i++)
         {
             std::stringstream ss;
-            ss << element;
-            formattedVector.append(ss.str() + ", ");
+            ss << vector[i];
+            formattedVector.append(ss.str());
+
+            if (i < (vector.size() - 1))
+            {
+                formattedVector.append(",");
+            }
         };
 
         return formattedVector;
