@@ -5,8 +5,7 @@
 #include <fstream>
 #include "SimModels/Vehicle.h"
 
-void SandboxFullModel()
-{
+void SandboxFullModel() {
     // Set up system
     Models::VehicleParameters vehicleParameters;
     vehicleParameters.Mass = 1500.f;
@@ -24,30 +23,18 @@ void SandboxFullModel()
     blocks.InThrottle->WriteValue(1.f);
 
 
-    // Set up file writing
-    std::ofstream myfile;
-    myfile.open ("tmpOut.csv", std::ios::out);
-
-
-
-    float dt = 0.05;
+    float dt = 0.5;
     int counter = 1;
     for (float t = 0.f; t <= 200.f; t += dt) {
 
-        if (counter == 200)
-        {
+        if (counter == 200) {
             blocks.InThrottle->WriteValue(1.f);
         }
 
-        if (counter % 400 == 0)
-        {
-            if (counter < 2500)
-            {
+        if (counter % 400 == 0) {
+            if (counter < 2500) {
                 vehicle.ShiftUp();
-            }
-
-            else
-            {
+            } else {
                 blocks.InThrottle->WriteValue(0.05);
 
                 vehicle.ShiftDown();
@@ -92,14 +79,12 @@ void SandboxFullModel()
 
 
         vehicle.Update(t);
+        std::cout << "t: " << t << ", Car Pos: " << blocks.OutPosition->ReadValue() << ", Car Vel: "
+                  << blocks.OutVelocity->ReadValue() << ", Engine Speed: " << blocks.OutEngineSpeed->ReadValue()
+                  << std::endl;
 
-        myfile << t << ", " << blocks.OutPosition->ReadValue() << ", " << blocks.OutVelocity->ReadValue() << ", " << blocks.OutEngineSpeed->ReadValue() << std::endl;
-        std::cout << "t: " << t << ", Car Pos: " << blocks.OutPosition->ReadValue() << ", Car Vel: " << blocks.OutVelocity->ReadValue() << ", Engine Speed: " << blocks.OutEngineSpeed->ReadValue()<< std::endl;
-
-        counter ++;
+        counter++;
     }
-
-    myfile.close();
 }
 
 #endif //FRAMEWORK_SANDBOXFULLMODEL_H

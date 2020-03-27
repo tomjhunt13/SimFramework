@@ -69,4 +69,12 @@ namespace Models {
     {
         return {&(this->m_InThrottle), &(this->m_InBrakePressure), &(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity)};
     };
+
+    std::vector<std::pair<std::string, const SimFramework::SignalBase *> > Vehicle::LogSignals()
+    {
+        return {{"Demand Throttle", this->m_InThrottle.OutSignal()},
+                {"Brake Pressure", this->m_InBrakePressure.OutSignal()}};
+    };
+
+
 }; // namespace Models

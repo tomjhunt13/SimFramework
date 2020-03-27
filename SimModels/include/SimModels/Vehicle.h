@@ -74,6 +74,7 @@ namespace Models {
 
 
     private:
+        std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override;
 
         // Blocks - IO
         SimFramework::Input<float> m_InThrottle;

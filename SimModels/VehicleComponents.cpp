@@ -345,6 +345,13 @@ namespace Models {
                 {}};
     };
 
+    std::vector<std::pair<std::string, const SimFramework::SignalBase *> > VehicleController::LogSignals()
+    {
+        return {{"Clutch Stiffness", this->OutClutchStiffness()},
+                {"Augmented Throttle", this->OutAugmentedThrottle()}};
+    };
+
+
 
     Engine::Engine() : m_EngineMap("Engine Map"), m_TorqueVector("Engine Torque"), m_Inertia("Engine"), m_SpeedMask("Engine") {};
 
@@ -511,8 +518,6 @@ namespace Models {
 
         Eigen::Matrix<float, 2, 3> D;
         D << 0.f, 0.f, 0.f, 0.f, 0.f, 0.f;
-
-        std::cout << "A: " << A << ", B: " << B << ", C: " << C << ", D: " << D << std::endl;
 
         this->m_States.SetMatrices(A, B, C, D);
     }

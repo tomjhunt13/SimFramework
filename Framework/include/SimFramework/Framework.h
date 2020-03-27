@@ -131,6 +131,7 @@ namespace SimFramework {
         void SetLogOutputFile(std::string outputCSVPath);
 
     protected:
+        // TODO: Protected functions should return BlockList rather than call RegisterBlocks
         void RegisterBlocks(BlockList& blocks);
         virtual std::vector<std::pair<std::string, const SignalBase*>> LogSignals() { return {}; };
 

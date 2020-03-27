@@ -202,6 +202,9 @@ namespace Models {
 
         SimFramework::BlockList Blocks() override;
 
+        std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override;
+
+
     private:
         // Parameters
         float m_ClutchStiffness;
