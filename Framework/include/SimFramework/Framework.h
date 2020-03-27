@@ -120,6 +120,7 @@ namespace SimFramework {
     {
     public:
         virtual BlockList Blocks() = 0;
+        virtual std::vector<std::pair<std::string, const SignalBase*>> LogSignals() { return {}; };
     };
 
     class System {

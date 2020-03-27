@@ -402,6 +402,11 @@ namespace Models {
                 {}};
     };
 
+    std::vector<std::pair<std::string, const SimFramework::SignalBase *> > Engine::LogSignals()
+    {
+        return {{"Engine Speed", this->m_Inertia.OutSignal()}};
+    };
+
 
     void Transmission::SetParameters(
             std::vector<float> gearRatios, float effectiveInertia,

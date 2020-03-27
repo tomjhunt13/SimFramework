@@ -99,8 +99,15 @@ namespace SimFramework {
 
         for (Subsystem* subsys : blocks.Subsystems)
         {
+            // Register blocks
             BlockList subsysBlocks = subsys->Blocks();
             this->RegisterBlocks(subsysBlocks);
+
+            // Log signals
+            for (auto pair : subsys->LogSignals())
+            {
+                this->LogSignal(pair.first, pair.second);
+            }
         }
     };
 

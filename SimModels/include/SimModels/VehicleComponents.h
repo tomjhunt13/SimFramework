@@ -236,6 +236,7 @@ namespace Models {
         const SimFramework::Signal<float>* OutEngineSpeed() const;
 
         SimFramework::BlockList Blocks() override;
+        std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override;
 
     private:
         // Blocks
