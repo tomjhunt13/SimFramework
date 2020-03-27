@@ -105,4 +105,38 @@ namespace SimFramework {
         return string;
     };
 
+
+
+    CSVWriter::CSVWriter() : m_Filepath("outCSV.csv") {};
+
+    void CSVWriter::SetOutputFilepath(std::string filepath)
+    {
+        this->m_Filepath = filepath;
+    };
+
+    void CSVWriter::SetHeader(std::vector<std::string> names)
+    {
+        this->m_HeaderNames = names;
+        this->AppendRow(names);
+    };
+
+    void CSVWriter::AppendRow(std::vector<std::string> values)
+    {
+        std::string row;
+        for (auto element : values)
+        {
+            row += (element + ",");
+        }
+
+        std::ofstream file;
+        file.open(this->m_Filepath, std::ios::app);
+        file << row;
+        file.close();
+    };
+
+    void CSVWriter::Reset()
+    {
+
+    };
+
 } // namespace SimFramework

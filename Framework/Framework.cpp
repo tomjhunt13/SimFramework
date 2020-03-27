@@ -94,9 +94,11 @@ namespace SimFramework {
     };
 
     void SetLogOutputFile(std::string outputCSVPath)
-    {};
+    {
 
-    void System::LogSignal(const SignalBase* signal)
+    };
+
+    void System::LogSignal(std::string name, const SignalBase* signal)
     {
         this->m_LoggedSignals.push_back(signal);
     };

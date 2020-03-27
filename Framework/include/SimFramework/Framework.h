@@ -16,7 +16,7 @@ namespace SimFramework {
     {
     public:
         SignalBase(std::string name = "Signal");
-        virtual const std::string ToString() const = 0;
+        virtual const std::string ValueToString() const = 0;
 
 
     private:
@@ -39,7 +39,7 @@ namespace SimFramework {
             this->m_Value = value;
         };
 
-        const std::string ToString() const override
+        const std::string ValueToString() const override
         {
             return ToString(this->m_Value);
         };
