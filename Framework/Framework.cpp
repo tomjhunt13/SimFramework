@@ -12,6 +12,12 @@ namespace SimFramework {
     Sink::Sink(std::string name) : Block(name) {};
 
 
+    System::System(float dtMax) : m_Configured(false), m_dtMax(dtMax)
+    {
+        this->m_LogNames.push_back("t");
+        this->m_LogSignals.push_back(nullptr);
+    }
+
     void System::Initialise(float t_0)
     {
         if (!this->m_Configured)
@@ -39,6 +45,10 @@ namespace SimFramework {
         }
 
         this->m_t_n = t_0;
+
+        // Update CSV Writer
+        this->m_CSV.SetHeader(this->m_LogNames);
+        this->UpdateLoggedSignals(t_0);
     }
 
 
@@ -93,14 +103,15 @@ namespace SimFramework {
         }
     };
 
-    void SetLogOutputFile(std::string outputCSVPath)
+    void System::SetLogOutputFile(std::string outputCSVPath)
     {
-
+        this->m_CSV.SetOutputFilepath(outputCSVPath);
     };
 
     void System::LogSignal(std::string name, const SignalBase* signal)
     {
-        this->m_LoggedSignals.push_back(signal);
+        this->m_LogNames.push_back(name);
+        this->m_LogSignals.push_back(signal);
     };
 
 
@@ -112,9 +123,19 @@ namespace SimFramework {
 
     void System::UpdateLoggedSignals(float t)
     {
+        std::vector<std::string> elements;
+        elements.push_back(ToString(t));
 
+        for (auto signal : this->m_LogSignals)
+        {
+            if (signal)
+            {
+                elements.push_back(signal->ValueToString());
+            }
+        }
+
+        this->m_CSV.AppendRow(elements);
     };
-
 
 
     namespace Internal {

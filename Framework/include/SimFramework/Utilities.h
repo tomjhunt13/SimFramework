@@ -37,9 +37,10 @@ namespace SimFramework {
         void SetOutputFilepath(std::string filepath);
         void SetHeader(std::vector<std::string> names);
         void AppendRow(std::vector<std::string> values);
-//        void Reset();
 
     private:
+        void ResetFile();
+
         std::string m_Filepath;
         std::vector<std::string> m_HeaderNames;
     };

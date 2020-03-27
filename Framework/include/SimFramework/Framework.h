@@ -125,14 +125,10 @@ namespace SimFramework {
     };
 
     class System {
-
     public:
-
-        System(float dtMax=0.1) : m_Configured(false), m_dtMax(dtMax) {}
-
+        System(float dtMax=0.1);
         void Initialise(float t_0);
         void Update(float t_np1);
-
 
     protected:
         void RegisterBlocks(BlockList& blocks);
@@ -150,7 +146,9 @@ namespace SimFramework {
         std::vector<Function*> m_Functions;
         std::vector<Sink*> m_Sinks;
 
-        std::vector<const SignalBase*> m_LoggedSignals;
+        std::vector<const SignalBase*> m_LogSignals;
+        std::vector<std::string> m_LogNames;
+        CSVWriter m_CSV;
 
         bool m_Configured;
         float m_dtMax;
