@@ -404,7 +404,8 @@ namespace Models {
 
     std::vector<std::pair<std::string, const SimFramework::SignalBase *> > Engine::LogSignals()
     {
-        return {{"Engine Speed", this->m_Inertia.OutSignal()}};
+        return {{"Engine Speed", this->m_Inertia.OutSignal()},
+                {"Engine Torque, Engine Clutch Torque", this->m_TorqueVector.OutSignal()}};
     };
 
 
@@ -457,6 +458,11 @@ namespace Models {
                 {}};
     };
 
+    std::vector<std::pair<std::string, const SimFramework::SignalBase *> > Transmission::LogSignals()
+    {
+        return {{"Transmission Clutch Speed, Transmission Wheel Speed", this->m_States.OutSignal()},
+                {"Transmission Clutch Torque, Transmission Tyre Torque, Transmission Brake Torque", this->m_TorqueVector.OutSignal()}};
+    };
 
     bool Transmission::ShiftUp()
     {
