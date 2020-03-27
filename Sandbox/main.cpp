@@ -14,7 +14,11 @@ int main() {
 
 
     SimFramework::CSVWriter csv;
+
+    csv.SetOutputFilepath("outCSV.csv");
     csv.AppendRow({"1", "2", "3"});
+    csv.AppendRow({"2", "5", "3"});
+
 
 
 

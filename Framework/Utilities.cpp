@@ -112,6 +112,10 @@ namespace SimFramework {
     void CSVWriter::SetOutputFilepath(std::string filepath)
     {
         this->m_Filepath = filepath;
+
+        std::ofstream file;
+        file.open(this->m_Filepath, std::ios::out);
+        file.close();
     };
 
     void CSVWriter::SetHeader(std::vector<std::string> names)
@@ -125,18 +129,23 @@ namespace SimFramework {
         std::string row;
         for (auto element : values)
         {
-            row += (element + ",");
+            row += element;
+
+            if (element != values.back())
+            {
+                row += ",";
+            }
         }
 
         std::ofstream file;
         file.open(this->m_Filepath, std::ios::app);
-        file << row;
+        file << row << std::endl;
         file.close();
     };
 
-    void CSVWriter::Reset()
-    {
-
-    };
+//    void CSVWriter::Reset()
+//    {
+//
+//    };
 
 } // namespace SimFramework
