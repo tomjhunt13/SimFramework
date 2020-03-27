@@ -6,6 +6,8 @@
 #include <map>
 #include <stack>
 
+#include "Utilities.h"
+
 namespace SimFramework {
 
 
@@ -14,6 +16,8 @@ namespace SimFramework {
     {
     public:
         SignalBase(std::string name = "Signal");
+        virtual const std::string ToString() const = 0;
+
 
     private:
         std::string m_Name;
@@ -25,8 +29,20 @@ namespace SimFramework {
     public:
         Signal(std::string name = "Signal") : SignalBase(name) {};
 
-        SignalType Read() const { return this->m_Value; };
-        void Write(const SignalType& value) { this->m_Value = value; };
+        SignalType Read() const
+        {
+            return this->m_Value;
+        };
+
+        void Write(const SignalType& value)
+        {
+            this->m_Value = value;
+        };
+
+        const std::string ToString() const override
+        {
+            return ToString(this->m_Value);
+        };
 
     private:
         SignalType m_Value;
@@ -121,13 +137,20 @@ namespace SimFramework {
     protected:
         void RegisterBlocks(BlockList& blocks);
 
+        // Data logging
+        void SetLogOutputFile(std::string outputCSVPath);
+        void LogSignal(std::string name, const SignalBase* signal);
+
     private:
         void Configure();
+        void UpdateLoggedSignals(float t);
 
         std::vector<Source*> m_Sources;
         std::vector<DynamicSystem*> m_DynamicSystems;
         std::vector<Function*> m_Functions;
         std::vector<Sink*> m_Sinks;
+
+        std::vector<const SignalBase*> m_LoggedSignals;
 
         bool m_Configured;
         float m_dtMax;

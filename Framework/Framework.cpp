@@ -1,5 +1,4 @@
 #include "SimFramework/Framework.h"
-#include "SimFramework/Utilities.h"
 
 namespace SimFramework {
 
@@ -94,11 +93,25 @@ namespace SimFramework {
         }
     };
 
+    void SetLogOutputFile(std::string outputCSVPath)
+    {};
+
+    void System::LogSignal(const SignalBase* signal)
+    {
+        this->m_LoggedSignals.push_back(signal);
+    };
+
+
     void System::Configure()
     {
         this->m_Functions = Internal::SortFunctions(this->m_Functions);
         this->m_Configured = true;
     }
+
+    void System::UpdateLoggedSignals(float t)
+    {
+
+    };
 
 
 
