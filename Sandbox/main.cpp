@@ -10,7 +10,7 @@
 
 int main() {
 
-//    SandboxMassSpringDamper();
+    SandboxMassSpringDamper();
 //    SandboxEngine();
 //    SandboxTransmission();
 //    SandboxVehicleStandalone();

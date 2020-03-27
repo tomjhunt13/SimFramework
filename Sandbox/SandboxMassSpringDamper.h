@@ -11,12 +11,9 @@ void SandboxMassSpringDamper()
 {
     // Set up system
     Models::MassSpringDamper1D sys(1.f, 4.f, 0.2);
+    sys.SetLogOutputFile("tmpOut.csv");
     Models::MassSpringDamperBlocks blocks = sys.Blocks();
     sys.Initialise(0);
-
-    // Set up file writing
-    std::ofstream myfile;
-    myfile.open ("tmpOut.csv", std::ios::out);
 
     int counter = 0;
 
@@ -29,13 +26,10 @@ void SandboxMassSpringDamper()
 
         sys.Update(t);
 
-        myfile << t << ", " << blocks.MassPositionBlock->ReadValue() << ", " << blocks.MassVelocityBlock->ReadValue() << std::endl;
         std::cout << "t: " << t << ", x: " << blocks.MassPositionBlock->ReadValue() << ", dx/dt: " << blocks.MassVelocityBlock->ReadValue() << std::endl;
 
         counter ++;
     }
-
-    myfile.close();
 }
 
 #endif //FRAMEWORK_SANDBOXMASSSPRINGDAMPER_H

@@ -87,6 +87,7 @@ namespace SimFramework {
         }
 
         this->m_t_n = t_np1;
+        this->UpdateLoggedSignals(this->m_t_n);
     };
 
     void System::RegisterBlocks(BlockList& blocks)

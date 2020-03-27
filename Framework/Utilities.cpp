@@ -127,11 +127,11 @@ namespace SimFramework {
     void CSVWriter::AppendRow(std::vector<std::string> values)
     {
         std::string row;
-        for (auto element : values)
+        for (int i = 0; i < values.size(); i++)
         {
-            row += element;
+            row += values[i];
 
-            if (element != values.back())
+            if (i < (values.size() - 1))
             {
                 row += ",";
             }

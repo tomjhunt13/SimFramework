@@ -119,8 +119,6 @@ namespace SimFramework {
     class Subsystem
     {
     public:
-
-        // virtual void Configure(inputs, output) = 0;
         virtual BlockList Blocks() = 0;
     };
 
@@ -129,12 +127,12 @@ namespace SimFramework {
         System(float dtMax=0.1);
         void Initialise(float t_0);
         void Update(float t_np1);
+        void SetLogOutputFile(std::string outputCSVPath);
 
     protected:
         void RegisterBlocks(BlockList& blocks);
 
         // Data logging
-        void SetLogOutputFile(std::string outputCSVPath);
         void LogSignal(std::string name, const SignalBase* signal);
 
     private:
