@@ -3,6 +3,34 @@
 #include <cmath>
 #include <fstream>
 #include "nlohmann/json.hpp"
+#include "SimFramework/Interpolation.h"
+
+
+// TODO: put in interpolation
+template <typename ValueType>
+ValueType LinearBlend(float alpha, const ValueType& P1, const ValueType& P2)
+{
+    return (1.f - alpha) * P1 + alpha * P2;
+}
+
+template <typename ValueType>
+ValueType LinearBlendClamped(float alpha, const ValueType& P1, const ValueType& P2)
+{
+    if (alpha <= 0)
+    {
+        return P1;
+    }
+    else if (alpha >= 1)
+    {
+        return P2;
+    }
+
+    return (1.f - alpha) * P1 + alpha * P2;
+}
+
+
+
+
 
 namespace Models {
 
@@ -18,8 +46,8 @@ namespace Models {
         fileObject.close();
 
         // Create edges
-        this->m_Segments.resize(x.size() - 2);
-        this->m_CumulativeLength.resize(x.size() - 2);
+        this->m_Segments.resize(x.size() - 1);
+        this->m_CumulativeLength.resize(x.size() - 1);
 
         for (int i = 0; i < this->m_Segments.size(); i++)
         {
@@ -33,7 +61,7 @@ namespace Models {
 
             if (i == 0)
             {
-                this->m_CumulativeLength[0] = this->m_Segments[0].Length;
+                this->m_CumulativeLength[0] = 0;
             }
             else
             {
@@ -42,5 +70,25 @@ namespace Models {
         };
     };
 
+    RoadResult Road::Evaluate(float arcLength)
+    {
+        return Internal::EvaluateRoad(arcLength, this->m_CumulativeLength, this->m_Segments);
+    }
+
+    RoadResult Internal::EvaluateRoad(float arcLength, std::vector<float>& CumulativeLength, std::vector<RoadSegment>& Segments)
+    {
+        // Get edge indices
+        std::vector<int> indices = SimFramework::Internal::NearestIndices(CumulativeLength, arcLength);
+
+        // Get edge info
+        int index = 0;
+        if (arcLength >= CumulativeLength[indices[1]])
+        {
+            index = 1;
+        }
+        RoadSegment& segment = Segments[indices[index]];
+        float segParam = (arcLength - CumulativeLength[indices[index]]) / segment.Length;
+        return {segment.Gradient, LinearBlendClamped(segParam, segment.P1, segment.P2)};
+    };
 
 }; // namespace Models

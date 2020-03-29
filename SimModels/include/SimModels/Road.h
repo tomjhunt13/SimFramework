@@ -4,35 +4,39 @@
 #include <vector>
 #include <string>
 
-#include "SimFramework/Interpolation.h"
-#include "SimFramework/Framework.h"
+#include "Eigen/Dense"
 
+#include "SimFramework/Framework.h"
 
 namespace Models {
 
-    struct RoadSegment {
-        RoadSegment() : P1(2), P2(2) {};
+    struct RoadResult {
+        float Gradient = 0;
+        Eigen::Vector2f Position;
+    };
 
-        std::vector<float> P1;
-        std::vector<float> P2;
+    struct RoadSegment {
+        Eigen::Vector2f P1;
+        Eigen::Vector2f P2;
         float Gradient;
         float Length;
     };
 
 
-
     class Road {
     public:
-
         void SetProfile(std::string roadJSONFilepath);
+        RoadResult Evaluate(float arcLength);
 
     private:
-
         std::vector<float> m_CumulativeLength;
         std::vector<RoadSegment> m_Segments;
-
-
     };
+
+
+    namespace Internal {
+        RoadResult EvaluateRoad(float arcLength, std::vector<float>& cumulativeLength, std::vector<RoadSegment>& segments);
+    }
 
 }; // namespace Models
 
