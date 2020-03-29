@@ -25,7 +25,7 @@ ValueType LinearBlendClamped(float alpha, const ValueType& P1, const ValueType& 
         return P2;
     }
 
-    return (1.f - alpha) * P1 + alpha * P2;
+    return LinearBlend(alpha, P1, P2);
 }
 
 
@@ -34,6 +34,21 @@ ValueType LinearBlendClamped(float alpha, const ValueType& P1, const ValueType& 
 
 namespace Models {
 
+
+    void Road::Configure(const SimFramework::Signal<float>* inArcLength)
+    {
+        this->m_InArcLength = inArcLength;
+    };
+
+    const SimFramework::Signal<Eigen::Vector2f>* Road::OutPosition() const
+    {
+        return &(this->m_OutPosition);
+    };
+
+    const SimFramework::Signal<float>* Road::OutGradient() const
+    {
+        return &(this->m_OutGradient);
+    };
 
     void Road::SetProfile(std::string roadJSONFilepath)
     {
@@ -70,10 +85,29 @@ namespace Models {
         };
     };
 
-    RoadResult Road::Evaluate(float arcLength)
+    std::vector<const SimFramework::SignalBase*> Road::InputSignals() const
     {
-        return Internal::EvaluateRoad(arcLength, this->m_CumulativeLength, this->m_Segments);
-    }
+        return {this->m_InArcLength};
+    };
+
+    std::vector<const SimFramework::SignalBase*> Road::OutputSignals() const
+    {
+        return {&(this->m_OutPosition), &(this->m_OutGradient)};
+    };
+
+    void Road::Update()
+    {
+        // Read input
+        float arcLength = this->m_InArcLength->Read();
+
+        // Compute result
+        RoadResult result = Internal::EvaluateRoad(arcLength, this->m_CumulativeLength, this->m_Segments);
+
+        // Write to outputs
+        this->m_OutPosition.Write(result.Position);
+        this->m_OutGradient.Write(result.Gradient);
+    };
+
 
     RoadResult Internal::EvaluateRoad(float arcLength, std::vector<float>& CumulativeLength, std::vector<RoadSegment>& Segments)
     {

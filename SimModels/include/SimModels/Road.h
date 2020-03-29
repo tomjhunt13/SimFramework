@@ -22,17 +22,27 @@ namespace Models {
         float Length;
     };
 
-
-    class Road {
+    class Road : public SimFramework::Function {
     public:
+        void Configure(const SimFramework::Signal<float>* inArcLength);
+        const SimFramework::Signal<Eigen::Vector2f>* OutPosition() const;
+        const SimFramework::Signal<float>* OutGradient() const;
+
         void SetProfile(std::string roadJSONFilepath);
-        RoadResult Evaluate(float arcLength);
+        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
+        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
+        void Update() override;
 
     private:
+        // Parameters
         std::vector<float> m_CumulativeLength;
         std::vector<RoadSegment> m_Segments;
-    };
 
+        // Signals
+        const SimFramework::Signal<float>* m_InArcLength;
+        SimFramework::Signal<Eigen::Vector2f> m_OutPosition;
+        SimFramework::Signal<float> m_OutGradient;
+    };
 
     namespace Internal {
         RoadResult EvaluateRoad(float arcLength, std::vector<float>& cumulativeLength, std::vector<RoadSegment>& segments);
