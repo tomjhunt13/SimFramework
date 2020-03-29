@@ -8,6 +8,7 @@
 #include "SimFramework/Components.h"
 
 #include "SimModels/VehicleComponents.h"
+#include "SimModels/Road.h"
 
 
 namespace Models {
@@ -38,6 +39,9 @@ namespace Models {
         int BrakeCylindersPerWheel = 2;
 
         // Tyre
+
+        // Road
+        std::string RoadJSON = "/Users/tom/Documents/University/Y4_S2/Data/Road/road1.json";
 
         // Vehicle
         float InitialPosition = 0.f;
@@ -87,6 +91,7 @@ namespace Models {
         // Blocks - System
         Clutch m_Clutch;
         Tyre m_Tyre;
+        Road m_Road;
 
         // Subsystems
         VehicleController m_Controller;

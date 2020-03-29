@@ -18,9 +18,9 @@ void SandboxFullModel() {
     Models::Vehicle vehicle;
     vehicle.SetParameters(vehicleParameters);
     Models::VehicleBlocks blocks = vehicle.Blocks();
-    blocks.InThrottle->WriteValue(1.f);
+    blocks.InThrottle->WriteValue(0.f);
     vehicle.Initialise(0);
-    blocks.InThrottle->WriteValue(1.f);
+    blocks.InThrottle->WriteValue(0.f);
 
 
     float dt = 0.5;

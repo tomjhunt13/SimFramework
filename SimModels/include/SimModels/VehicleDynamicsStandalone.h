@@ -37,7 +37,7 @@ namespace Models {
         SimFramework::Output<float> m_VehiclePosition;
         SimFramework::Output<float> m_VehicleSpeed;
         Models::VehicleDynamics m_SysVehicleDynamics;
-
+        SimFramework::ConstantBlock<float> m_Gradient;
     };
 
 }; // namespace Models

@@ -58,33 +58,6 @@ namespace Models {
         SimFramework::Signal<float> m_OutEngagement;
     };
 
-// TODO: Remove
-//
-//    class CentrifugalClutch : public SimFramework::Function
-//    {
-//    public:
-//        CentrifugalClutch(std::string = "CentrifugalClutch");
-//
-//        void Configure(SimFramework::Signal<float>* inEngineSpeed);
-//
-//        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
-//        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
-//        void Update() override;
-//
-//    private:
-//        // Parameters
-//        float m_EngagementSpeed = 1.5f; // [1000 rev/min]
-//        float m_TorqueCapacity = 30.f; // [Nm @ engagement speed]
-//
-//        // Signals
-//        SimFramework::Signal<float>* m_InEngineSpeed;
-//        SimFramework::Signal<float>* m_OutClutchTorque;
-//
-//        // Copies
-//        float m_InSpeedCopy;
-//        float m_OutTorqueCopy;
-//    };
-
 
     class LinearTrigger : public SimFramework::TriggerFunction {
     public:
@@ -136,9 +109,7 @@ namespace Models {
         AeroDrag(std::string name="Aero Drag");
 
         void SetParameters(float Cd=0.3, float A=2.5, float rho=1.225);
-
         void Configure(const SimFramework::Signal<float>* inSpeed);
-
         const SimFramework::Signal<float>* OutForce() const;
 
         std::vector<const SimFramework::SignalBase*> InputSignals() const override;
@@ -185,6 +156,28 @@ namespace Models {
     };
 
 
+    class Gravity : public SimFramework::Function
+    {
+    public:
+        Gravity(std::string name="Gravity");
+
+        void SetParameters(float mass=1000.f);
+        void Configure(const SimFramework::Signal<float>* inGradient);
+        const SimFramework::Signal<float>* OutForce() const;
+
+        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
+        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
+        void Update() override;
+
+    private:
+        // Parameters
+        float mass;
+        const float g=9.81;
+
+        // Signals
+        const SimFramework::Signal<float>* m_Gradient;
+        SimFramework::Signal<float> m_Force;
+    };
 
 
 
@@ -295,7 +288,7 @@ namespace Models {
 
         void SetParameters(float initialPosition=0.f, float initialVelocity=0.f, float mass=1000.f, float Cd=0.3, float A=2.5, float rho=1.225);
 
-        void Configure(const SimFramework::Signal<float>* inTyreForce);
+        void Configure(const SimFramework::Signal<float>* inTyreForce, const SimFramework::Signal<float>* inGradient);
 
         const SimFramework::Signal<float>* OutVehiclePosition() const;
         const SimFramework::Signal<float>* OutVehicleVelocity() const;
@@ -306,8 +299,9 @@ namespace Models {
     private:
         // Blocks
         AeroDrag m_AeroDrag;
-        SimFramework::Vectorise<float, Eigen::Vector2f> m_Vectorise;
-        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector2f, 2, 2, 2> m_StateSpace;
+        Gravity m_Gravity;
+        SimFramework::Vectorise<float, Eigen::Vector3f> m_Vectorise;
+        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 2, 2> m_StateSpace;
         SimFramework::Mask<Eigen::Vector2f, float, 2> m_Mask;
 
     };

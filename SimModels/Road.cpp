@@ -92,7 +92,7 @@ namespace Models {
 
     std::vector<const SimFramework::SignalBase*> Road::OutputSignals() const
     {
-        return {&(this->m_OutPosition), &(this->m_OutGradient)};
+        return {this->OutPosition(), this->OutGradient()};
     };
 
     void Road::Update()

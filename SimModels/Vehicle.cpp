@@ -9,11 +9,12 @@ namespace Models {
         this->m_Controller.Configure(this->m_InThrottle.OutSignal(), this->m_Transmission.OutClutchSpeed());
         this->m_Engine.Configure(this->m_Controller.OutAugmentedThrottle(), this->m_Clutch.OutClutchTorque());
         this->m_Transmission.Configure(this->m_Clutch.OutClutchTorque(), this->m_Tyre.OutTorque(), this->m_InBrakePressure.OutSignal());
-        this->m_VehicleDynamics.Configure(this->m_Tyre.OutForce());
+        this->m_VehicleDynamics.Configure(this->m_Tyre.OutForce(), this->m_Road.OutGradient());
 
         // Configure model blocks
         this->m_Clutch.Configure(this->m_Engine.OutEngineSpeed(), this->m_Transmission.OutClutchSpeed(), this->m_Controller.OutClutchStiffness());
         this->m_Tyre.Configure(this->m_Transmission.OutTyreSpeed(), this->m_VehicleDynamics.OutVehicleVelocity());
+        this->m_Road.Configure(this->m_VehicleDynamics.OutVehiclePosition());
 
         // Configure IO blocks
         this->m_InThrottle.Configure(0.f);
@@ -25,7 +26,7 @@ namespace Models {
 
         SimFramework::BlockList list = {{&(this->m_InThrottle),     &(this->m_InBrakePressure)},
                                         {},
-                                        {&(this->m_Clutch), &(this->m_Tyre)},
+                                        {&(this->m_Clutch), &(this->m_Tyre), &(this->m_Road)},
                                         {&(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity)},
                                         {&(this->m_Controller), &(this->m_Engine),         &(this->m_Transmission), &(this->m_VehicleDynamics)}};
         this->RegisterBlocks(list);
@@ -38,8 +39,7 @@ namespace Models {
         this->m_Engine.SetParameters(parameters.EngineJSON, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant);
         this->m_Transmission.SetParameters(parameters.GearRatios, parameters.TransmissionInertia, parameters.BrakeFrictionCoefficient, parameters.BrakeRadius, parameters.BrakeCylinderDiameter, parameters.MaxBrakePressure, parameters.BrakeCylindersPerWheel);
         this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho);
-
-
+        this->m_Road.SetProfile(parameters.RoadJSON);
     };
 
 
@@ -73,7 +73,9 @@ namespace Models {
     std::vector<std::pair<std::string, const SimFramework::SignalBase *> > Vehicle::LogSignals()
     {
         return {{"Demand Throttle", this->m_InThrottle.OutSignal()},
-                {"Brake Pressure", this->m_InBrakePressure.OutSignal()}};
+                {"Brake Pressure", this->m_InBrakePressure.OutSignal()},
+                {"Vehicle Position (x), Vehicle Position (y)", this->m_Road.OutPosition()},
+                {"Road Gradient", this->m_Road.OutGradient()}};
     };
 
 
