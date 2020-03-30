@@ -50,6 +50,10 @@ namespace Models {
         float Cd = 0.3;
         float A = 2.5;
         float rho = 1.225;
+
+        // Admin
+        int LogFrequency = 5; // Number of complete updates until next log
+        std::string LogOutputFile = "LogOut.csv";
     };
 
 

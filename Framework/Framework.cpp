@@ -12,7 +12,7 @@ namespace SimFramework {
     Sink::Sink(std::string name) : Block(name) {};
 
 
-    System::System(float dtMax) : m_Configured(false), m_dtMax(dtMax)
+    System::System(float dtMax) : m_Configured(false), m_LogFrequency(1), m_dtMax(dtMax)
     {
         this->m_LogNames.push_back("t");
         this->m_LogSignals.push_back(nullptr);
@@ -52,6 +52,7 @@ namespace SimFramework {
             this->LogOneSignal(pair.first, pair.second);
         }
         this->m_CSV.SetHeader(this->m_LogNames);
+        this->m_UpdateCounter = 0;
     }
 
 
@@ -90,7 +91,12 @@ namespace SimFramework {
         }
 
         this->m_t_n = t_np1;
-        this->UpdateLoggedSignals(this->m_t_n);
+
+        if (this->m_UpdateCounter % this->m_LogFrequency == 0)
+        {
+            this->UpdateLoggedSignals(this->m_t_n);
+        }
+        this->m_UpdateCounter += 1;
     };
 
     void System::RegisterBlocks(BlockList& blocks)
@@ -114,9 +120,10 @@ namespace SimFramework {
         }
     };
 
-    void System::SetLogOutputFile(std::string outputCSVPath)
+    void System::SetLogOutputFile(std::string outputCSVPath, int updateFrequency)
     {
         this->m_CSV.SetOutputFilepath(outputCSVPath);
+        this->m_LogFrequency = updateFrequency;
     };
 
     void System::LogOneSignal(std::string name, const SignalBase* signal)

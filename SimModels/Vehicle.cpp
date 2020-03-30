@@ -3,7 +3,7 @@
 
 namespace Models {
 
-    Vehicle::Vehicle() : System(0.0025)
+    Vehicle::Vehicle() : System(0.01)
     {
         // Configure subsystems
         this->m_Controller.Configure(this->m_InThrottle.OutSignal(), this->m_Transmission.OutClutchSpeed());
@@ -40,6 +40,8 @@ namespace Models {
         this->m_Transmission.SetParameters(parameters.GearRatios, parameters.TransmissionInertia, parameters.BrakeFrictionCoefficient, parameters.BrakeRadius, parameters.BrakeCylinderDiameter, parameters.MaxBrakePressure, parameters.BrakeCylindersPerWheel);
         this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho);
         this->m_Road.SetProfile(parameters.RoadJSON);
+
+        this->SetLogOutputFile(parameters.LogOutputFile, parameters.LogFrequency);
     };
 
 

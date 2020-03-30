@@ -14,6 +14,7 @@ void SandboxFullModel() {
     vehicleParameters.ClutchStiffness = 100.f;
     vehicleParameters.EngineViscousConstant = 0.05;
     vehicleParameters.EngineInertia = 0.2f;
+    vehicleParameters.LogFrequency = 1;
 
     Models::Vehicle vehicle;
     vehicle.SetParameters(vehicleParameters);
@@ -25,7 +26,7 @@ void SandboxFullModel() {
 
     float dt = 0.5;
     int counter = 1;
-    for (float t = 0.f; t <= 200.f; t += dt) {
+    for (float t = 0.f; t <= 1400.f; t += dt) {
 
         if (counter == 200) {
             blocks.InThrottle->WriteValue(1.f);

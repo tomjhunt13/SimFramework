@@ -128,7 +128,9 @@ namespace SimFramework {
         System(float dtMax=0.1);
         void Initialise(float t_0);
         void Update(float t_np1);
-        void SetLogOutputFile(std::string outputCSVPath);
+        void SetLogOutputFile(std::string outputCSVPath, int updateFrequency);
+
+
 
     protected:
         // TODO: Protected functions should return BlockList rather than call RegisterBlocks
@@ -150,6 +152,8 @@ namespace SimFramework {
         CSVWriter m_CSV;
 
         bool m_Configured;
+        int m_LogFrequency;
+        int m_UpdateCounter;
         float m_dtMax;
         float m_t_n;
     };
