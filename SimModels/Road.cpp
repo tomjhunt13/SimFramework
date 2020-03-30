@@ -57,7 +57,7 @@ namespace Models {
         fileObject.open (roadJSONFilepath);
         nlohmann::json js = nlohmann::json::parse(fileObject);
         std::vector<float> x = js["x"];
-        std::vector<float> y = js["y"];
+        std::vector<float> y = js["z"];
         fileObject.close();
 
         // Create edges
