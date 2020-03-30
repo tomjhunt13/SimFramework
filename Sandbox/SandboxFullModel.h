@@ -8,6 +8,8 @@
 void SandboxFullModel() {
     // Set up system
     Models::VehicleParameters vehicleParameters;
+    vehicleParameters.EngineJSON = "../Sandbox/Data/2L_Turbo_Gasoline.json";
+    vehicleParameters.RoadJSON = "../Sandbox/Data/road1.json";
     vehicleParameters.Mass = 1500.f;
     vehicleParameters.GearshiftLag = 0.75;
     vehicleParameters.A = 2.5;

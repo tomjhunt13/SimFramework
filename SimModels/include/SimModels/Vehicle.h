@@ -16,7 +16,7 @@ namespace Models {
     struct VehicleParameters
     {
         // Engine
-        std::string EngineJSON = "/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json";
+        std::string EngineJSON;
         float EngineInitialSpeed = 200.f;
         float EngineInertia = 1.f;
         float EngineViscousConstant = 0.05;
@@ -41,7 +41,7 @@ namespace Models {
         // Tyre
 
         // Road
-        std::string RoadJSON = "/Users/tom/Documents/University/Y4_S2/Data/Road/road1.json";
+        std::string RoadJSON;
 
         // Vehicle
         float InitialPosition = 0.f;

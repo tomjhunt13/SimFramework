@@ -17,6 +17,7 @@ namespace Models {
         float Cd = 0.3;
         float A = 2.5;
         float rho = 1.225;
+        std::string RoadJSON = "../Sandbox/Data/road1.json";
     };
 
     struct VehicleDynamicsBlocks
