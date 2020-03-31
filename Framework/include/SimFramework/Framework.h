@@ -16,6 +16,8 @@ namespace SimFramework {
     {
     public:
         SignalBase(std::string name = "Signal");
+        virtual ~SignalBase() {};
+
         virtual const std::string ValueToString() const = 0;
 
 
@@ -54,7 +56,6 @@ namespace SimFramework {
     {
     public:
         Block(std::string name = "Block");
-
         virtual ~Block() {};
 
         virtual std::vector<const SignalBase*> InputSignals() const = 0;
@@ -68,8 +69,8 @@ namespace SimFramework {
     {
     public:
         Source(std::string name = "Source");
-
         virtual ~Source() {};
+
         virtual void Initialise(float t_0) = 0;     // Updates internal states AND writes initial values
         virtual void Update(float dt) = 0;
 
@@ -79,8 +80,8 @@ namespace SimFramework {
     {
     public:
         DynamicSystem(std::string name = "Dynamic System");
-
         virtual ~DynamicSystem() {};
+
         virtual void ReadInputs() = 0;
         virtual void Initialise(float t_0) = 0;     // Set initial states AND write initial output
         virtual void Update(float dt) = 0;
@@ -90,8 +91,8 @@ namespace SimFramework {
     {
     public:
         Function(std::string name = "Function");
-
         virtual ~Function() {};
+
         virtual void Update() = 0;
     };
 
@@ -99,8 +100,8 @@ namespace SimFramework {
     {
     public:
         Sink(std::string name = "Sink");
-
         virtual ~Sink() {};
+
         virtual void Update(float dt) = 0;
     };
 
@@ -119,6 +120,7 @@ namespace SimFramework {
     class Subsystem
     {
     public:
+        virtual ~Subsystem() {};
         virtual BlockList Blocks() = 0;
         virtual std::vector<std::pair<std::string, const SignalBase*>> LogSignals() { return {}; };
     };
@@ -126,6 +128,8 @@ namespace SimFramework {
     class System {
     public:
         System(float dtMax=0.1);
+        virtual ~System() {};
+
         void Initialise(float t_0);
         void Update(float t_np1);
         void SetLogOutputFile(std::string outputCSVPath, int updateFrequency);
