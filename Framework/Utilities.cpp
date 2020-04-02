@@ -151,7 +151,7 @@ namespace SimFramework {
     void CSVWriter::ResetFile()
     {
         std::ofstream file;
-        file.open(this->m_Filepath, std::ios::out);
+        file.open(this->m_Filepath, std::ios::trunc);
         file.close();
     };
 
