@@ -3,6 +3,8 @@ project(Framework)
 
 set(CMAKE_CXX_STANDARD 14)
 
+message(${CMAKE_HOST_SYSTEM_PROCESSOR})
+
 # eigen
 message("Configuring Eigen")
 add_subdirectory(ThirdParty/eigen)
@@ -43,13 +45,13 @@ target_link_libraries(Tests gtest gtest_main Framework SimModels)
 add_custom_command(TARGET Framework POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E copy
         "$<TARGET_FILE:Framework>"
-        "${CMAKE_SOURCE_DIR}/Binaries/${CMAKE_HOST_SYSTEM_NAME}/$<TARGET_FILE_NAME:Framework>"
+        "${CMAKE_SOURCE_DIR}/Binaries/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/$<TARGET_FILE_NAME:Framework>"
         COMMAND ${CMAKE_COMMAND} -E echo
-        "Copying $<TARGET_FILE:Framework> to ${CMAKE_SOURCE_DIR}/Binaries/${CMAKE_HOST_SYSTEM_NAME}/$<TARGET_FILE_NAME:Framework>")
+        "Copying $<TARGET_FILE:Framework> to ${CMAKE_SOURCE_DIR}/Binaries/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/$<TARGET_FILE_NAME:Framework>")
 
 add_custom_command(TARGET SimModels POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E copy
         "$<TARGET_FILE:SimModels>"
-        "${CMAKE_SOURCE_DIR}/Binaries/${CMAKE_HOST_SYSTEM_NAME}/$<TARGET_FILE_NAME:SimModels>"
+        "${CMAKE_SOURCE_DIR}/Binaries/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/$<TARGET_FILE_NAME:SimModels>"
         COMMAND ${CMAKE_COMMAND} -E echo
-        "Copying $<TARGET_FILE:SimModels> to ${CMAKE_SOURCE_DIR}/Binaries/${CMAKE_HOST_SYSTEM_NAME}/$<TARGET_FILE_NAME:SimModels>")
+        "Copying $<TARGET_FILE:SimModels> to ${CMAKE_SOURCE_DIR}/Binaries/${CMAKE_HOST_SYSTEM_NAME}/${CMAKE_HOST_SYSTEM_PROCESSOR}/$<TARGET_FILE_NAME:SimModels>")
