@@ -132,14 +132,12 @@ namespace SimFramework {
 
         void Initialise(float t_0);
         void Update(float t_np1);
-        void SetLogOutputFile(std::string outputCSVPath, int updateFrequency);
-
-
 
     protected:
         // TODO: Protected functions should return BlockList rather than call RegisterBlocks
         void RegisterBlocks(BlockList& blocks);
         virtual std::vector<std::pair<std::string, const SignalBase*>> LogSignals() { return {}; };
+        void SetLogOutputFile(std::string outputCSVPath, int updateFrequency);
 
     private:
         void Configure();

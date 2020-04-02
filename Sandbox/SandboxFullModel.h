@@ -17,6 +17,7 @@ void SandboxFullModel() {
     vehicleParameters.EngineViscousConstant = 0.05;
     vehicleParameters.EngineInertia = 0.2f;
     vehicleParameters.LogFrequency = 1;
+    vehicleParameters.LogOutputFile = "../Sandbox/Data/UE4Out.csv";
 
     Models::Vehicle vehicle;
     vehicle.SetParameters(vehicleParameters);
