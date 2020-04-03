@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.14)
 project(Framework)
 
 set(CMAKE_CXX_STANDARD 14)
-#set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Debug)
 
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
