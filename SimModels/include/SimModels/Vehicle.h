@@ -68,6 +68,7 @@ namespace Models {
         SimFramework::Output<float>* OutPosition;
         SimFramework::Output<float>* OutVelocity;
         SimFramework::Output<Eigen::Vector2f>* OutCoordinates;
+        SimFramework::Output<float>* OutGradient; // Radians
     };
 
     class Vehicle : public SimFramework::System
@@ -95,6 +96,7 @@ namespace Models {
         SimFramework::Output<float> m_OutPosition;
         SimFramework::Output<float> m_OutVelocity;
         SimFramework::Output<Eigen::Vector2f> m_OutCoordinates;
+        SimFramework::Output<float> m_OutGradient;
 
         // Blocks - System
         Clutch m_Clutch;

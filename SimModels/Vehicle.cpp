@@ -24,11 +24,12 @@ namespace Models {
         this->m_OutPosition.Configure(this->m_VehicleDynamics.OutVehiclePosition(), 0.f);
         this->m_OutVelocity.Configure(this->m_VehicleDynamics.OutVehicleVelocity(), 0.f);
         this->m_OutCoordinates.Configure(this->m_Road.OutPosition(), Eigen::Vector2f::Zero());
+        this->m_OutGradient.Configure(this->m_Road.OutGradient(), 0.f);
 
         SimFramework::BlockList list = {{&(this->m_InThrottle),     &(this->m_InBrakePressure)},
                                         {},
                                         {&(this->m_Clutch), &(this->m_Tyre), &(this->m_Road)},
-                                        {&(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity), &(this->m_OutCoordinates)},
+                                        {&(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity), &(this->m_OutCoordinates), &(this->m_OutGradient)},
                                         {&(this->m_Controller), &(this->m_Engine),         &(this->m_Transmission), &(this->m_VehicleDynamics)}};
         this->RegisterBlocks(list);
 
@@ -70,7 +71,14 @@ namespace Models {
 
     const VehicleBlocks Vehicle::Blocks()
     {
-        return {&(this->m_InThrottle), &(this->m_InBrakePressure), &(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity), &(this->m_OutCoordinates)};
+        return {&(this->m_InThrottle),
+                &(this->m_InBrakePressure),
+                &(this->m_OutEngineSpeed),
+                &(this->m_OutTyreSpeed),
+                &(this->m_OutPosition),
+                &(this->m_OutVelocity),
+                &(this->m_OutCoordinates),
+                &(this->m_OutGradient)};
     };
 
     std::vector<std::pair<std::string, const SimFramework::SignalBase *> > Vehicle::LogSignals()
