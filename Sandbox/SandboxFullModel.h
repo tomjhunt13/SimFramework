@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "SimFramework/Utilities.h"
 #include "SimModels/Vehicle.h"
 
 void SandboxFullModel() {
@@ -45,45 +46,8 @@ void SandboxFullModel() {
             }
         }
 
-//        if (counter == 1400)
-//        {
-//            blocks.InThrottle->WriteValue(0.f);
-//            blocks.InBrakePressure->WriteValue(1.f);
-//        }
-//
-//        if (counter == 1800)
-//        {
-//            blocks.InThrottle->WriteValue(0.25f);
-//            blocks.InBrakePressure->WriteValue(0.f);
-//        }
-//
-//        if (counter == 2000)
-//        {
-//            blocks.InThrottle->WriteValue(0.5f);
-//            blocks.InBrakePressure->WriteValue(0.f);
-//        }
-//
-//        if (counter == 2200)
-//        {
-//            blocks.InThrottle->WriteValue(0.75f);
-//            blocks.InBrakePressure->WriteValue(0.f);
-//        }
-//
-//        if (counter == 2400)
-//        {
-//            blocks.InThrottle->WriteValue(0.25f);
-//            blocks.InBrakePressure->WriteValue(0.f);
-//        }
-//
-//        if (counter == 2600)
-//        {
-//            blocks.InThrottle->WriteValue(1.f);
-//            blocks.InBrakePressure->WriteValue(0.f);
-//        }
-
-
         vehicle.Update(t);
-        std::cout << "t: " << t << ", Car Pos: " << blocks.OutPosition->ReadValue() << ", Car Vel: "
+        std::cout << "t: " << t << ", Car Pos: " << SimFramework::ToString(blocks.OutCoordinates->ReadValue()) << ", Car Vel: "
                   << blocks.OutVelocity->ReadValue() << ", Engine Speed: " << blocks.OutEngineSpeed->ReadValue()
                   << std::endl;
 

@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "Eigen/Dense"
+
 #include "SimFramework/Utilities.h"
 #include "SimFramework/Framework.h"
 #include "SimFramework/Components.h"
@@ -65,6 +67,7 @@ namespace Models {
         SimFramework::Output<float>* OutTyreSpeed;
         SimFramework::Output<float>* OutPosition;
         SimFramework::Output<float>* OutVelocity;
+        SimFramework::Output<Eigen::Vector2f>* OutCoordinates;
     };
 
     class Vehicle : public SimFramework::System
@@ -91,6 +94,7 @@ namespace Models {
         SimFramework::Output<float> m_OutTyreSpeed;
         SimFramework::Output<float> m_OutPosition;
         SimFramework::Output<float> m_OutVelocity;
+        SimFramework::Output<Eigen::Vector2f> m_OutCoordinates;
 
         // Blocks - System
         Clutch m_Clutch;
