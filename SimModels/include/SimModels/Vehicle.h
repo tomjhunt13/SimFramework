@@ -33,7 +33,7 @@ namespace Models {
 
         // Transmission
         std::vector<float> GearRatios = {3, 2.25, 1.7, 1.3, 1};
-        float TransmissionInertia = 1.f;
+        float TransmissionInertia = 2.f;
 
         // Brake
 

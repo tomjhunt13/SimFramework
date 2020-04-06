@@ -39,12 +39,12 @@ namespace Models {
 
     const SimFramework::Signal<float>* Transmission::OutClutchSpeed() const
     {
-        return this->m_StateMask.OutSignal(0);
+        return this->m_StateMask.OutSignal(1);
     };
 
     const SimFramework::Signal<float>* Transmission::OutTyreSpeed() const
     {
-        return this->m_StateMask.OutSignal(1);
+        return this->m_StateMask.OutSignal(0);
     };
 
     const SimFramework::Signal<int>* Transmission::OutGearIndex() const

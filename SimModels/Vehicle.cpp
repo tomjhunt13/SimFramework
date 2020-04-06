@@ -3,7 +3,7 @@
 
 namespace Models {
 
-    Vehicle::Vehicle() : System(0.01)
+    Vehicle::Vehicle() : System(0.005)
     {
         // Configure subsystems
         this->m_Controller.Configure(this->m_Transmission.OutClutchSpeed(), this->m_InThrottle.OutSignal(), this->m_Transmission.OutGearIndex());
@@ -83,7 +83,8 @@ namespace Models {
         return {{"Demand Throttle", this->m_InThrottle.OutSignal()},
                 {"Brake Pressure", this->m_InBrakePressure.OutSignal()},
                 {"Vehicle Position (x), Vehicle Position (y)", this->m_Road.OutPosition()},
-                {"Road Gradient", this->m_Road.OutGradient()}};
+                {"Road Gradient", this->m_Road.OutGradient()},
+                {"Clutch Torque", this->m_Clutch.OutClutchTorque()}};
     };
 
 
