@@ -8,7 +8,7 @@ namespace Models {
         // Configure subsystems
         this->m_Controller.Configure(this->m_InThrottle.OutSignal(), this->m_Transmission.OutClutchSpeed());
         this->m_Engine.Configure(this->m_Controller.OutAugmentedThrottle(), this->m_Clutch.OutClutchTorque());
-        this->m_Transmission.Configure(this->m_Clutch.OutClutchTorque(), this->m_Tyre.OutTorque(), this->m_InBrakePressure.OutSignal());
+        this->m_Transmission.Configure(this->m_Clutch.OutClutchTorque(), this->m_Tyre.OutTorque());
         this->m_VehicleDynamics.Configure(this->m_Tyre.OutForce(), this->m_Road.OutGradient());
 
         // Configure model blocks
@@ -25,11 +25,12 @@ namespace Models {
         this->m_OutVelocity.Configure(this->m_VehicleDynamics.OutVehicleVelocity(), 0.f);
         this->m_OutCoordinates.Configure(this->m_Road.OutPosition(), Eigen::Vector2f::Zero());
         this->m_OutGradient.Configure(this->m_Road.OutGradient(), 0.f);
+        this->m_OutCurrentGear.Configure(this->m_Transmission.OutGearIndex(), 0);
 
         SimFramework::BlockList list = {{&(this->m_InThrottle),     &(this->m_InBrakePressure)},
                                         {},
                                         {&(this->m_Clutch), &(this->m_Tyre), &(this->m_Road)},
-                                        {&(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity), &(this->m_OutCoordinates), &(this->m_OutGradient)},
+                                        {&(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity), &(this->m_OutCoordinates), &(this->m_OutGradient), &(this->m_OutCurrentGear)},
                                         {&(this->m_Controller), &(this->m_Engine),         &(this->m_Transmission), &(this->m_VehicleDynamics)}};
         this->RegisterBlocks(list);
 
@@ -39,7 +40,7 @@ namespace Models {
 
         this->m_Controller.SetParameters(parameters.GearshiftLag, parameters.ClutchStiffness);
         this->m_Engine.SetParameters(parameters.EngineJSON, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant);
-        this->m_Transmission.SetParameters(parameters.GearRatios, parameters.TransmissionInertia, parameters.BrakeFrictionCoefficient, parameters.BrakeRadius, parameters.BrakeCylinderDiameter, parameters.MaxBrakePressure, parameters.BrakeCylindersPerWheel);
+        this->m_Transmission.SetParameters(parameters.GearRatios, parameters.TransmissionInertia);
         this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho);
         this->m_Road.SetProfile(parameters.RoadJSON);
 
@@ -64,11 +65,6 @@ namespace Models {
         };
     };
 
-    int Vehicle::CurrentGear() const
-    {
-        return this->m_Transmission.CurrentGear();
-    };
-
     const VehicleBlocks Vehicle::Blocks()
     {
         return {&(this->m_InThrottle),
@@ -77,6 +73,7 @@ namespace Models {
                 &(this->m_OutTyreSpeed),
                 &(this->m_OutPosition),
                 &(this->m_OutVelocity),
+                &(this->m_OutCurrentGear),
                 &(this->m_OutCoordinates),
                 &(this->m_OutGradient)};
     };

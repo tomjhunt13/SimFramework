@@ -31,15 +31,10 @@ namespace Models {
         float ClutchStiffness = 100.f;
 
         // Transmission
-        std::vector<float> GearRatios = {0.07, 0.14, 0.23, 0.32, 0.41, 0.5};
+        std::vector<float> GearRatios = {3, 2.25, 1.7, 1.3, 1};
         float TransmissionInertia = 1.f;
 
         // Brake
-        float BrakeFrictionCoefficient = 0.9;
-        float BrakeRadius = 0.15;
-        float BrakeCylinderDiameter = 0.01;
-        float MaxBrakePressure = 500000;
-        int BrakeCylindersPerWheel = 2;
 
         // Tyre
 
@@ -68,6 +63,7 @@ namespace Models {
         SimFramework::Output<float>* OutTyreSpeed;
         SimFramework::Output<float>* OutPosition;
         SimFramework::Output<float>* OutVelocity;
+        SimFramework::Output<int>* OutCurrentGear;
         SimFramework::Output<Eigen::Vector2f>* OutCoordinates;
         SimFramework::Output<float>* OutGradient; // Radians
     };
@@ -98,6 +94,7 @@ namespace Models {
         SimFramework::Output<float> m_OutVelocity;
         SimFramework::Output<Eigen::Vector2f> m_OutCoordinates;
         SimFramework::Output<float> m_OutGradient;
+        SimFramework::Output<int> m_OutCurrentGear;
 
         // Blocks - System
         Clutch m_Clutch;

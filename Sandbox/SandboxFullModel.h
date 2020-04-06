@@ -28,7 +28,7 @@ void SandboxFullModel() {
     blocks.InThrottle->WriteValue(0.f);
 
 
-    float dt = 0.5;
+    float dt = 0.1;
     int counter = 1;
     for (float t = 0.f; t <= 1400.f; t += dt) {
 
@@ -52,7 +52,8 @@ void SandboxFullModel() {
                   << ", Car Vel: " << blocks.OutVelocity->ReadValue()
                   << ", Engine Speed: " << blocks.OutEngineSpeed->ReadValue()
                   << ", Road Gradient: " << blocks.OutGradient->ReadValue()
-                  << std::endl;
+                << ", Current Gear: " << blocks.OutCurrentGear->ReadValue()
+                << std::endl;
 
         counter++;
     }
