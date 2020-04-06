@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.14)
 project(Framework)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_BUILD_TYPE Release)
-#set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
@@ -24,18 +24,18 @@ add_subdirectory(ThirdParty/googletest)
 include_directories(ThirdParty/googletest/googletest/include)
 
 # Framework
-add_library(Framework STATIC Framework/include/SimFramework/Framework.h Framework/Framework.cpp Framework/include/SimFramework/Components.h Framework/Components.cpp Framework/include/SimFramework/Interpolation.h Framework/Interpolation.cpp Framework/include/SimFramework/Utilities.h Framework/Utilities.cpp SimModels/VehicleDynamicsStandalone.cpp SimModels/include/SimModels/VehicleDynamicsStandalone.h)
+add_library(Framework STATIC Framework/include/SimFramework/Framework.h Framework/Framework.cpp Framework/include/SimFramework/Components.h Framework/Components.cpp Framework/include/SimFramework/Interpolation.h Framework/Interpolation.cpp Framework/include/SimFramework/Utilities.h Framework/Utilities.cpp)
 include_directories(Framework/include)
 
 
 # SimModels
-add_library(SimModels STATIC SimModels/MassSpringDamper1D.cpp SimModels/include/SimModels/MassSpringDamper1D.h SimModels/EngineStandalone.cpp SimModels/include/SimModels/EngineStandalone.h SimModels/TransmissionStandalone.cpp SimModels/include/SimModels/TransmissionStandalone.h SimModels/Vehicle.cpp SimModels/include/SimModels/Vehicle.h SimModels/VehicleComponents.cpp SimModels/include/SimModels/VehicleComponents.h SimModels/Road.cpp SimModels/include/SimModels/Road.h)
+add_library(SimModels STATIC SimModels/MassSpringDamper1D.cpp SimModels/include/SimModels/MassSpringDamper1D.h SimModels/EngineStandalone.cpp SimModels/include/SimModels/EngineStandalone.h SimModels/Vehicle.cpp SimModels/include/SimModels/Vehicle.h SimModels/VehicleComponents.cpp SimModels/include/SimModels/VehicleComponents.h SimModels/Road.cpp SimModels/include/SimModels/Road.h SimModels/Transmission.cpp SimModels/include/SimModels/Transmission.h)
 target_link_libraries(SimModels Framework)
 include_directories(SimModels/include)
 
 
 # Sandbox
-add_executable(Sandbox Sandbox/main.cpp Sandbox/SandboxTransmission.h Sandbox/SandboxMassSpringDamper.h Sandbox/SandboxEngine.h Sandbox/SandboxVehicleStandalone.h Sandbox/SandboxFullModel.h)
+add_executable(Sandbox Sandbox/main.cpp Sandbox/SandboxMassSpringDamper.h Sandbox/SandboxEngine.h Sandbox/SandboxFullModel.h)
 target_link_libraries(Sandbox Framework SimModels)
 
 
