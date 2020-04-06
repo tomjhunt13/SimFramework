@@ -23,7 +23,7 @@ namespace Models {
         std::string EngineJSON;
         float EngineInitialSpeed = 200.f;
         float EngineInertia = 1.f;
-        float EngineViscousConstant = 0.05;
+        float EngineViscousConstant = 0.4;
 
         // Controller
         float GearshiftLag = 1.f;
@@ -32,7 +32,7 @@ namespace Models {
         float ClutchStiffness = 100.f;
 
         // Transmission
-        std::vector<float> GearRatios = {3, 2.25, 1.7, 1.3, 1};
+        std::vector<float> GearRatios = {11.f, 7.3, 5.5, 3.8, 2.5, 2.f};
         float TransmissionInertia = 2.f;
 
         // Brake
