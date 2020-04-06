@@ -33,30 +33,7 @@ namespace Models {
     };
 
 
-    class ClutchLowSpeedEngagement : public SimFramework::Function
-    {
-    public:
-        ClutchLowSpeedEngagement(float threshold = 50.f, std::string name = "Clutch Low Speed Engagement");
 
-        void Configure(const SimFramework::Signal<float>* inTransmissionSpeed, const SimFramework::Signal<float>* inThrottle);
-
-        const SimFramework::Signal<float>* OutEngagement() const;
-
-        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
-        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
-        void Update() override;
-
-    private:
-        // Parameters
-        float m_SpeedThreshold;
-        float m_ThrottleThreshold = 0.02;
-        bool m_Accelerating;
-
-        // Signals
-        const SimFramework::Signal<float>* m_InTransmissionSpeed;
-        const SimFramework::Signal<float>* m_InThrottle;
-        SimFramework::Signal<float> m_OutEngagement;
-    };
 
 
     class LinearTrigger : public SimFramework::TriggerFunction {
@@ -179,44 +156,6 @@ namespace Models {
         SimFramework::Signal<float> m_Force;
     };
 
-
-
-    class VehicleController : public SimFramework::Subsystem
-    {
-    public:
-        void SetParameters(float clutchLagTime=1.f, float clutchStiffness=1000.f);
-
-        void Configure(const SimFramework::Signal<float>* inDemandThrottle, const SimFramework::Signal<float>* inTransmissionSpeed);
-
-        const SimFramework::Signal<float>* OutAugmentedThrottle() const;
-        const SimFramework::Signal<float>* OutClutchStiffness() const;
-
-        void Trigger();
-
-        SimFramework::BlockList Blocks() override;
-
-        std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override;
-
-
-    private:
-        // Parameters
-        float m_ClutchStiffness;
-
-        // Blocks - Blending functions
-        SimFramework::LinearBlend<float> m_BlendClutchLowSpeed;
-        SimFramework::LinearBlend<float> m_BlendThrottle;
-        SimFramework::LinearBlend<float> m_BlendClutchGearShift;
-
-        // Blocks - Blend parameters
-        LinearTrigger m_GearChangeTrigger;
-        ClutchLowSpeedEngagement m_LowSpeedEngagement;
-
-        // Blocks - Constants
-        SimFramework::ConstantBlock<float> m_ConstZero;
-        SimFramework::ConstantBlock<float> m_ClutchStiffnessMax;
-
-
-    };
 
 
     class Engine : public SimFramework::Subsystem {

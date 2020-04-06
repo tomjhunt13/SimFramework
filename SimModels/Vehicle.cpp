@@ -6,7 +6,7 @@ namespace Models {
     Vehicle::Vehicle() : System(0.01)
     {
         // Configure subsystems
-        this->m_Controller.Configure(this->m_InThrottle.OutSignal(), this->m_Transmission.OutClutchSpeed());
+        this->m_Controller.Configure(this->m_Transmission.OutClutchSpeed(), this->m_InThrottle.OutSignal(), this->m_Transmission.OutGearIndex());
         this->m_Engine.Configure(this->m_Controller.OutAugmentedThrottle(), this->m_Clutch.OutClutchTorque());
         this->m_Transmission.Configure(this->m_Clutch.OutClutchTorque(), this->m_Tyre.OutTorque());
         this->m_VehicleDynamics.Configure(this->m_Tyre.OutForce(), this->m_Road.OutGradient());
