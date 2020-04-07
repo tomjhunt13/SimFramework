@@ -20,9 +20,10 @@ namespace Models {
         this->m_InThrottle.Configure(0.f);
         this->m_InBrakePressure.Configure(0.f);
         this->m_OutEngineSpeed.Configure(this->m_Engine.OutEngineSpeed(), 0.f);
-        this->m_OutTyreSpeed.Configure(this->m_Transmission.OutTyreSpeed(), 0.f);
-        this->m_OutPosition.Configure(this->m_VehicleDynamics.OutVehiclePosition(), 0.f);
-        this->m_OutVelocity.Configure(this->m_VehicleDynamics.OutVehicleVelocity(), 0.f);
+        this->m_OutFuelFlowRate.Configure(this->m_Engine.OutFuelRate(), 0.f);
+        this->m_OutFuelCumulative.Configure(this->m_Engine.OutFuelCumulative(), 0.f);
+        this->m_OutWheelSpeed.Configure(this->m_Transmission.OutTyreSpeed(), 0.f);
+        this->m_OutLinearVelocity.Configure(this->m_VehicleDynamics.OutVehicleVelocity(), 0.f);
         this->m_OutCoordinates.Configure(this->m_Road.OutPosition(), Eigen::Vector2f::Zero());
         this->m_OutGradient.Configure(this->m_Road.OutGradient(), 0.f);
         this->m_OutCurrentGear.Configure(this->m_Transmission.OutGearIndex(), 0);
@@ -30,7 +31,7 @@ namespace Models {
         SimFramework::BlockList list = {{&(this->m_InThrottle),     &(this->m_InBrakePressure)},
                                         {},
                                         {&(this->m_Clutch), &(this->m_Tyre), &(this->m_Road)},
-                                        {&(this->m_OutEngineSpeed), &(this->m_OutTyreSpeed), &(this->m_OutPosition), &(this->m_OutVelocity), &(this->m_OutCoordinates), &(this->m_OutGradient), &(this->m_OutCurrentGear)},
+                                        {&(this->m_OutEngineSpeed), &(this->m_OutFuelFlowRate), &(this->m_OutFuelCumulative), &(this->m_OutWheelSpeed), &(this->m_OutLinearVelocity), &(this->m_OutCoordinates), &(this->m_OutGradient), &(this->m_OutCurrentGear)},
                                         {&(this->m_Controller), &(this->m_Engine),         &(this->m_Transmission), &(this->m_VehicleDynamics)}};
         this->RegisterBlocks(list);
 
@@ -70,11 +71,12 @@ namespace Models {
         return {&(this->m_InThrottle),
                 &(this->m_InBrakePressure),
                 &(this->m_OutEngineSpeed),
-                &(this->m_OutTyreSpeed),
-                &(this->m_OutPosition),
-                &(this->m_OutVelocity),
-                &(this->m_OutCurrentGear),
+                &(this->m_OutFuelFlowRate),
+                &(this->m_OutFuelCumulative),
+                &(this->m_OutLinearVelocity),
+                &(this->m_OutLinearVelocity),
                 &(this->m_OutCoordinates),
+                &(this->m_OutCurrentGear),
                 &(this->m_OutGradient)};
     };
 

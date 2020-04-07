@@ -58,11 +58,13 @@ void SandboxFullModel() {
         vehicle.Update(t);
         std::cout << "t: " << t
                   <<", Car Pos: " << SimFramework::ToString(blocks.OutCoordinates->ReadValue())
-                  << ", Car Vel: " << blocks.OutVelocity->ReadValue()
+                  << ", Car Vel: " << blocks.OutLinearVelocity->ReadValue()
                   << ", Engine Speed: " << blocks.OutEngineSpeed->ReadValue()
                   << ", Road Gradient: " << blocks.OutGradient->ReadValue()
-                << ", Current Gear: " << blocks.OutCurrentGear->ReadValue()
-                << std::endl;
+                  << ", Fuel Usage: " << blocks.OutFuelCumulative->ReadValue()
+                  << ", Fuel Rate: " << blocks.OutFuelFlowRate->ReadValue()
+                  << ", Current Gear: " << blocks.OutCurrentGear->ReadValue()
+                  << std::endl;
 
         counter++;
     }

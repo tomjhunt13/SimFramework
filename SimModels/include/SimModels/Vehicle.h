@@ -61,14 +61,24 @@ namespace Models {
 
     struct VehicleBlocks
     {
+        // Inputs
         SimFramework::Input<float>* InThrottle;
         SimFramework::Input<float>* InBrakePressure;
+
+        // Engine
         SimFramework::Output<float>* OutEngineSpeed;
-        SimFramework::Output<float>* OutTyreSpeed;
-        SimFramework::Output<float>* OutPosition;
-        SimFramework::Output<float>* OutVelocity;
-        SimFramework::Output<int>* OutCurrentGear;
+        SimFramework::Output<float>* OutFuelFlowRate;
+        SimFramework::Output<float>* OutFuelCumulative;
+
+        // Vehicle
+        SimFramework::Output<float>* OutWheelSpeed;
+        SimFramework::Output<float>* OutLinearVelocity;
         SimFramework::Output<Eigen::Vector2f>* OutCoordinates;
+
+        // Transmission
+        SimFramework::Output<int>* OutCurrentGear;
+
+        // Road
         SimFramework::Output<float>* OutGradient; // Radians
     };
 
@@ -82,9 +92,6 @@ namespace Models {
 
         void ShiftUp();
         void ShiftDown();
-        int CurrentGear() const;
-
-
 
     private:
         std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override;
@@ -92,13 +99,15 @@ namespace Models {
         // Blocks - IO
         SimFramework::Input<float> m_InThrottle;
         SimFramework::Input<float> m_InBrakePressure;
+
         SimFramework::Output<float> m_OutEngineSpeed;
-        SimFramework::Output<float> m_OutTyreSpeed;
-        SimFramework::Output<float> m_OutPosition;
-        SimFramework::Output<float> m_OutVelocity;
+        SimFramework::Output<float> m_OutFuelFlowRate;
+        SimFramework::Output<float> m_OutFuelCumulative;
+        SimFramework::Output<float> m_OutWheelSpeed;
+        SimFramework::Output<float> m_OutLinearVelocity;
         SimFramework::Output<Eigen::Vector2f> m_OutCoordinates;
-        SimFramework::Output<float> m_OutGradient;
         SimFramework::Output<int> m_OutCurrentGear;
+        SimFramework::Output<float> m_OutGradient;
 
         // Blocks - System
         Clutch m_Clutch;
