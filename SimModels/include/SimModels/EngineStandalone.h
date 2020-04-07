@@ -9,6 +9,7 @@
 #include "SimFramework/Components.h"
 
 #include "SimModels/VehicleComponents.h"
+#include "SimModels/Engine.h"
 
 
 namespace Models {

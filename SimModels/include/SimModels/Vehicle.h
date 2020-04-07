@@ -10,6 +10,7 @@
 #include "SimFramework/Components.h"
 
 #include "SimModels/VehicleComponents.h"
+#include "SimModels/Engine.h"
 #include "SimModels/VehicleDynamics.h"
 #include "SimModels/VehicleController.h"
 #include "SimModels/Transmission.h"
