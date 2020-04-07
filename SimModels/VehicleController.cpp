@@ -55,11 +55,11 @@ namespace Models {
             return 1.f;
         };
 
-        // As a precaution: if transmission speed is negative clutch should be released
-        if (transmissionSpeed < 0.f)
-        {
-            return 0.f;
-        };
+//        // As a precaution: if transmission speed is negative clutch should be released
+//        if (transmissionSpeed < 0.f)
+//        {
+//            return 0.f;
+//        };
 
         // If throttle is above threshold then assume clutch should be trying to engage
         if (throttle > this->m_ThrottleThreshold)
