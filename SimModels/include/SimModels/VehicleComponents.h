@@ -105,13 +105,15 @@ namespace Models {
     };
 
 
-    class DiscBrake : public SimFramework::Function
+
+    class CoulombFriction : public SimFramework::Function
     {
     public:
-        void Configure(const SimFramework::Signal<float>* inBrakePressure, const SimFramework::Signal<float>* inWheelSpeed);
-        void SetParameters(float mu=0.9, float R=0.15, float D=0.01, float maxBrakePressure=50000, int N=2);
+        CoulombFriction(std::string name="Coulomb Friction");
 
-        const SimFramework::Signal<float>* OutTorque() const;
+        void SetParameters(float mu=1.f);
+        void Configure(const SimFramework::Signal<float>* inVelocity, const SimFramework::Signal<float>* inNormalForce);
+        const SimFramework::Signal<float>* OutForce() const;
 
         std::vector<const SimFramework::SignalBase*> InputSignals() const override;
         std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
@@ -119,17 +121,12 @@ namespace Models {
 
     private:
         // Parameters
-        float mu;   // Friction coefficient
-        float R;    // Average radius of pad
-        float D;    // Diameter of cylinder
-        int N;      // Number of cylinders
-        float maxBrakePressure;
-        float m_BrakeConstant;
+        float mu;
 
         // Signals
-        const SimFramework::Signal<float>* m_BrakePressure;
-        const SimFramework::Signal<float>* m_WheelSpeed;
-        SimFramework::Signal<float> m_BrakeTorque;
+        const SimFramework::Signal<float>* m_Velocity;
+        const SimFramework::Signal<float>* m_NormalForce;
+        SimFramework::Signal<float> m_Force;
     };
 
 

@@ -160,54 +160,51 @@ namespace Models {
     };
 
 
-    void DiscBrake::Configure(const SimFramework::Signal<float>* inBrakePressure, const SimFramework::Signal<float>* inWheelSpeed)
-    {
-        this->m_BrakePressure = inBrakePressure;
-        this->m_WheelSpeed = inWheelSpeed;
 
-        this->SetParameters();
-    };
+    CoulombFriction::CoulombFriction(std::string name) : SimFramework::Function(name) {};
 
-    void DiscBrake::SetParameters(float mu, float R, float D, float maxBrakePressure, int N)
+    void CoulombFriction::SetParameters(float mu)
     {
         this->mu = mu;
-        this->R = R;
-        this->D = D;
-        this->maxBrakePressure = maxBrakePressure;
-        this->N = N;
-
-        this->m_BrakeConstant = (mu * SimFramework::pi() * D * D * R * N * maxBrakePressure); // For all four wheels
     };
 
-    const SimFramework::Signal<float>* DiscBrake::OutTorque() const
+    void CoulombFriction::Configure(const SimFramework::Signal<float>* inVelocity, const SimFramework::Signal<float>* inNormalForce)
     {
-        return &(this->m_BrakeTorque);
+        this->m_Velocity = inVelocity;
+        this->m_NormalForce = inNormalForce;
     };
 
-
-    std::vector<const SimFramework::SignalBase*> DiscBrake::InputSignals() const
+    const SimFramework::Signal<float>* CoulombFriction::OutForce() const
     {
-        return {this->m_BrakePressure};
+        return &(this->m_Force);
     };
 
-    std::vector<const SimFramework::SignalBase*> DiscBrake::OutputSignals() const
+    std::vector<const SimFramework::SignalBase*> CoulombFriction::InputSignals() const
     {
-        return {&(this->m_BrakeTorque)};
+        return {this->m_Velocity, this->m_NormalForce};
     };
 
-    void DiscBrake::Update()
+    std::vector<const SimFramework::SignalBase*> CoulombFriction::OutputSignals() const
     {
-        float speed = this->m_WheelSpeed->Read();
-        float brakeMagnitude = this->m_BrakeConstant * this->m_BrakePressure->Read();
+        return {&(this->m_Force)};
+    };
 
-        if (speed >= 0.f)
+    void CoulombFriction::Update()
+    {
+        // Read inputs
+        float speed = this->m_Velocity->Read();
+        float normalForce = this->m_NormalForce->Read();
+
+        // Calculate output force
+        float output = this->mu * normalForce;
+
+        // Write output
+        if (speed < 0)
         {
-            this->m_BrakeTorque.Write(-1 * brakeMagnitude);
-        }
-        else
-        {
-            this->m_BrakeTorque.Write(brakeMagnitude);
+            output *= -1.f;
         };
+
+        this->m_Force.Write(output);
     };
 
 

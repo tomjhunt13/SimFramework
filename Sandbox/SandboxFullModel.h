@@ -15,12 +15,10 @@ void SandboxFullModel() {
     vehicleParameters.GearshiftLag = 0.75;
     vehicleParameters.A = 2.5;
     vehicleParameters.ClutchStiffness = 50.f;
-    vehicleParameters.EngineViscousConstant = 0.05;
     vehicleParameters.EngineInertia = 0.2f;
     vehicleParameters.LogFrequency = 1;
     vehicleParameters.LogOutputFile = "LogOut.csv";
 
-    vehicleParameters.GearRatios = {15.f};
 
     Models::Vehicle vehicle;
     vehicle.SetParameters(vehicleParameters);
@@ -41,15 +39,15 @@ void SandboxFullModel() {
             vehicle.ShiftUp();
         }
 
-//        if (counter % 400 == 0) {
-//            if (counter < 2500) {
-//                vehicle.ShiftUp();
-//            } else {
-//                blocks.InThrottle->WriteValue(0.05);
-//
-//                vehicle.ShiftDown();
-//            }
-//        }
+        if (counter % 400 == 0) {
+            if (counter < 2500) {
+                vehicle.ShiftUp();
+            } else {
+                blocks.InThrottle->WriteValue(0.05);
+
+                vehicle.ShiftDown();
+            }
+        }
 
         vehicle.Update(t);
         std::cout << "t: " << t
