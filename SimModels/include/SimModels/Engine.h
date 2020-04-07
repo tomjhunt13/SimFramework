@@ -17,16 +17,19 @@ namespace Models {
                 const SimFramework::Signal<float>* inLoadTorque);
 
         const SimFramework::Signal<float>* OutEngineSpeed() const;
+        const SimFramework::Signal<float>* OutFuelRate() const;
+        const SimFramework::Signal<float>* OutFuelCumulative() const;
 
         SimFramework::BlockList Blocks() override;
         std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override;
 
     private:
         // Blocks
-        SimFramework::LookupTable2D m_EngineMap;
-        SimFramework::Vectorise<float, Eigen::Vector2f> m_TorqueVector;
-        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector<float, 1>, 2, 1, 1> m_Inertia;
-        SimFramework::Mask<Eigen::Matrix<float, 1, 1>, float, 1> m_SpeedMask;
+        SimFramework::LookupTable2D m_TorqueMap;
+        SimFramework::LookupTable2D m_FuelMap;
+        SimFramework::Vectorise<float, Eigen::Vector3f> m_InputVector;
+        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 2, 2> m_StateSpace;
+        SimFramework::Mask<Eigen::Vector2f, float, 2> m_OutputMask;
     };
 
 }; // namespace Models
