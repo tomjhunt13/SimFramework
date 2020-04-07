@@ -41,7 +41,7 @@ namespace Models {
         // Configure blocks
         this->m_TorqueMap.Configure(this->OutEngineSpeed(), inThrottle);
         this->m_FuelMap.Configure(this->OutEngineSpeed(), inThrottle);
-        this->m_InputVector.Configure({this->m_TorqueMap.OutSignal(), inLoadTorque, });
+        this->m_InputVector.Configure({this->m_TorqueMap.OutSignal(), inLoadTorque, this->m_FuelMap.OutSignal()});
         this->m_StateSpace.Configure(this->m_InputVector.OutSignal());
         this->m_OutputMask.Configure(this->m_StateSpace.OutSignal());
     };
