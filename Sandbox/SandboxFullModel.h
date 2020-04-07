@@ -42,11 +42,17 @@ void SandboxFullModel() {
         if (counter % 400 == 0) {
             if (counter < 2500) {
                 vehicle.ShiftUp();
-            } else {
-                blocks.InThrottle->WriteValue(0.05);
+            } //else {
+//                blocks.InThrottle->WriteValue(0.05);
+//
+//                vehicle.ShiftDown();
+//            }
+        }
 
-                vehicle.ShiftDown();
-            }
+        if (counter == 2600)
+        {
+            blocks.InThrottle->WriteValue(0.f);
+            blocks.InBrakePressure->WriteValue(1.f);
         }
 
         vehicle.Update(t);

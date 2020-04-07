@@ -10,6 +10,7 @@
 #include "SimFramework/Components.h"
 
 #include "SimModels/VehicleComponents.h"
+#include "SimModels/VehicleDynamics.h"
 #include "SimModels/VehicleController.h"
 #include "SimModels/Transmission.h"
 #include "SimModels/Road.h"
@@ -36,6 +37,7 @@ namespace Models {
         float TransmissionInertia = 2.f;
 
         // Brake
+        float PeakBrakeForce = 300.f;
 
         // Tyre
 
