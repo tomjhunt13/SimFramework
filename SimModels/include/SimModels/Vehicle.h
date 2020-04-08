@@ -73,6 +73,7 @@ namespace Models {
         // Vehicle
         SimFramework::Output<float>* OutWheelSpeed;
         SimFramework::Output<float>* OutLinearVelocity;
+        SimFramework::Output<float>* OutDisplacement;
         SimFramework::Output<Eigen::Vector2f>* OutCoordinates;
 
         // Transmission
@@ -105,6 +106,7 @@ namespace Models {
         SimFramework::Output<float> m_OutFuelCumulative;
         SimFramework::Output<float> m_OutWheelSpeed;
         SimFramework::Output<float> m_OutLinearVelocity;
+        SimFramework::Output<float> m_OutDisplacement;
         SimFramework::Output<Eigen::Vector2f> m_OutCoordinates;
         SimFramework::Output<int> m_OutCurrentGear;
         SimFramework::Output<float> m_OutGradient;

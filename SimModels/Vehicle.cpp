@@ -25,13 +25,14 @@ namespace Models {
         this->m_OutWheelSpeed.Configure(this->m_Transmission.OutTyreSpeed(), 0.f);
         this->m_OutLinearVelocity.Configure(this->m_VehicleDynamics.OutVehicleVelocity(), 0.f);
         this->m_OutCoordinates.Configure(this->m_Road.OutPosition(), Eigen::Vector2f::Zero());
+        this->m_OutDisplacement.Configure(this->m_VehicleDynamics.OutVehiclePosition(), 0.f);
         this->m_OutGradient.Configure(this->m_Road.OutGradient(), 0.f);
         this->m_OutCurrentGear.Configure(this->m_Transmission.OutGearIndex(), 0);
 
         SimFramework::BlockList list = {{&(this->m_InThrottle),     &(this->m_InBrakePressure)},
                                         {},
                                         {&(this->m_Clutch), &(this->m_Tyre), &(this->m_Road)},
-                                        {&(this->m_OutEngineSpeed), &(this->m_OutFuelFlowRate), &(this->m_OutFuelCumulative), &(this->m_OutWheelSpeed), &(this->m_OutLinearVelocity), &(this->m_OutCoordinates), &(this->m_OutGradient), &(this->m_OutCurrentGear)},
+                                        {&(this->m_OutEngineSpeed), &(this->m_OutFuelFlowRate), &(this->m_OutFuelCumulative), &(this->m_OutWheelSpeed), &(this->m_OutLinearVelocity), &(this->m_OutDisplacement), &(this->m_OutCoordinates), &(this->m_OutGradient), &(this->m_OutCurrentGear)},
                                         {&(this->m_Controller), &(this->m_Engine),         &(this->m_Transmission), &(this->m_VehicleDynamics)}};
         this->RegisterBlocks(list);
 
@@ -75,6 +76,7 @@ namespace Models {
                 &(this->m_OutFuelCumulative),
                 &(this->m_OutLinearVelocity),
                 &(this->m_OutLinearVelocity),
+                &(this->m_OutDisplacement),
                 &(this->m_OutCoordinates),
                 &(this->m_OutCurrentGear),
                 &(this->m_OutGradient)};
@@ -86,7 +88,8 @@ namespace Models {
                 {"Brake Pressure", this->m_InBrakePressure.OutSignal()},
                 {"Vehicle Position (x), Vehicle Position (y)", this->m_Road.OutPosition()},
                 {"Road Gradient", this->m_Road.OutGradient()},
-                {"Clutch Torque", this->m_Clutch.OutClutchTorque()}};
+                {"Clutch Torque", this->m_Clutch.OutClutchTorque()},
+                {"Displacement", this->m_VehicleDynamics.OutVehiclePosition()}};
     };
 
 
