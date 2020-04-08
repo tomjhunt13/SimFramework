@@ -70,7 +70,7 @@ namespace Models {
         this->SetParameters();
      }
 
-     void Tyre::SetParameters(float radius, float Fz, float B, float C, float D, float E)
+     void Tyre::SetParameters(float radius, float Fz, float D, float C, float B, float E)
      {
         // TODO: Fz could be an input signal
         this->radius = radius;

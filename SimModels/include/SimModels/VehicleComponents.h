@@ -56,7 +56,7 @@ namespace Models {
         const SimFramework::Signal<float>*  OutForce() const;
         const SimFramework::Signal<float>*  OutTorque() const;
 
-        void SetParameters(float radius=0.2, float Fz=15000, float D=1.f, float B=10, float C=1.9,  float E=0.97);
+        void SetParameters(float radius=0.2, float Fz=15000,  float D=1, float C=1.9, float B=10, float E=0.97);
 
         std::vector<const SimFramework::SignalBase*> InputSignals() const override;
         std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
@@ -70,7 +70,7 @@ namespace Models {
         float C;
         float D;
         float E;
-        float V_threshold = 0.1;
+        float V_threshold = 0.001;
 
         // Signals
         const SimFramework::Signal<float>* m_RotationalSpeed;

@@ -36,6 +36,7 @@ namespace Models {
         // Transmission
         std::vector<float> GearRatios = {11.f, 7.3, 5.5, 3.8, 2.5, 2.f};
         float TransmissionInertia = 2.f;
+        float TransmissionViscousFriction = 0.05;
 
         // Brake
         float PeakBrakeForce = 300.f;
