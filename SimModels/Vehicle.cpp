@@ -43,7 +43,7 @@ namespace Models {
         this->m_Controller.SetParameters(parameters.GearshiftLag, parameters.ClutchStiffness);
         this->m_Engine.SetParameters(parameters.EngineJSON, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant);
         this->m_Transmission.SetParameters(parameters.GearRatios, parameters.TransmissionInertia);
-        this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho, parameters.PeakBrakeForce);
+        this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho, parameters.PeakBrakeForce, parameters.RollingResistance);
         this->m_Road.SetProfile(parameters.RoadJSON);
 
         this->SetLogOutputFile(parameters.LogOutputFile, parameters.LogFrequency);
