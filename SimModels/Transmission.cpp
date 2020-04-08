@@ -1,6 +1,5 @@
 #include "SimModels/Transmission.h"
 
-
 namespace Models {
 
     void Transmission::SetParameters(std::vector<float> gearRatios, float effectiveInertia)
@@ -65,7 +64,8 @@ namespace Models {
 
     std::vector<std::pair<std::string, const SimFramework::SignalBase *> > Transmission::LogSignals()
     {
-        return {{"Transmission Clutch Speed, Transmission Wheel Speed", this->m_States.OutSignal()},
+        return {{"Transmission Clutch Speed", this->OutClutchSpeed()},
+                {"Transmission Wheel Speed", this->OutTyreSpeed()},
                 {"Transmission Clutch Torque, Transmission Tyre Torque", this->m_TorqueVector.OutSignal()},
                 {"Transmission Gear Index", this->m_InGearIndex.OutSignal()}};
     };
@@ -121,8 +121,7 @@ namespace Models {
         Eigen::Matrix<float, 2, 1> C;
         C << 1.f, this->m_Ratios[this->m_GearIndex];
 
-        Eigen::Matrix<float, 2, 2> D;
-        D << 0.f, 0.f, 0.f, 0.f;
+        Eigen::Matrix<float, 2, 2> D = Eigen::Matrix<float, 2, 2>::Zero();
 
         this->m_States.SetMatrices(A, B, C, D);
     }

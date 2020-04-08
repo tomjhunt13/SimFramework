@@ -41,6 +41,8 @@ namespace Models {
         float PeakBrakeForce = 300.f;
 
         // Tyre
+        float TyreRadius = 0.2;
+        float PeakTyreForceScale = 1.f;
 
         // Road
         std::string RoadJSON;
@@ -87,7 +89,7 @@ namespace Models {
     class Vehicle : public SimFramework::System
     {
     public:
-        Vehicle();
+        Vehicle(float dt=0.001);
 
         const VehicleBlocks Blocks();
         void SetParameters(VehicleParameters parameters);

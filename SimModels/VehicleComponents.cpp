@@ -35,7 +35,13 @@ namespace Models {
 
     void Clutch::Update()
     {
-        this->m_OutClutchTorque.Write(this->m_InClutchStiffness->Read() * (this->m_InEngineSpeed->Read() - this->m_InTransmissionSpeed->Read()));
+        float clutchStiffness = this->m_InClutchStiffness->Read();
+        float engineSpeed = this->m_InEngineSpeed->Read();
+        float transmissionSpeed = this->m_InTransmissionSpeed->Read();
+
+        float torque = clutchStiffness * (engineSpeed - transmissionSpeed);
+
+        this->m_OutClutchTorque.Write(torque);
     };
 
 
