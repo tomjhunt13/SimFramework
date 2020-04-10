@@ -62,7 +62,7 @@ namespace Models {
     public:
         CrossingDetect(std::string name="Crossing Detect");
 
-        void SetParameters(float offset);
+        void SetParameters(float offset, bool initialSign);
         void Configure(const SimFramework::Signal<float>* inSignal);
         const SimFramework::Signal<bool>* OutCrossing() const;
 
@@ -153,13 +153,8 @@ namespace Models {
         SimFramework::Switch<float> m_EngineSpeedSwitch;
 
         // Lock state manager
-
+        CrossingDetect m_CrossingDetect;
         LockupClutchController m_LockStateController;
-
-
-
-
-
 
     };
 

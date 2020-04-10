@@ -7,31 +7,89 @@
 #include "SimModels/LockupClutch.h"
 
 int main() {
-    SimFramework::ConstantBlock<float> c1;
-    SimFramework::ConstantBlock<float> c2;
-    SimFramework::ConstantBlock<float> c3;
+    SimFramework::Input<float> in;
+    Models::CrossingDetect cross;
+    SimFramework::Output<bool> out;
 
-    c1.Configure(0.f);
-    c2.Configure(4.f);
-    c3.Configure(8.f);
+    in.Configure(1.f);
+    cross.Configure(in.OutSignal());
+    cross.SetParameters(3.f, false);
+    out.Configure(cross.OutCrossing(), false);
 
-    SimFramework::Switch<float> switchBlock;
-    switchBlock.Configure({c1.OutSignal(), c2.OutSignal(), c3.OutSignal()}, 0);
 
-    c1.Initialise(0.f);
-    c2.Initialise(0.f);
-    c3.Initialise(0.f);
+    in.Initialise(0.f);
 
-    switchBlock.Update();
-    float kjhb = switchBlock.OutSignal()->Read();
+    in.Update(0.f);
+    cross.Update();
+    out.Update(0.f);
 
-    switchBlock.SetIndex(1);
-    switchBlock.Update();
-    kjhb = switchBlock.OutSignal()->Read();
+    bool value = out.ReadValue();
 
-    switchBlock.SetIndex(2);
-    switchBlock.Update();
-    kjhb = switchBlock.OutSignal()->Read();
+    in.Update(0.f);
+    cross.Update();
+    out.Update(0.f);
+
+    value = out.ReadValue();
+
+    in.WriteValue(4.f);
+    in.Update(0.f);
+    cross.Update();
+    out.Update(0.f);
+
+    value = out.ReadValue();
+
+    in.Update(0.f);
+    cross.Update();
+    out.Update(0.f);
+
+    value = out.ReadValue();
+
+    in.Update(0.f);
+    cross.Update();
+    out.Update(0.f);
+
+    value = out.ReadValue();
+
+    in.Update(0.f);
+    cross.Update();
+    out.Update(0.f);
+
+    value = out.ReadValue();
+
+    in.WriteValue(8.f);
+    in.Update(0.f);
+    cross.Update();
+    out.Update(0.f);
+
+    value = out.ReadValue();
+
+    in.Update(0.f);
+    cross.Update();
+    out.Update(0.f);
+
+    value = out.ReadValue();
+
+    in.WriteValue(2.f);
+    in.Update(0.f);
+    cross.Update();
+    out.Update(0.f);
+
+    value = out.ReadValue();
+
+    in.Update(0.f);
+    cross.Update();
+    out.Update(0.f);
+
+    value = out.ReadValue();
+
+    in.Update(0.f);
+    cross.Update();
+    out.Update(0.f);
+
+    value = out.ReadValue();
+
+
+
 
 
 

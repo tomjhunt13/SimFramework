@@ -56,10 +56,10 @@ namespace Models {
 
     CrossingDetect::CrossingDetect(std::string name) : Function(name) {};
 
-    void CrossingDetect::SetParameters(float offset)
+    void CrossingDetect::SetParameters(float offset, bool initialSign)
     {
         this->m_Offset = offset;
-        this->m_PreviousPositive = true;
+        this->m_PreviousPositive = initialSign;
     };
 
     void CrossingDetect::Configure(const SimFramework::Signal<float>* inSignal)
@@ -183,8 +183,13 @@ namespace Models {
         this->m_UnlockedMask.Configure(this->m_UnLockedState.OutSignal());
         this->m_LockedState.Configure(this->m_LockedState.OutSignal());
 
-        // Switched
+        // Switches
         this->m_EngineSpeedSwitch.Configure({this->m_UnlockedMask.OutSignal(1), this->m_LockedMask.OutSignal(1)}, 0);
+
+        // Lock state manager
+        this->m_CrossingDetect.Configure(this->m_RelativeSpeed.OutSignal());
+        this->m_CrossingDetect.SetParameters(0, false);
+        this->m_LockStateController.Configure(this->m_CrossingDetect.OutCrossing(), this->m_TransmittedTorque.OutTorque(), this->m_MaxClutchTorque.OutForce(), this);
 
     }
 
