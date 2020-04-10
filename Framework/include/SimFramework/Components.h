@@ -508,6 +508,56 @@ namespace SimFramework {
         Signal<InputType> m_Output;
     };
 
+    template <typename SignalType>
+    class Switch : public Function {
+    public:
+        Switch(std::string name = "Switch") : Function(name) {};
+
+        void Configure(std::vector<const Signal<SignalType>*> inputSignals, int index)
+        {
+            this->m_InputSignals = inputSignals;
+            this->m_Index = index;
+        }
+
+        const Signal<SignalType>* OutSignal() const
+        {
+            return &(this->m_OutputSignal);
+        }
+
+        void SetIndex(int index)
+        {
+            this->m_Index = index;
+        }
+
+        std::vector<const SignalBase*> InputSignals() const override
+        {
+            std::vector<const SignalBase*> signals(this->m_InputSignals.size());
+            for (int i=0; i < this->m_InputSignals.size(); i++)
+            {
+                signals[i] = m_InputSignals[i];
+            }
+            return {signals};
+        }
+
+        std::vector<const SignalBase*> OutputSignals() const override
+        {
+            return {&(this->m_OutputSignal)};
+        }
+
+        void Update() override
+        {
+            this->m_OutputSignal.Write(this->m_InputSignals[this->m_Index]->Read());
+        };
+
+    private:
+        // Parameters
+        int m_Index;
+
+        // Signals
+        std::vector<const Signal<SignalType>*> m_InputSignals;
+        Signal<SignalType> m_OutputSignal;
+    };
+
 
     template <typename ValueType>
     class Output : public Sink

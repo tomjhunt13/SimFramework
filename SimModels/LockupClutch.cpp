@@ -54,6 +54,95 @@ namespace Models {
     };
 
 
+
+    void LockupClutchController::Configure(
+            const SimFramework::Signal<bool> *inSpeedMatch,
+            const SimFramework::Signal<bool> *inTransmittedTorque,
+            const LockupClutch* lockupModel)
+    {
+        this->m_SpeedMatch = inSpeedMatch;
+        this->m_TransmittedTorque = inTransmittedTorque;
+        this->m_LockupModel = lockupModel;
+    }
+
+    std::vector<const SimFramework::SignalBase*> LockupClutchController::InputSignals() const
+    {
+        return {this->m_SpeedMatch, this->m_TransmittedTorque, this->m_ClutchTorqueLimit};
+    };
+
+    std::vector<const SimFramework::SignalBase*> LockupClutchController::OutputSignals() const
+    {
+        return {};
+    };
+
+    void LockupClutchController::Update(float dt)
+    {
+        // Read inputs
+        bool speedMatch = this->m_SpeedMatch->Read();
+        float transmittedTorque = this->m_TransmittedTorque->Read();
+        float torqueLimit = this->m_ClutchTorqueLimit->Read();
+
+        switch (this->m_LockState)
+        {
+            case ELockupClutchState::e_Locked:
+            {
+                if (transmittedTorque > torqueLimit)
+                {
+                    this->m_LockupModel->TransitionState(ELockupClutchState::e_Unlocked);
+                    this->m_LockState = ELockupClutchState::e_Unlocked;
+                }
+
+                break;
+            }
+
+            case ELockupClutchState::e_Unlocked:
+            {
+                if (transmittedTorque < torqueLimit && speedMatch)
+                {
+                    this->m_LockupModel->TransitionState(ELockupClutchState::e_Locked);
+                    this->m_LockState = ELockupClutchState::e_Locked;
+                }
+
+                break;
+            }
+        }
+    };
+
+
+
+    void LockupClutch::Configure(
+            const SimFramework::Signal<float>* inThrottlePosition,
+            const SimFramework::Signal<float>* inClutchPosition,
+            const SimFramework::Signal<float>* inTyreTorque)
+    {
+        // Engine Maps
+        this->m_TorqueMap.Configure(this->m_EngineSpeedSwitch.OutSignal(), inThrottlePosition);
+        this->m_FuelMap.Configure(this->m_EngineSpeedSwitch.OutSignal(), inThrottlePosition);
+
+        // Clutch
+        this->m_TransmittedTorque.Configure(this->m_EngineSpeedSwitch.OutSignal(), this->m_TorqueMap.OutSignal(), inTyreTorque);
+        this->m_RelativeSpeed.Configure({this->m_UnlockedMask.OutSignal(1), this->m_UnlockedMask.OutSignal(0)}, {1.f, 0.f});
+        this->m_ClutchGain.Configure(inClutchPosition, 100.f);
+        this->m_MaxClutchTorque.Configure(this->m_RelativeSpeed.OutSignal(), this->m_ClutchGain.OutSignal());
+
+        // State space
+        this->m_UnLockedState.Configure(this->m_UnlockedInput.OutSignal());
+        this->m_LockedState.Configure(this->m_LockedInput.OutSignal());
+
+        // Vector inputs
+        this->m_UnlockedInput.Configure({this->m_TorqueMap.OutSignal(), this->m_MaxClutchTorque.OutForce(), inTyreTorque});
+        this->m_LockedInput.Configure({this->m_TorqueMap.OutSignal(), inTyreTorque});
+
+        // Mask outputs
+        this->m_UnlockedMask.Configure(this->m_UnLockedState.OutSignal());
+        this->m_LockedState.Configure(this->m_LockedState.OutSignal());
+
+        // Switched
+        this->m_EngineSpeedSwitch.Configure({this->m_UnlockedMask.OutSignal(1), this->m_LockedMask.OutSignal(1)}, 0);
+
+    }
+
+
     void LockupClutch::SetGearRatio(float G)
     {
 
@@ -71,7 +160,7 @@ namespace Models {
 
         Eigen::Matrix<float, 2, 2> lockedD = Eigen::Matrix<float, 2, 2>::Zero();
 
-        this->LockedState.SetMatrices(lockedA, lockedB, lockedC, lockedD);
+        this->m_LockedState.SetMatrices(lockedA, lockedB, lockedC, lockedD);
 
         // Set up state space matrices for unlocked state
         Eigen::Matrix<float, 2, 2> unlockedA;
@@ -85,7 +174,7 @@ namespace Models {
 
         Eigen::Matrix<float, 2, 3> unlockedD = Eigen::Matrix<float, 2, 3>::Zero();
 
-        this->UnLockedState.SetMatrices(unlockedA, unlockedB, unlockedC, unlockedD);
+        this->m_UnLockedState.SetMatrices(unlockedA, unlockedB, unlockedC, unlockedD);
 
     };
 
