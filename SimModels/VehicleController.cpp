@@ -107,7 +107,7 @@ namespace Models {
 
     const SimFramework::Signal<float>* VehicleController::OutClutchStiffness() const
     {
-        return this->m_BlendClutch.OutSignal();
+        return this->m_ClutchGain.OutSignal();
     };
 
     void VehicleController::Trigger()
