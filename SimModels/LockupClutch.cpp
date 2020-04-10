@@ -54,14 +54,60 @@ namespace Models {
     };
 
 
+    CrossingDetect::CrossingDetect(std::string name) : Function(name) {};
+
+    void CrossingDetect::SetParameters(float offset)
+    {
+        this->m_Offset = offset;
+        this->m_PreviousPositive = true;
+    };
+
+    void CrossingDetect::Configure(const SimFramework::Signal<float>* inSignal)
+    {
+        this->m_InSignal = inSignal;
+    };
+
+    const SimFramework::Signal<bool>* CrossingDetect::OutCrossing() const
+    {
+        return &(this->m_Crossing);
+    };
+
+    std::vector<const SimFramework::SignalBase*> CrossingDetect::InputSignals() const
+    {
+        return {this->m_InSignal};
+    };
+
+    std::vector<const SimFramework::SignalBase*> CrossingDetect::OutputSignals() const
+    {
+        return {this->OutCrossing()};
+    };
+
+    void CrossingDetect::Update()
+    {
+        // Read signal
+        float newValue = this->m_InSignal->Read();
+
+        // If signal greater than offset new signal value is positively signed
+        bool newPositive = (newValue >= this->m_Offset);
+
+        // If the sign has changed output is true
+        bool output = (!newPositive == this->m_PreviousPositive);
+
+        // Write output and transfer new value to old
+        this->m_Crossing.Write(output);
+        this->m_PreviousPositive = newPositive;
+    };
+
 
     void LockupClutchController::Configure(
             const SimFramework::Signal<bool> *inSpeedMatch,
-            const SimFramework::Signal<bool> *inTransmittedTorque,
-            const LockupClutch* lockupModel)
+            const SimFramework::Signal<float> *inTransmittedTorque,
+            const SimFramework::Signal<float>* inClutchTorqueLimit,
+            LockupClutch* lockupModel)
     {
         this->m_SpeedMatch = inSpeedMatch;
         this->m_TransmittedTorque = inTransmittedTorque;
+        this->m_ClutchTorqueLimit = inClutchTorqueLimit;
         this->m_LockupModel = lockupModel;
     }
 
@@ -142,6 +188,11 @@ namespace Models {
 
     }
 
+
+    void LockupClutch::TransitionState(ELockupClutchState newState)
+    {
+
+    }
 
     void LockupClutch::SetGearRatio(float G)
     {

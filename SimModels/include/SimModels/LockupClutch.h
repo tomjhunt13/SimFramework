@@ -57,6 +57,30 @@ namespace Models {
     };
 
 
+    class CrossingDetect : public SimFramework::Function
+    {
+    public:
+        CrossingDetect(std::string name="Crossing Detect");
+
+        void SetParameters(float offset);
+        void Configure(const SimFramework::Signal<float>* inSignal);
+        const SimFramework::Signal<bool>* OutCrossing() const;
+
+        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
+        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
+        void Update() override;
+
+    private:
+        // Parameters
+        float m_Offset;
+        bool m_PreviousPositive;
+
+        // Signals
+        const SimFramework::Signal<float>* m_InSignal;
+        SimFramework::Signal<bool> m_Crossing;
+    };
+
+
     class LockupClutchController : SimFramework::Sink {
     public:
 
@@ -74,14 +98,14 @@ namespace Models {
         ELockupClutchState m_LockState;
 
         const SimFramework::Signal<bool>* m_SpeedMatch;
-        const SimFramework::Signal<bool>* m_TransmittedTorque;
-        const SimFramework::Signal<bool>* m_ClutchTorqueLimit;
+        const SimFramework::Signal<float>* m_TransmittedTorque;
+        const SimFramework::Signal<float>* m_ClutchTorqueLimit;
         LockupClutch* m_LockupModel;
     };
 
 
 
-    class LockupClutch : SimFramework::Subsystem {
+    class LockupClutch {//: SimFramework::Subsystem {
     public:
 
         void Configure(
@@ -90,7 +114,7 @@ namespace Models {
                 const SimFramework::Signal<float>* inTyreTorque);
 
 
-        void TransitionState(ELockupClutchState newState) {};
+        void TransitionState(ELockupClutchState newState);
 
         void SetGearRatio(float G);
 
@@ -127,6 +151,10 @@ namespace Models {
 
         // Switches
         SimFramework::Switch<float> m_EngineSpeedSwitch;
+
+        // Lock state manager
+
+        LockupClutchController m_LockStateController;
 
 
 
