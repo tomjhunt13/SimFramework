@@ -1,6 +1,8 @@
-#include "SandboxMassSpringDamper.h"
-#include "SandboxEngine.h"
-#include "SandboxFullModel.h"
+//#include "SandboxMassSpringDamper.h"
+//#include "SandboxEngine.h"
+//#include "SandboxFullModel.h"
+
+#include "SimModels/LockupClutch.h"
 
 int main() {
 
@@ -8,7 +10,11 @@ int main() {
 //    SandboxEngine();
 //    SandboxTransmission();
 //    SandboxVehicleStandalone();
-    SandboxFullModel();
+//    SandboxFullModel();
+
+    Models::LockupClutch clutch;
+
+    clutch.SetGearRatio(5);
 
 
 

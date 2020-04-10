@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.14)
 project(Framework)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_BUILD_TYPE Release)
-#set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 
 
 message(${CMAKE_HOST_SYSTEM_PROCESSOR})
@@ -29,7 +29,7 @@ include_directories(Framework/include)
 
 
 # SimModels
-add_library(SimModels STATIC SimModels/MassSpringDamper1D.cpp SimModels/include/SimModels/MassSpringDamper1D.h SimModels/EngineStandalone.cpp SimModels/include/SimModels/EngineStandalone.h SimModels/Vehicle.cpp SimModels/include/SimModels/Vehicle.h SimModels/VehicleComponents.cpp SimModels/include/SimModels/VehicleComponents.h SimModels/Road.cpp SimModels/include/SimModels/Road.h SimModels/Transmission.cpp SimModels/include/SimModels/Transmission.h SimModels/VehicleController.cpp SimModels/include/SimModels/VehicleController.h SimModels/VehicleDynamics.cpp SimModels/include/SimModels/VehicleDynamics.h SimModels/Engine.cpp SimModels/include/SimModels/Engine.h)
+add_library(SimModels STATIC SimModels/MassSpringDamper1D.cpp SimModels/include/SimModels/MassSpringDamper1D.h SimModels/EngineStandalone.cpp SimModels/include/SimModels/EngineStandalone.h SimModels/Vehicle.cpp SimModels/include/SimModels/Vehicle.h SimModels/VehicleComponents.cpp SimModels/include/SimModels/VehicleComponents.h SimModels/Road.cpp SimModels/include/SimModels/Road.h SimModels/Transmission.cpp SimModels/include/SimModels/Transmission.h SimModels/VehicleController.cpp SimModels/include/SimModels/VehicleController.h SimModels/VehicleDynamics.cpp SimModels/include/SimModels/VehicleDynamics.h SimModels/Engine.cpp SimModels/include/SimModels/Engine.h SimModels/LockupClutch.cpp SimModels/include/SimModels/LockupClutch.h)
 target_link_libraries(SimModels Framework)
 include_directories(SimModels/include)
 
