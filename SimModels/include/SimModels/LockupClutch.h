@@ -81,8 +81,10 @@ namespace Models {
     };
 
 
-    class LockupClutchController : SimFramework::Sink {
+    class LockupClutchController : public SimFramework::Sink {
     public:
+
+        LockupClutchController(std::string name="Lockup Clutch Controller");
 
         void Configure(
                 const SimFramework::Signal<bool>* inSpeedMatch,
@@ -105,8 +107,15 @@ namespace Models {
 
 
 
-    class LockupClutch {//: SimFramework::Subsystem {
+    class LockupClutch : SimFramework::Subsystem {
     public:
+
+        // Set up functions
+        void SetParameters(
+                std::string engineJSON="/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json", float initialSpeed=200.f,
+                std::vector<float> gearRatios={9, 6, 4.5, 3, 2, 1.5},
+                float b_e=0.3, float b_t=0.3, float I_e=1.f, float I_t=1.f,
+                float maxClutchTorque=250);
 
         void Configure(
                 const SimFramework::Signal<float>* inThrottlePosition,
@@ -114,14 +123,37 @@ namespace Models {
                 const SimFramework::Signal<float>* inTyreTorque);
 
 
+        // Transmission functions
+        bool ShiftUp();
+        bool ShiftDown();
+
+
+
+
+        // Output signals
+        const SimFramework::Signal<float>* OutEngineSpeed() const;
+        const SimFramework::Signal<float>* OutWheelSpeed() const;
+        const SimFramework::Signal<int>* OutGearIndex() const;
+        const SimFramework::Signal<float>* OutFuelRate() const;
+        const SimFramework::Signal<float>* OutFuelCumulative() const;
+
+        // Subsystem functions
+        SimFramework::BlockList LockupClutch::Blocks() override;
+        std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override { return {}; };
+
+
         void TransitionState(ELockupClutchState newState);
 
-        void SetGearRatio(float G);
 
 
     private:
 
-        // System Parameters
+        // Transmission
+        void SetGearRatio(float G);
+        std::vector<float> m_Ratios;
+        int m_GearIndex;
+
+        // State space parameters
         float b_e = 0.2;
         float b_t = 0.5;
         float I_e = 0.25;
@@ -134,12 +166,12 @@ namespace Models {
         // Clutch
         TransmittedTorque m_TransmittedTorque;
         SimFramework::SummingJunction<float> m_RelativeSpeed;
-        SimFramework::Gain<float, float, float> m_ClutchGain;
         CoulombFriction m_MaxClutchTorque;
 
         // State space
         SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 2, 2> m_UnLockedState;
         SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector2f, 2, 1, 2> m_LockedState;
+        SimFramework::StateSpace<float, Eigen::Vector<float, 1>, 1, 1, 1> m_FuelIntegrator;
 
         // Vector inputs
         SimFramework::Vectorise<float, Eigen::Vector3f> m_UnlockedInput;
@@ -148,13 +180,18 @@ namespace Models {
         // Mask outputs
         SimFramework::Mask<Eigen::Vector2f, float, 2> m_UnlockedMask;
         SimFramework::Mask<Eigen::Vector2f, float, 2> m_LockedMask;
+        SimFramework::Mask<Eigen::Vector<float, 1>, float, 1> m_FuelUsageMask;
 
         // Switches
         SimFramework::Switch<float> m_EngineSpeedSwitch;
+        SimFramework::Switch<float> m_WheelSpeedSwitch;
 
         // Lock state manager
         CrossingDetect m_CrossingDetect;
         LockupClutchController m_LockStateController;
+
+        // Gear index
+        SimFramework::Input<int> m_InGearIndex;
 
     };
 

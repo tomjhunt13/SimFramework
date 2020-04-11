@@ -405,11 +405,15 @@ namespace SimFramework {
     {
     public:
 
-        void Configure(const Signal<InputType>* inputSignal, GainType gain)
+        void Configure(const Signal<InputType>* inputSignal)
         {
             this->m_InputSignal = inputSignal;
-            this->m_Gain = gain;
         };
+
+        void SetGain(const GainType& gain)
+        {
+            this->m_Gain = gain;
+        }
 
         const Signal<ReturnType>* OutSignal() const
         {

@@ -103,7 +103,6 @@ int main() {
 
     Models::LockupClutch clutch;
 
-    clutch.SetGearRatio(5);
 
 
 

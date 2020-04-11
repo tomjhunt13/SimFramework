@@ -80,7 +80,7 @@ namespace Models {
         this->m_GearChangeTrigger.SetParameters(0.f, clutchLagTime);
 
         // TODO: why is gain value set in Configure()?
-        this->m_ClutchGain.Configure(this->m_BlendClutch.OutSignal(), clutchStiffness);
+        this->m_ClutchGain.SetGain(clutchStiffness);
     }
 
     void VehicleController::Configure(
@@ -94,7 +94,7 @@ namespace Models {
         // Configure clutch blocks
         this->m_ClutchController.Configure(inTransmissionSpeed, inThrottle, inGearIndex);
         this->m_BlendClutch.Configure(this->m_ClutchController.OutEngagement(), this->m_ConstZero.OutSignal(), this->m_GearChangeTrigger.OutSignal());
-        this->m_ClutchGain.Configure(this->m_BlendClutch.OutSignal(), 1.f);
+        this->m_ClutchGain.Configure(this->m_BlendClutch.OutSignal());
 
         // Configure throttle blocks
         this->m_BlendThrottle.Configure(inThrottle, this->m_ConstZero.OutSignal(), this->m_GearChangeTrigger.OutSignal());
