@@ -4,19 +4,22 @@ namespace Models {
 
     TransmittedTorque::TransmittedTorque(std::string name) : SimFramework::Function(name) {};
 
-    void TransmittedTorque::SetParameters(EngineTransmissionParameters parameters)
+    void TransmittedTorque::SetParameters(float b_1, float b_2, float I_1, float I_2)
     {
-        this->m_Parameters = parameters;
+        this->b_1 = b_1;
+        this->b_2 = b_2;
+        this->I_1 = I_1;
+        this->I_2 = I_2;
     };
 
     void TransmittedTorque::Configure(
             const SimFramework::Signal<float>* inSpeed,
-            const SimFramework::Signal<float>* inEngineTorque,
-            const SimFramework::Signal<float>* inTyreTorque)
+            const SimFramework::Signal<float>* inTorque1,
+            const SimFramework::Signal<float>* inTorque2)
     {
         this->m_InSpeed = inSpeed;
-        this->m_InEngineTorque = inEngineTorque;
-        this->m_InTyreTorque = inTyreTorque;
+        this->m_InTorque1 = inTorque1;
+        this->m_InTorque2 = inTorque2;
     };
 
     const SimFramework::Signal<float>* TransmittedTorque::OutTorque() const
@@ -26,7 +29,7 @@ namespace Models {
 
     std::vector<const SimFramework::SignalBase*> TransmittedTorque::InputSignals() const
     {
-        return {this->m_InTyreTorque, this->m_InEngineTorque, this->m_InSpeed};
+        return {this->m_InTorque1, this->m_InTorque2, this->m_InSpeed};
     };
 
     std::vector<const SimFramework::SignalBase*> TransmittedTorque::OutputSignals() const
@@ -38,20 +41,17 @@ namespace Models {
     {
         // Read inputs
         float speed = this->m_InSpeed->Read();
-        float engineTorque = this->m_InEngineTorque->Read();
-        float tyreTorque = this->m_InTyreTorque->Read();
+        float T_1 = this->m_InTorque1->Read();
+        float T_2 = this->m_InTorque2->Read();
 
         // Calculate transmitted torque
-        float outTorque = this->Evaluate(speed, engineTorque, tyreTorque, this->m_Parameters.G, this->m_Parameters.b_e, this->m_Parameters.b_t, this->m_Parameters.I_e, this->m_Parameters.I_t);
+        float outTorque = (this->I_2 * T_1 + this->I_1 * T_2 + (this->I_1 * this->b_2 - this->I_2 * this->b_1) * speed) / (this->I_1 + this->I_2);
 
         // Write to output signal
         this->m_OutTorque.Write(outTorque);
     };
 
-    float TransmittedTorque::Evaluate(float w, float T_e, float T_t, float G, float b_e, float b_t, float I_e, float I_t)
-    {
-        return ((I_e * b_t - I_t * b_e) * w + I_t * T_e + I_e * T_t) / (I_t + G * I_e);
-    };
+
 
 
     CrossingDetect::CrossingDetect(std::string name) : SimFramework::Function(name) {};
@@ -127,8 +127,8 @@ namespace Models {
     {
         // Read inputs
         bool speedMatch = this->m_SpeedMatch->Read();
-        float transmittedTorque = this->m_TransmittedTorque->Read();
-        float torqueLimit = this->m_ClutchTorqueLimit->Read();
+        float transmittedTorque = std::abs(this->m_TransmittedTorque->Read());
+        float torqueLimit = std::abs(this->m_ClutchTorqueLimit->Read());
 
         switch (this->m_LockState)
         {
@@ -158,166 +158,66 @@ namespace Models {
 
 
 
-    void LockupClutch::SetParameters(std::string engineJSON, float engineInitialSpeed, std::vector<float> gearRatios, float b_e, float b_t, float I_e, float I_t, float maxClutchTorque)
+    void LockupClutch::SetParameters(float b_1, float b_2, float I_1, float I_2, float peakClutchTorque)
     {
-        // Set up parameters
-        this->b_e = b_e;
-        this->b_t = b_t;
-        this->I_e = I_e;
-        this->I_t = I_t;
+        // Set up state space matrices
+        this->UpdateSSMatrices(b_1, b_2, I_1, I_2);
 
-        // Set up gear ratios
-        std::vector<float> ratios(1 + gearRatios.size());
-        ratios[0] = 0;
-        for (int i = 0; i < gearRatios.size(); i++)
-        {
-            ratios[i+1] = gearRatios[i];
-        }
-        this->m_Ratios = ratios;
-        this->m_GearIndex = 0;
-        this->m_InGearIndex.WriteValue(this->m_GearIndex);
-        this->SetGearRatio(0.f);
+        this->m_CrossingDetect.SetParameters(0, false);
 
-        // Engine maps
-        SimFramework::Table3D torqueTable = SimFramework::ReadTableJSON(engineJSON, "speed", "throttle", "torque");
-        this->m_TorqueMap.SetTable(torqueTable);
-
-        SimFramework::Table3D fuelTable = SimFramework::ReadTableJSON(engineJSON, "speed", "throttle", "fuel");
-        this->m_FuelMap.SetTable(fuelTable);
-
-        // Clutch
-        this->m_MaxClutchTorque.SetParameters(maxClutchTorque);
-
-        // Initialise states
-        Eigen::Vector<float, 2> unlockedInit = {engineInitialSpeed, 0.f};
-        this->m_LockedState.SetInitialConditions(Eigen::Vector<float, 1>::Zero());
-        this->m_UnLockedState.SetInitialConditions(unlockedInit);
-        this->m_FuelIntegrator.SetInitialConditions(Eigen::Vector<float, 1>::Zero());
-
-        // Switches
-        this->m_Switch.SetIndex(0);
-
-        // Lock state manager
-        this->m_CrossingDetect.SetParameters(0.f, false);
+        this->m_ClutchTorque.SetParameters(peakClutchTorque);
     };
 
 
 
     void LockupClutch::Configure(
-            const SimFramework::Signal<float>* inThrottlePosition,
-            const SimFramework::Signal<float>* inClutchPosition,
-            const SimFramework::Signal<float>* inTyreTorque)
+            const SimFramework::Signal<float>* inTorque1,
+            const SimFramework::Signal<float>* inTorque2,
+            const SimFramework::Signal<float>* inClutchEngagement)
     {
-        // Engine Maps
-        this->m_TorqueMap.Configure(this->OutEngineSpeed(), inThrottlePosition);
-        this->m_FuelMap.Configure(this->OutEngineSpeed(), inThrottlePosition);
-
-        // Clutch
-        this->m_TransmittedTorque.Configure(this->OutEngineSpeed(), this->m_TorqueMap.OutSignal(), inTyreTorque);
-        this->m_RelativeSpeed.Configure({this->m_UnlockedMask.OutSignal(1), this->m_UnlockedMask.OutSignal(0)}, {1.f, -1.f});
-        this->m_MaxClutchTorque.Configure(this->m_RelativeSpeed.OutSignal(), inClutchPosition);
+        // Vector inputs
+        this->m_UnlockedInput.Configure({this->m_ClutchTorque.OutForce(), inTorque1, inTorque2});
+        this->m_LockedInput.Configure({inTorque1, inTorque2});
 
         // State space
         this->m_UnLockedState.Configure(this->m_UnlockedInput.OutSignal());
         this->m_LockedState.Configure(this->m_LockedInput.OutSignal());
-        this->m_FuelIntegrator.Configure(this->m_FuelMap.OutSignal());
 
-        // Vector inputs
-        this->m_UnlockedInput.Configure({this->m_TorqueMap.OutSignal(), this->m_MaxClutchTorque.OutForce(), inTyreTorque});
-        this->m_LockedInput.Configure({this->m_TorqueMap.OutSignal(), inTyreTorque});
+        // Switch
+        this->m_Switch.Configure({this->m_UnLockedState.OutSignal(), this->m_LockedState.OutSignal()}, 0);
 
-        // Mask outputs
-        this->m_UnlockedMask.Configure(this->m_UnLockedState.OutSignal());
-        this->m_LockedMask.Configure(this->m_LockedState.OutSignal());
-        this->m_FuelUsageMask.Configure(this->m_FuelIntegrator.OutSignal());
-
-        // Switches
-        this->m_EngineSpeedSwitch.Configure({this->m_UnlockedMask.OutSignal(0), this->m_LockedMask.OutSignal(0)}, 0);
-        this->m_WheelSpeedSwitch.Configure({this->m_UnlockedMask.OutSignal(2), this->m_LockedMask.OutSignal(0)}, 0);
-        this->m_ClutchSpeedSwitch.Configure({this->m_UnlockedMask.OutSignal(1)})
+        // Speed mask outputs
+        this->m_StateMask.Configure(this->m_Switch.OutSignal());
+        this->m_RelativeSpeed.Configure({this->m_StateMask.OutSignal(1), this->m_StateMask.OutSignal(0)}, {1.f, -1.f});
 
         // Lock state manager
+        this->m_TransmittedTorque.Configure(this->OutSpeed1(), inTorque1, inTorque2);
         this->m_CrossingDetect.Configure(this->m_RelativeSpeed.OutSignal());
-        this->m_CrossingDetect.SetParameters(0, false);
-        this->m_LockStateController.Configure(this->m_CrossingDetect.OutCrossing(), this->m_TransmittedTorque.OutTorque(), this->m_MaxClutchTorque.OutForce(), this);
+        this->m_LockStateController.Configure(this->m_CrossingDetect.OutCrossing(), this->m_TransmittedTorque.OutTorque(), this->m_ClutchTorque.OutForce(), this);
+
+        // Clutch
+        this->m_ClutchTorque.Configure(this->m_RelativeSpeed.OutSignal(), inClutchEngagement);
 
     }
 
-    bool LockupClutch::ShiftUp()
+
+    const SimFramework::Signal<float>* LockupClutch::OutSpeed1() const
     {
-        // Ignore if in top gear
-        if (this->m_GearIndex == this->m_Ratios.size() - 1)
-        {
-            return false;
-        }
-
-        // Else increment gear
-        this->m_GearIndex += 1;
-
-        // Change gear
-        this->SetGearRatio(this->m_Ratios[this->m_GearIndex]);
-
-        // Update input block
-        this->m_InGearIndex.WriteValue(this->m_GearIndex);
-
-        return true;
+        return this->m_StateMask.OutSignal(0);
     };
 
-    bool LockupClutch::ShiftDown()
+    const SimFramework::Signal<float>* LockupClutch::OutSpeed2() const
     {
-        // Ignore if in bottom gear
-        if (this->m_GearIndex == 0)
-        {
-            return false;
-        }
-
-        // Else decrement gear
-        this->m_GearIndex -= 1;
-
-        // Change gear
-        this->SetGearRatio(this->m_Ratios[this->m_GearIndex]);
-
-        // Update input block
-        this->m_InGearIndex.WriteValue(this->m_GearIndex);
-
-        return true;
+        return this->m_StateMask.OutSignal(1);
     };
 
-    const SimFramework::Signal<float>* LockupClutch::OutEngineSpeed() const
-    {
-        return this->m_StatesMask.OutSignal(0);
-    };
-
-    const SimFramework::Signal<float>* LockupClutch::OutClutchSpeed() const
-    {
-        return this->m_StatesMask.OutSignal(1);
-    };
-
-    const SimFramework::Signal<float>* LockupClutch::OutWheelSpeed() const
-    {
-        return this->m_StatesMask.OutSignal(2);
-    };
-    const SimFramework::Signal<int>* LockupClutch::OutGearIndex() const
-    {
-        return this->m_InGearIndex.OutSignal();
-    };
-
-    const SimFramework::Signal<float>* LockupClutch::OutFuelRate() const
-    {
-        return this->m_FuelMap.OutSignal();
-    };
-
-    const SimFramework::Signal<float>* LockupClutch::OutFuelCumulative() const
-    {
-        return this->m_FuelUsageMask.OutSignal(0);
-    };
 
     SimFramework::BlockList LockupClutch::Blocks()
     {
         // Construct system
-        return {{&(this->m_InGearIndex)},
-                {&(this->m_UnLockedState), &(this->m_LockedState), &(this->m_FuelIntegrator)},
-                {&(this->m_TorqueMap), &(this->m_FuelMap), &(this->m_TransmittedTorque), &(this->m_RelativeSpeed), &(this->m_MaxClutchTorque), &(this->m_UnlockedInput), &(this->m_LockedInput), &(this->m_UnlockedMask), &(this->m_LockedMask), &(this->m_FuelUsageMask), &(this->m_EngineSpeedSwitch), &(this->m_WheelSpeedSwitch), &(this->m_CrossingDetect)},
+        return {{},
+                {&(this->m_UnLockedState), &(this->m_LockedState)},
+                {&(this->m_UnlockedInput), &(this->m_LockedInput), &(this->m_Switch), &(this->m_StateMask), &(this->m_RelativeSpeed), &(this->m_TransmittedTorque), &(this->m_CrossingDetect), &(this->m_ClutchTorque)},
                 {&(this->m_LockStateController)},
                 {}};
     };
@@ -331,12 +231,11 @@ namespace Models {
             case ELockupClutchState::e_Locked:
             {
                 // Change switch indices
-                this->m_WheelSpeedSwitch.SetIndex(1);
-                this->m_EngineSpeedSwitch.SetIndex(1);
+                this->m_Switch.SetIndex(1);
 
                 // Initialise state space models
                 Eigen::Vector<float, 1> initialConditions;
-                initialConditions << this->m_WheelSpeedSwitch.OutSignal()->Read();
+                initialConditions << this->m_StateMask.OutSignal(0)->Read();
                 this->m_LockedState.SetInitialConditions(initialConditions);
                 this->m_LockedState.Initialise(0.f);
 
@@ -346,11 +245,10 @@ namespace Models {
             case ELockupClutchState::e_Unlocked:
             {
                 // Change switch indices
-                this->m_WheelSpeedSwitch.SetIndex(0);
-                this->m_EngineSpeedSwitch.SetIndex(0);
+                this->m_Switch.SetIndex(0);
 
                 // Initialise state space models
-                Eigen::Vector2f initialConditions = {this->m_WheelSpeedSwitch.OutSignal()->Read(), this->m_WheelSpeedSwitch.OutSignal()->Read()};
+                Eigen::Vector2f initialConditions = {this->m_StateMask.OutSignal(0)->Read(), this->m_StateMask.OutSignal(1)->Read()};
                 this->m_UnLockedState.SetInitialConditions(initialConditions);
                 this->m_UnLockedState.Initialise(0.f);
 
@@ -359,42 +257,36 @@ namespace Models {
         }
     }
 
-    void LockupClutch::SetGearRatio(float G)
+    void LockupClutch::UpdateSSMatrices(float b_1, float b_2, float I_1, float I_2)
     {
 
         // Set up state space matrices for locked state
-        float inertia = G / (G * this->I_e + this->I_t);
-
         Eigen::Matrix<float, 1, 1> lockedA;
-        lockedA << - (this->b_e + this->b_t) * inertia;
+        lockedA << - (b_1 + b_2) / (I_1 + I_2);
 
         Eigen::Matrix<float, 1, 2> lockedB;
-        lockedB << inertia, - inertia;
+        lockedB << 1.f / (I_1 + I_2), - 1.f / (I_1 + I_2);
 
-        Eigen::Matrix<float, 3, 1> lockedC;
-        lockedC << G, G, 1.f;
+        Eigen::Matrix<float, 2, 1> lockedC;
+        lockedC << 1.f, 1.f;
 
-        Eigen::Matrix<float, 2, 2> lockedD = Eigen::Matrix<float, 3, 2>::Zero();
+        Eigen::Matrix<float, 2, 2> lockedD = Eigen::Matrix<float, 2, 2>::Zero();
 
         this->m_LockedState.SetMatrices(lockedA, lockedB, lockedC, lockedD);
 
         // Set up state space matrices for unlocked state
         Eigen::Matrix<float, 2, 2> unlockedA;
-        unlockedA << - this->b_e / this->I_e, 0.f, 0.f, - this->b_t / this->I_t;
+        unlockedA << - b_1 / I_1, 0.f, 0.f, - b_2 / I_2;
 
         Eigen::Matrix<float, 2, 3> unlockedB;
-        unlockedB << 1.f / this->I_e, - 1.f / this->I_e, 0.f, 0.f, G / this->I_t, - 1 / this->I_t;
+        unlockedB << - 1.f / I_1, 1.f / I_1, 0.f, 1.f / I_2, 0, - 1.f / I_2;
 
-        Eigen::Matrix<float, 3, 2> unlockedC;
-        unlockedC << 1.f, 0.f, 0.f, G, 0.f, 1.f;
+        Eigen::Matrix<float, 2, 2> unlockedC;
+        unlockedC << 1.f, 0.f, 0.f, 1.f;
 
         Eigen::Matrix<float, 3, 3> unlockedD = Eigen::Matrix<float, 3, 3>::Zero();
 
         this->m_UnLockedState.SetMatrices(unlockedA, unlockedB, unlockedC, unlockedD);
-
-        // Set parameters for clutch transmission
-        this->m_TransmittedTorque.SetParameters({G, this->b_e, this->b_t, this->I_e, this->I_t});
-
     };
 
 }; // namespace Models
