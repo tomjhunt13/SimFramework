@@ -58,9 +58,6 @@ namespace Models {
 
 
     private:
-        // Parameters
-        float m_MaxClutchStiffness;
-
         // Blocks - Gear change
         LinearTrigger m_GearChangeTrigger;
 

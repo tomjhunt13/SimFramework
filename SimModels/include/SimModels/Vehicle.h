@@ -10,7 +10,7 @@
 #include "SimFramework/Components.h"
 
 #include "SimModels/VehicleComponents.h"
-//#include "SimModels/Engine.h"
+#include "SimModels/Engine.h"
 #include "SimModels/VehicleDynamics.h"
 #include "SimModels/VehicleController.h"
 #include "SimModels/Transmission.h"
@@ -124,6 +124,7 @@ namespace Models {
         VehicleController m_Controller;
         LockupClutch m_LockupClutch;
         Transmission m_Transmission;
+        Engine m_Engine;
         VehicleDynamics m_VehicleDynamics;
     };
 

@@ -103,10 +103,10 @@ namespace Models {
 
 
 
-    class LockupClutch : SimFramework::Subsystem {
+    class LockupClutch : public SimFramework::Subsystem {
     public:
 
-        void SetParameters(float b_1=1.f, float b_2=1.f, float I_1=1.f, float I_2=1.f, float peakClutchTorque = 400.f);
+        void SetParameters(float initSpeed1=0.f, float initSpeed2=0.f, float b_1=1.f, float b_2=1.f, float I_1=1.f, float I_2=1.f, float peakClutchTorque = 400.f);
 
         void Configure(
                 const SimFramework::Signal<float>* inTorque1,
@@ -136,8 +136,8 @@ namespace Models {
         SimFramework::Vectorise<float, Eigen::Vector2f> m_LockedInput;
 
         // State space
-        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector3f, 3, 2, 2> m_UnLockedState;
-        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector3f, 2, 1, 2> m_LockedState;
+        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 2, 2> m_UnLockedState;
+        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector2f, 2, 1, 2> m_LockedState;
 
         // Switch
         SimFramework::Switch<Eigen::Vector2f> m_Switch;

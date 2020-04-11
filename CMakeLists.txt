@@ -29,13 +29,13 @@ include_directories(Framework/include)
 
 
 # SimModels
-add_library(SimModels STATIC SimModels/MassSpringDamper1D.cpp SimModels/include/SimModels/MassSpringDamper1D.h SimModels/EngineStandalone.cpp SimModels/include/SimModels/EngineStandalone.h SimModels/Vehicle.cpp SimModels/include/SimModels/Vehicle.h SimModels/VehicleComponents.cpp SimModels/include/SimModels/VehicleComponents.h SimModels/Road.cpp SimModels/include/SimModels/Road.h SimModels/Transmission.cpp SimModels/include/SimModels/Transmission.h SimModels/VehicleController.cpp SimModels/include/SimModels/VehicleController.h SimModels/VehicleDynamics.cpp SimModels/include/SimModels/VehicleDynamics.h SimModels/Engine.cpp SimModels/include/SimModels/Engine.h SimModels/LockupClutch.cpp SimModels/include/SimModels/LockupClutch.h)
+add_library(SimModels STATIC SimModels/MassSpringDamper1D.cpp SimModels/include/SimModels/MassSpringDamper1D.h SimModels/Vehicle.cpp SimModels/include/SimModels/Vehicle.h SimModels/VehicleComponents.cpp SimModels/include/SimModels/VehicleComponents.h SimModels/Road.cpp SimModels/include/SimModels/Road.h SimModels/Transmission.cpp SimModels/include/SimModels/Transmission.h SimModels/VehicleController.cpp SimModels/include/SimModels/VehicleController.h SimModels/VehicleDynamics.cpp SimModels/include/SimModels/VehicleDynamics.h SimModels/Engine.cpp SimModels/include/SimModels/Engine.h SimModels/LockupClutch.cpp SimModels/include/SimModels/LockupClutch.h)
 target_link_libraries(SimModels Framework)
 include_directories(SimModels/include)
 
 
 # Sandbox
-add_executable(Sandbox Sandbox/main.cpp Sandbox/SandboxMassSpringDamper.h Sandbox/SandboxEngine.h Sandbox/SandboxFullModel.h)
+add_executable(Sandbox Sandbox/main.cpp Sandbox/SandboxMassSpringDamper.h Sandbox/SandboxFullModel.h)
 target_link_libraries(Sandbox Framework SimModels)
 
 

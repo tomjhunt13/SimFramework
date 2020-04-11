@@ -158,7 +158,7 @@ namespace Models {
 
 
 
-    void LockupClutch::SetParameters(float b_1, float b_2, float I_1, float I_2, float peakClutchTorque)
+    void LockupClutch::SetParameters(float initSpeed1, float initSpeed2, float b_1, float b_2, float I_1, float I_2, float peakClutchTorque)
     {
         // Set up state space matrices
         this->UpdateSSMatrices(b_1, b_2, I_1, I_2);
@@ -166,6 +166,15 @@ namespace Models {
         this->m_CrossingDetect.SetParameters(0, false);
 
         this->m_ClutchTorque.SetParameters(peakClutchTorque);
+
+        // Initialise system
+        Eigen::Vector<float, 1> initLocked;
+        initLocked << initSpeed1;
+        this->m_LockedState.SetInitialConditions(initLocked);
+
+        Eigen::Vector2f initUnlocked = {initSpeed1, initSpeed2};
+        this->m_UnLockedState.SetInitialConditions(initUnlocked);
+
     };
 
 
@@ -284,7 +293,7 @@ namespace Models {
         Eigen::Matrix<float, 2, 2> unlockedC;
         unlockedC << 1.f, 0.f, 0.f, 1.f;
 
-        Eigen::Matrix<float, 3, 3> unlockedD = Eigen::Matrix<float, 3, 3>::Zero();
+        Eigen::Matrix<float, 2, 3> unlockedD = Eigen::Matrix<float, 2, 3>::Zero();
 
         this->m_UnLockedState.SetMatrices(unlockedA, unlockedB, unlockedC, unlockedD);
     };
