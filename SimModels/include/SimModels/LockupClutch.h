@@ -119,7 +119,7 @@ namespace Models {
         const SimFramework::Signal<float>* OutSpeed2() const;
 
         // Subsystem functions
-        SimFramework::BlockList LockupClutch::Blocks() override;
+        SimFramework::BlockList Blocks() override;
         std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override { return {}; };
 
 
