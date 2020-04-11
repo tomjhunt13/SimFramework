@@ -13,7 +13,7 @@
 //#include "SimModels/Engine.h"
 #include "SimModels/VehicleDynamics.h"
 #include "SimModels/VehicleController.h"
-//#include "SimModels/Transmission.h"
+#include "SimModels/Transmission.h"
 #include "SimModels/Road.h"
 #include "SimModels/LockupClutch.h"
 
@@ -122,7 +122,8 @@ namespace Models {
 
         // Subsystems
         VehicleController m_Controller;
-        LockupClutch m_EngineTransmission;
+        LockupClutch m_LockupClutch;
+        Transmission m_Transmission;
         VehicleDynamics m_VehicleDynamics;
     };
 

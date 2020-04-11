@@ -2,48 +2,36 @@
 
 namespace Models {
 
-    void Transmission::SetParameters(std::vector<float> gearRatios, float effectiveInertia)
+    void Transmission::SetParameters(std::vector<float> gearRatios)
     {
 
         // Set up gear ratios
-        std::vector<float> ratios(1 + gearRatios.size());
-        ratios[0] = 0;
-        for (int i = 0; i < gearRatios.size(); i++)
-        {
-            ratios[i+1] = gearRatios[i];
-        }
-        this->m_Ratios = ratios;
-
-
-        this->m_EffectiveInertia = effectiveInertia;
+        this->m_Ratios = gearRatios;
 
         // Initialise dynamic variables and initial conditions
         this->m_GearIndex = 0;
         this->SetGearRatio();
         this->m_InGearIndex.WriteValue(this->m_GearIndex);
-
-        this->m_States.SetInitialConditions(Eigen::Vector<float, 1>::Zero());
     }
 
     void Transmission::Configure(
-            const SimFramework::Signal<float>* inClutchTorque,
+            const SimFramework::Signal<float>* inClutchSpeed,
             const SimFramework::Signal<float>* inTyreTorque)
     {
         // Configure blocks
-        this->m_TorqueVector.Configure({inClutchTorque, inTyreTorque});
-        this->m_States.Configure(this->m_TorqueVector.OutSignal());
-        this->m_StateMask.Configure(this->m_States.OutSignal());
+        this->m_SpeedGain.Configure(inClutchSpeed);
+        this->m_TorqueGain.Configure(inTyreTorque);
         this->m_InGearIndex.Configure(0);
     };
 
-    const SimFramework::Signal<float>* Transmission::OutClutchSpeed() const
+    const SimFramework::Signal<float>* Transmission::OutWheelSpeed() const
     {
-        return this->m_StateMask.OutSignal(1);
+        return this->m_SpeedGain.OutSignal();
     };
 
-    const SimFramework::Signal<float>* Transmission::OutTyreSpeed() const
+    const SimFramework::Signal<float>* Transmission::OutClutchTorque() const
     {
-        return this->m_StateMask.OutSignal(0);
+        return this->m_TorqueGain.OutSignal();
     };
 
     const SimFramework::Signal<int>* Transmission::OutGearIndex() const
@@ -51,23 +39,18 @@ namespace Models {
         return this->m_InGearIndex.OutSignal();
     };
 
-
-
     SimFramework::BlockList Transmission::Blocks()
     {
         return {{&(this->m_InGearIndex)},
-                {&(this->m_States)},
-                {&(this->m_TorqueVector), &(this->m_StateMask)},
+                {},
+                {&(this->m_TorqueGain), &(this->m_SpeedGain)},
                 {},
                 {}};
     };
 
     std::vector<std::pair<std::string, const SimFramework::SignalBase *> > Transmission::LogSignals()
     {
-        return {{"Transmission Clutch Speed", this->OutClutchSpeed()},
-                {"Transmission Wheel Speed", this->OutTyreSpeed()},
-                {"Transmission Clutch Torque, Transmission Tyre Torque", this->m_TorqueVector.OutSignal()},
-                {"Transmission Gear Index", this->m_InGearIndex.OutSignal()}};
+        return {};
     };
 
     bool Transmission::ShiftUp()
@@ -112,17 +95,9 @@ namespace Models {
 
     void Transmission::SetGearRatio()
     {
-        Eigen::Matrix<float, 1, 1> A;
-        A << 0.f;
+        float G = this->m_Ratios[this->m_GearIndex];
 
-        Eigen::Matrix<float, 1, 2> B;
-        B << this->m_Ratios[this->m_GearIndex] / this->m_EffectiveInertia,  - 1 / this->m_EffectiveInertia;
-
-        Eigen::Matrix<float, 2, 1> C;
-        C << 1.f, this->m_Ratios[this->m_GearIndex];
-
-        Eigen::Matrix<float, 2, 2> D = Eigen::Matrix<float, 2, 2>::Zero();
-
-        this->m_States.SetMatrices(A, B, C, D);
+        this->m_TorqueGain.SetGain(G);
+        this->m_SpeedGain.SetGain(1.f / G);
     }
 }

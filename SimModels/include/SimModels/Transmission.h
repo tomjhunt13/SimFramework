@@ -10,16 +10,16 @@ namespace Models {
 
     class Transmission : public SimFramework::Subsystem {
     public:
-        void SetParameters(std::vector<float> gearRatios, float effectiveInertia = 1.f);
+        void SetParameters(std::vector<float> gearRatios);
 
         bool ShiftUp();
         bool ShiftDown();
         void Configure(
-                const SimFramework::Signal<float>* inClutchTorque,
+                const SimFramework::Signal<float>* inClutchSpeed,
                 const SimFramework::Signal<float>* inTyreTorque);
 
-        const SimFramework::Signal<float>* OutClutchSpeed() const;
-        const SimFramework::Signal<float>* OutTyreSpeed() const;
+        const SimFramework::Signal<float>* OutWheelSpeed() const;
+        const SimFramework::Signal<float>* OutClutchTorque() const;
         const SimFramework::Signal<int>* OutGearIndex() const;
 
         SimFramework::BlockList Blocks() override;
@@ -31,12 +31,10 @@ namespace Models {
         // Parameters
         std::vector<float> m_Ratios;
         int m_GearIndex;
-        float m_EffectiveInertia;
 
-        // Blocks
-        SimFramework::Vectorise<float, Eigen::Vector2f> m_TorqueVector;
-        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector2f, 2, 1, 2> m_States;
-        SimFramework::Mask<Eigen::Vector2f, float, 2> m_StateMask;
+        // Gain blocks
+        SimFramework::Gain<float, float, float> m_SpeedGain;
+        SimFramework::Gain<float, float, float> m_TorqueGain;
 
         // Gear index monitoring
         SimFramework::Input<int> m_InGearIndex;

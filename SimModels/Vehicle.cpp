@@ -6,23 +6,22 @@ namespace Models {
     Vehicle::Vehicle(float dt) : System(dt)
     {
         // Configure subsystems
-        this->m_Controller.Configure(this->m_EngineTransmission.OutClutchSpeed(), this->m_InThrottle.OutSignal(), this->m_Transmission.OutGearIndex());
+        this->m_Controller.Configure(this->m_LockupClutch.OutSpeed2(), this->m_InThrottle.OutSignal(), this->m_Transmission.OutGearIndex());
         this->m_Engine.Configure(this->m_Controller.OutAugmentedThrottle(), this->m_Clutch.OutClutchTorque());
-        this->m_Transmission.Configure(this->m_Clutch.OutClutchTorque(), this->m_Tyre.OutTorque());
+        this->m_Transmission.Configure(this->m_LockupClutch.OutSpeed2(), this->m_Tyre.OutTorque());
         this->m_VehicleDynamics.Configure(this->m_Tyre.OutForce(), this->m_Road.OutGradient(), this->m_InBrakePressure.OutSignal());
 
         // Configure model blocks
-        this->m_Clutch.Configure(this->m_Engine.OutEngineSpeed(), this->m_Transmission.OutClutchSpeed(), this->m_Controller.OutClutchStiffness());
         this->m_Tyre.Configure(this->m_Transmission.OutTyreSpeed(), this->m_VehicleDynamics.OutVehicleVelocity());
         this->m_Road.Configure(this->m_VehicleDynamics.OutVehiclePosition());
 
         // Configure IO blocks
         this->m_InThrottle.Configure(0.f);
         this->m_InBrakePressure.Configure(0.f);
-        this->m_OutEngineSpeed.Configure(this->m_Engine.OutEngineSpeed(), 0.f);
+        this->m_OutEngineSpeed.Configure(this->m_LockupClutch.OutSpeed1(), 0.f);
         this->m_OutFuelFlowRate.Configure(this->m_Engine.OutFuelRate(), 0.f);
         this->m_OutFuelCumulative.Configure(this->m_Engine.OutFuelCumulative(), 0.f);
-        this->m_OutWheelSpeed.Configure(this->m_Transmission.OutTyreSpeed(), 0.f);
+        this->m_OutWheelSpeed.Configure(this->m_Transmission.OutWheelSpeed(), 0.f);
         this->m_OutLinearVelocity.Configure(this->m_VehicleDynamics.OutVehicleVelocity(), 0.f);
         this->m_OutCoordinates.Configure(this->m_Road.OutPosition(), Eigen::Vector2f::Zero());
         this->m_OutDisplacement.Configure(this->m_VehicleDynamics.OutVehiclePosition(), 0.f);
