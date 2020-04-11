@@ -10,11 +10,12 @@
 #include "SimFramework/Components.h"
 
 #include "SimModels/VehicleComponents.h"
-#include "SimModels/Engine.h"
+//#include "SimModels/Engine.h"
 #include "SimModels/VehicleDynamics.h"
 #include "SimModels/VehicleController.h"
-#include "SimModels/Transmission.h"
+//#include "SimModels/Transmission.h"
 #include "SimModels/Road.h"
+#include "SimModels/LockupClutch.h"
 
 
 namespace Models {
@@ -31,7 +32,7 @@ namespace Models {
         float GearshiftLag = 1.f;
 
         // Clutch
-        float ClutchStiffness = 100.f;
+        float PeakClutchTorque = 250.f;
 
         // Transmission
         std::vector<float> GearRatios = {11.f, 7.3, 5.5, 3.8, 2.5, 2.f};
@@ -116,14 +117,12 @@ namespace Models {
         SimFramework::Output<float> m_OutGradient;
 
         // Blocks - System
-        Clutch m_Clutch;
         Tyre m_Tyre;
         Road m_Road;
 
         // Subsystems
         VehicleController m_Controller;
-        Engine m_Engine;
-        Transmission m_Transmission;
+        LockupClutch m_EngineTransmission;
         VehicleDynamics m_VehicleDynamics;
     };
 

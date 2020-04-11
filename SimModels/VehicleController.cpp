@@ -74,13 +74,9 @@ namespace Models {
 
 
 
-    void VehicleController::SetParameters(float clutchLagTime, float clutchStiffness)
+    void VehicleController::SetParameters(float clutchLagTime)
     {
-        this->m_MaxClutchStiffness = clutchStiffness;
         this->m_GearChangeTrigger.SetParameters(0.f, clutchLagTime);
-
-        // TODO: why is gain value set in Configure()?
-        this->m_ClutchGain.SetGain(clutchStiffness);
     }
 
     void VehicleController::Configure(
@@ -94,7 +90,6 @@ namespace Models {
         // Configure clutch blocks
         this->m_ClutchController.Configure(inTransmissionSpeed, inThrottle, inGearIndex);
         this->m_BlendClutch.Configure(this->m_ClutchController.OutEngagement(), this->m_ConstZero.OutSignal(), this->m_GearChangeTrigger.OutSignal());
-        this->m_ClutchGain.Configure(this->m_BlendClutch.OutSignal());
 
         // Configure throttle blocks
         this->m_BlendThrottle.Configure(inThrottle, this->m_ConstZero.OutSignal(), this->m_GearChangeTrigger.OutSignal());
@@ -107,7 +102,7 @@ namespace Models {
 
     const SimFramework::Signal<float>* VehicleController::OutClutchStiffness() const
     {
-        return this->m_ClutchGain.OutSignal();
+        return this->m_BlendClutch.OutSignal();
     };
 
     void VehicleController::Trigger()
@@ -119,7 +114,7 @@ namespace Models {
     {
         return {{&(this->m_GearChangeTrigger), &(this->m_ConstZero)},
                 {},
-                {&(this->m_ClutchController), &(this->m_BlendThrottle), &(this->m_BlendClutch), &(m_ClutchGain)},
+                {&(this->m_ClutchController), &(this->m_BlendThrottle), &(this->m_BlendClutch)},
                 {},
                 {}};
     };

@@ -158,7 +158,7 @@ namespace Models {
 
 
 
-    void LockupClutch::SetParameters(std::string engineJSON, float initialSpeed, std::vector<float> gearRatios, float b_e, float b_t, float I_e, float I_t, float maxClutchTorque)
+    void LockupClutch::SetParameters(std::string engineJSON, float engineInitialSpeed, std::vector<float> gearRatios, float b_e, float b_t, float I_e, float I_t, float maxClutchTorque)
     {
         // Set up parameters
         this->b_e = b_e;
@@ -189,14 +189,13 @@ namespace Models {
         this->m_MaxClutchTorque.SetParameters(maxClutchTorque);
 
         // Initialise states
-        Eigen::Vector<float, 2> unlockedInit = {200.f, 0.f};
+        Eigen::Vector<float, 2> unlockedInit = {engineInitialSpeed, 0.f};
         this->m_LockedState.SetInitialConditions(Eigen::Vector<float, 1>::Zero());
         this->m_UnLockedState.SetInitialConditions(unlockedInit);
         this->m_FuelIntegrator.SetInitialConditions(Eigen::Vector<float, 1>::Zero());
 
         // Switches
-        this->m_EngineSpeedSwitch.SetIndex(0);
-        this->m_WheelSpeedSwitch.SetIndex(0);
+        this->m_Switch.SetIndex(0);
 
         // Lock state manager
         this->m_CrossingDetect.SetParameters(0.f, false);
@@ -210,11 +209,11 @@ namespace Models {
             const SimFramework::Signal<float>* inTyreTorque)
     {
         // Engine Maps
-        this->m_TorqueMap.Configure(this->m_EngineSpeedSwitch.OutSignal(), inThrottlePosition);
-        this->m_FuelMap.Configure(this->m_EngineSpeedSwitch.OutSignal(), inThrottlePosition);
+        this->m_TorqueMap.Configure(this->OutEngineSpeed(), inThrottlePosition);
+        this->m_FuelMap.Configure(this->OutEngineSpeed(), inThrottlePosition);
 
         // Clutch
-        this->m_TransmittedTorque.Configure(this->m_EngineSpeedSwitch.OutSignal(), this->m_TorqueMap.OutSignal(), inTyreTorque);
+        this->m_TransmittedTorque.Configure(this->OutEngineSpeed(), this->m_TorqueMap.OutSignal(), inTyreTorque);
         this->m_RelativeSpeed.Configure({this->m_UnlockedMask.OutSignal(1), this->m_UnlockedMask.OutSignal(0)}, {1.f, -1.f});
         this->m_MaxClutchTorque.Configure(this->m_RelativeSpeed.OutSignal(), inClutchPosition);
 
@@ -233,8 +232,9 @@ namespace Models {
         this->m_FuelUsageMask.Configure(this->m_FuelIntegrator.OutSignal());
 
         // Switches
-        this->m_EngineSpeedSwitch.Configure({this->m_UnlockedMask.OutSignal(1), this->m_LockedMask.OutSignal(1)}, 0);
-        this->m_WheelSpeedSwitch.Configure({this->m_UnlockedMask.OutSignal(0), this->m_LockedMask.OutSignal(0)}, 0);
+        this->m_EngineSpeedSwitch.Configure({this->m_UnlockedMask.OutSignal(0), this->m_LockedMask.OutSignal(0)}, 0);
+        this->m_WheelSpeedSwitch.Configure({this->m_UnlockedMask.OutSignal(2), this->m_LockedMask.OutSignal(0)}, 0);
+        this->m_ClutchSpeedSwitch.Configure({this->m_UnlockedMask.OutSignal(1)})
 
         // Lock state manager
         this->m_CrossingDetect.Configure(this->m_RelativeSpeed.OutSignal());
@@ -285,12 +285,17 @@ namespace Models {
 
     const SimFramework::Signal<float>* LockupClutch::OutEngineSpeed() const
     {
-        return this->m_EngineSpeedSwitch.OutSignal();
+        return this->m_StatesMask.OutSignal(0);
+    };
+
+    const SimFramework::Signal<float>* LockupClutch::OutClutchSpeed() const
+    {
+        return this->m_StatesMask.OutSignal(1);
     };
 
     const SimFramework::Signal<float>* LockupClutch::OutWheelSpeed() const
     {
-        return this->m_WheelSpeedSwitch.OutSignal();
+        return this->m_StatesMask.OutSignal(2);
     };
     const SimFramework::Signal<int>* LockupClutch::OutGearIndex() const
     {
@@ -366,10 +371,10 @@ namespace Models {
         Eigen::Matrix<float, 1, 2> lockedB;
         lockedB << inertia, - inertia;
 
-        Eigen::Matrix<float, 2, 1> lockedC;
-        lockedC << 1.f, G;
+        Eigen::Matrix<float, 3, 1> lockedC;
+        lockedC << G, G, 1.f;
 
-        Eigen::Matrix<float, 2, 2> lockedD = Eigen::Matrix<float, 2, 2>::Zero();
+        Eigen::Matrix<float, 2, 2> lockedD = Eigen::Matrix<float, 3, 2>::Zero();
 
         this->m_LockedState.SetMatrices(lockedA, lockedB, lockedC, lockedD);
 
@@ -380,10 +385,10 @@ namespace Models {
         Eigen::Matrix<float, 2, 3> unlockedB;
         unlockedB << 1.f / this->I_e, - 1.f / this->I_e, 0.f, 0.f, G / this->I_t, - 1 / this->I_t;
 
-        Eigen::Matrix<float, 2, 2> unlockedC;
-        unlockedC << 1.f, 0.f, 0.f, 1.f;
+        Eigen::Matrix<float, 3, 2> unlockedC;
+        unlockedC << 1.f, 0.f, 0.f, G, 0.f, 1.f;
 
-        Eigen::Matrix<float, 2, 3> unlockedD = Eigen::Matrix<float, 2, 3>::Zero();
+        Eigen::Matrix<float, 3, 3> unlockedD = Eigen::Matrix<float, 3, 3>::Zero();
 
         this->m_UnLockedState.SetMatrices(unlockedA, unlockedB, unlockedC, unlockedD);
 

@@ -40,7 +40,7 @@ namespace Models {
     class VehicleController : public SimFramework::Subsystem
     {
     public:
-        void SetParameters(float clutchLagTime=1.f, float clutchStiffness=1000.f);
+        void SetParameters(float clutchLagTime=1.f);
 
         void Configure(
                 const SimFramework::Signal<float>* inTransmissionSpeed,
@@ -70,7 +70,6 @@ namespace Models {
         // Blocks - Clutch
         ClutchController m_ClutchController;
         SimFramework::LinearBlend<float> m_BlendClutch;
-        SimFramework::Gain<float, float, float> m_ClutchGain;
 
         // Blocks - Constants
         SimFramework::ConstantBlock<float> m_ConstZero;

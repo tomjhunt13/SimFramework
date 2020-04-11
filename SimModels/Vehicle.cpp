@@ -6,7 +6,7 @@ namespace Models {
     Vehicle::Vehicle(float dt) : System(dt)
     {
         // Configure subsystems
-        this->m_Controller.Configure(this->m_Transmission.OutClutchSpeed(), this->m_InThrottle.OutSignal(), this->m_Transmission.OutGearIndex());
+        this->m_Controller.Configure(this->m_EngineTransmission.OutClutchSpeed(), this->m_InThrottle.OutSignal(), this->m_Transmission.OutGearIndex());
         this->m_Engine.Configure(this->m_Controller.OutAugmentedThrottle(), this->m_Clutch.OutClutchTorque());
         this->m_Transmission.Configure(this->m_Clutch.OutClutchTorque(), this->m_Tyre.OutTorque());
         this->m_VehicleDynamics.Configure(this->m_Tyre.OutForce(), this->m_Road.OutGradient(), this->m_InBrakePressure.OutSignal());
@@ -41,7 +41,11 @@ namespace Models {
     void Vehicle::SetParameters(Models::VehicleParameters parameters) {
 
         this->m_Controller.SetParameters(parameters.GearshiftLag, parameters.ClutchStiffness);
-        this->m_Engine.SetParameters(parameters.EngineJSON, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant);
+
+        m_EngineTransmission.SetParameters(
+                parameters.EngineJSON, parameters.EngineInitialSpeed,
+                parameters.GearRatios, parameters.EngineViscousConstant, parameters.TransmissionViscousFriction, parameters.EngineInertia, parameters.TransmissionInertia, parameters.PeakClutchTorque)
+        this->m_Engine.SetParameters(, parameters.EngineInitialSpeed, parameters.EngineInertia, parameters.EngineViscousConstant);
         this->m_Transmission.SetParameters(parameters.GearRatios, parameters.TransmissionInertia);
         this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho, parameters.PeakBrakeForce, parameters.RollingResistance);
         this->m_Road.SetProfile(parameters.RoadJSON);

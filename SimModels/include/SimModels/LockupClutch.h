@@ -112,7 +112,7 @@ namespace Models {
 
         // Set up functions
         void SetParameters(
-                std::string engineJSON="/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json", float initialSpeed=200.f,
+                std::string engineJSON="/Users/tom/Documents/University/Y4_S2/Data/Engine/2L_Turbo_Gasoline.json", float engineInitialSpeed=200.f,
                 std::vector<float> gearRatios={9, 6, 4.5, 3, 2, 1.5},
                 float b_e=0.3, float b_t=0.3, float I_e=1.f, float I_t=1.f,
                 float maxClutchTorque=250);
@@ -132,6 +132,7 @@ namespace Models {
 
         // Output signals
         const SimFramework::Signal<float>* OutEngineSpeed() const;
+        const SimFramework::Signal<float>* OutClutchSpeed() const;
         const SimFramework::Signal<float>* OutWheelSpeed() const;
         const SimFramework::Signal<int>* OutGearIndex() const;
         const SimFramework::Signal<float>* OutFuelRate() const;
@@ -169,8 +170,8 @@ namespace Models {
         CoulombFriction m_MaxClutchTorque;
 
         // State space
-        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 2, 2> m_UnLockedState;
-        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector2f, 2, 1, 2> m_LockedState;
+        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector3f, 3, 2, 3> m_UnLockedState;
+        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector3f, 2, 1, 3> m_LockedState;
         SimFramework::StateSpace<float, Eigen::Vector<float, 1>, 1, 1, 1> m_FuelIntegrator;
 
         // Vector inputs
@@ -178,13 +179,11 @@ namespace Models {
         SimFramework::Vectorise<float, Eigen::Vector2f> m_LockedInput;
 
         // Mask outputs
-        SimFramework::Mask<Eigen::Vector2f, float, 2> m_UnlockedMask;
-        SimFramework::Mask<Eigen::Vector2f, float, 2> m_LockedMask;
+        SimFramework::Mask<Eigen::Vector3f, float, 3> m_StatesMask;
         SimFramework::Mask<Eigen::Vector<float, 1>, float, 1> m_FuelUsageMask;
 
         // Switches
-        SimFramework::Switch<float> m_EngineSpeedSwitch;
-        SimFramework::Switch<float> m_WheelSpeedSwitch;
+        SimFramework::Switch<Eigen::Vector3f> m_Switch;
 
         // Lock state manager
         CrossingDetect m_CrossingDetect;
