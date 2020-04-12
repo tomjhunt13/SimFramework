@@ -58,6 +58,7 @@ namespace Models {
 
     void Vehicle::ShiftUp()
     {
+        // TODO: if up from neutral don't trigger
         if (this->m_Transmission.ShiftUp())
         {
             this->m_Controller.Trigger();
