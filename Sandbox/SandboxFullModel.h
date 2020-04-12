@@ -21,6 +21,7 @@ void SandboxFullModel() {
     vehicleParameters.LogFrequency = 1;
     vehicleParameters.GearRatios = {10};
     vehicleParameters.InitialVelocity = 0;
+    vehicleParameters.PullawayClutchMinValue = 0.1;
     vehicleParameters.LogOutputFile = "LogOut.csv";
 
 
@@ -40,7 +41,7 @@ void SandboxFullModel() {
 
         if (counter == 200) {
             blocks.InThrottle->WriteValue(1.f);
-//            vehicle.ShiftUp();
+            vehicle.ShiftUp();
         }
 
         if (counter % 400 == 0) {

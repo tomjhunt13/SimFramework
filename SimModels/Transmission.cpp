@@ -6,7 +6,13 @@ namespace Models {
     {
 
         // Set up gear ratios
-        this->m_Ratios = gearRatios;
+        std::vector<float> ratios(1 + gearRatios.size());
+        ratios[0] = gearRatios[0];
+        for (int i = 0; i < gearRatios.size(); i++)
+        {
+            ratios[i+1] = gearRatios[i];
+        }
+        this->m_Ratios = ratios;
 
         // Initialise dynamic variables and initial conditions
         this->m_GearIndex = 0;
