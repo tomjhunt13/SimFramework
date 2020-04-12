@@ -28,11 +28,12 @@ namespace Models {
         this->m_OutDisplacement.Configure(this->m_VehicleDynamics.OutVehiclePosition(), 0.f);
         this->m_OutGradient.Configure(this->m_Road.OutGradient(), 0.f);
         this->m_OutCurrentGear.Configure(this->m_Transmission.OutGearIndex(), 0);
+        this->m_OutClutchLockState.Configure(this->m_LockupClutch.OutEngagement(), 0);
 
         SimFramework::BlockList list = {{&(this->m_InThrottle),     &(this->m_InBrakePressure)},
                                         {},
                                         {&(this->m_Tyre), &(this->m_Road)},
-                                        {&(this->m_OutEngineSpeed), &(this->m_OutFuelFlowRate), &(this->m_OutFuelCumulative), &(this->m_OutWheelSpeed), &(this->m_OutLinearVelocity), &(this->m_OutDisplacement), &(this->m_OutCoordinates), &(this->m_OutGradient), &(this->m_OutCurrentGear), &(this->m_ClutchLockState)},
+                                        {&(this->m_OutEngineSpeed), &(this->m_OutFuelFlowRate), &(this->m_OutFuelCumulative), &(this->m_OutWheelSpeed), &(this->m_OutLinearVelocity), &(this->m_OutDisplacement), &(this->m_OutCoordinates), &(this->m_OutGradient), &(this->m_OutCurrentGear), &(this->m_OutClutchLockState)},
                                         {&(this->m_Controller), &(this->m_Engine), &(this->m_Transmission), &(this->m_VehicleDynamics), &(this->m_LockupClutch)}};
         this->RegisterBlocks(list);
 
@@ -84,7 +85,7 @@ namespace Models {
                 &(this->m_OutCoordinates),
                 &(this->m_OutCurrentGear),
                 &(this->m_OutGradient),
-                &(this->m_ClutchLockState)
+                &(this->m_OutClutchLockState)
         };
     };
 

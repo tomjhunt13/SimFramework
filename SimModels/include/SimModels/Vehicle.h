@@ -90,7 +90,7 @@ namespace Models {
         // Road
         SimFramework::Output<float>* OutGradient; // Radians
 
-        SimFramework::Output<int>* ClutchLockState;
+        SimFramework::Output<int>* OutClutchLockState;
     };
 
     class Vehicle : public SimFramework::System
@@ -120,7 +120,7 @@ namespace Models {
         SimFramework::Output<Eigen::Vector2f> m_OutCoordinates;
         SimFramework::Output<int> m_OutCurrentGear;
         SimFramework::Output<float> m_OutGradient;
-        SimFramework::Output<int> m_ClutchLockState;
+        SimFramework::Output<int> m_OutClutchLockState;
 
         // Blocks - System
         Tyre m_Tyre;

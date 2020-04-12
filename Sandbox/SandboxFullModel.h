@@ -58,7 +58,9 @@ void SandboxFullModel() {
                   << ", Fuel Usage: " << blocks.OutFuelCumulative->ReadValue()
                   << ", Fuel Rate: " << blocks.OutFuelFlowRate->ReadValue()
                   << ", Current Gear: " << blocks.OutCurrentGear->ReadValue()
-                  << std::endl;
+                  << ", Clutch Engaged State: " << blocks.OutClutchLockState->ReadValue()
+
+                << std::endl;
 
         counter++;
     }
