@@ -30,14 +30,15 @@ namespace Models {
 
         // Controller
         float GearshiftLag = 1.f;
+        float ClutchEngagementSpeed = 100.f;
 
         // Clutch
-        float ClutchMaxNormalForce=100.f;
+        float ClutchMaxNormalForce = 10000.f;
         float ClutchTorqueCapacity = 400.f;
 
         // Transmission
-        std::vector<float> GearRatios = {11.f, 7.3, 5.5, 3.8, 2.5, 2.f};
-        float TransmissionInertia = 2.f;
+        std::vector<float> GearRatios = {1.f};
+        float TransmissionInertia = 0.2;
         float TransmissionViscousFriction = 0.05;
 
         // Brake
@@ -92,7 +93,7 @@ namespace Models {
     class Vehicle : public SimFramework::System
     {
     public:
-        Vehicle(float dt=0.001);
+        Vehicle(float dt=0.01);
 
         const VehicleBlocks Blocks();
         void SetParameters(VehicleParameters parameters);

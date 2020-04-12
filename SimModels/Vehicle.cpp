@@ -40,7 +40,7 @@ namespace Models {
 
     void Vehicle::SetParameters(Models::VehicleParameters parameters) {
 
-        this->m_Controller.SetParameters(parameters.GearshiftLag);
+        this->m_Controller.SetParameters(parameters.GearshiftLag, parameters.ClutchEngagementSpeed);
 
         this->m_LockupClutch.SetParameters(parameters.EngineInitialSpeed, 0.f, parameters.EngineViscousConstant, parameters.TransmissionViscousFriction, parameters.EngineInertia, parameters.TransmissionInertia, parameters.ClutchMaxNormalForce, parameters.ClutchTorqueCapacity);
         this->m_Engine.SetParameters(parameters.EngineJSON);

@@ -351,7 +351,10 @@ namespace SimFramework {
     class Mask : public Function
     {
     public:
-        Mask(std::string name = "Mask") : Function(name), m_MaskedSignals(InputLength) {};
+        Mask(std::string name = "Mask") : Function(name)
+        {
+            this->m_MaskedSignals.resize(InputLength);
+        };
 
         void Configure(const Signal<InputType>* inputSignal)
         {

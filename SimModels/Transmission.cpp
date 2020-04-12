@@ -98,6 +98,6 @@ namespace Models {
         float G = this->m_Ratios[this->m_GearIndex];
 
         this->m_TorqueGain.SetGain(1.f / G);
-        this->m_SpeedGain.SetGain(G);
+        this->m_SpeedGain.SetGain(1.f / G);
     }
 }

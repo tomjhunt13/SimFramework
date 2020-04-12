@@ -10,23 +10,26 @@ void SandboxFullModel() {
     // Set up system
     Models::VehicleParameters vehicleParameters;
     vehicleParameters.EngineJSON = "../Sandbox/Data/2L_Turbo_Gasoline.json";
-    vehicleParameters.RoadJSON = "../Sandbox/Data/road1.json";
+    vehicleParameters.RoadJSON = "../Sandbox/Data/flatRoad.json";
     vehicleParameters.Mass = 1500.f;
     vehicleParameters.GearshiftLag = 0.75;
     vehicleParameters.A = 2.5;
-    vehicleParameters.ClutchMaxNormalForce = 50.f;
+    vehicleParameters.ClutchMaxNormalForce = 500.f;
     vehicleParameters.ClutchTorqueCapacity = 1.f;
     vehicleParameters.EngineInertia = 0.2f;
+    vehicleParameters.TransmissionInertia = 4.f;
     vehicleParameters.LogFrequency = 1;
+    vehicleParameters.GearRatios = {10};
+    vehicleParameters.InitialVelocity = 0;
     vehicleParameters.LogOutputFile = "LogOut.csv";
 
 
     Models::Vehicle vehicle;
     vehicle.SetParameters(vehicleParameters);
     Models::VehicleBlocks blocks = vehicle.Blocks();
-    blocks.InThrottle->WriteValue(0.f);
+    blocks.InThrottle->WriteValue(1.f);
     vehicle.Initialise(0);
-    blocks.InThrottle->WriteValue(0.f);
+    blocks.InThrottle->WriteValue(1.f);
 
 
     float dt = 0.1;

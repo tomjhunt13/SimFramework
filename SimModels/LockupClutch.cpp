@@ -175,7 +175,10 @@ namespace Models {
         // Set up state space matrices
         this->UpdateSSMatrices(b_1, b_2, I_1, I_2);
 
-        this->m_CrossingDetect.SetParameters(0, false);
+        this->m_CrossingDetect.SetParameters(0, true);
+
+
+        this->m_TransmittedTorque.SetParameters(b_1, b_2, I_1, I_2);
 
         // Set up clutch
         this->m_NormalForce.SetGain(MaxNormalForce);
@@ -202,7 +205,7 @@ namespace Models {
             const SimFramework::Signal<float>* inClutchEngagement)
     {
         // Vector inputs
-        this->m_UnlockedInput.Configure({this->m_ClutchTorqueCapacity.OutSignal(), inTorque1, inTorque2});
+        this->m_UnlockedInput.Configure({this->m_SignedClutchTorque.OutForce(), inTorque1, inTorque2});
         this->m_LockedInput.Configure({inTorque1, inTorque2});
 
         // State space
@@ -214,7 +217,7 @@ namespace Models {
 
         // Speed mask outputs
         this->m_StateMask.Configure(this->m_Switch.OutSignal());
-        this->m_RelativeSpeed.Configure({this->m_StateMask.OutSignal(1), this->m_StateMask.OutSignal(0)}, {1.f, -1.f});
+        this->m_RelativeSpeed.Configure({this->m_StateMask.OutSignal(0), this->m_StateMask.OutSignal(1)}, {1.f, -1.f});
 
         // Lock state manager
         this->m_TransmittedTorque.Configure(this->OutSpeed1(), inTorque1, inTorque2);
@@ -250,8 +253,6 @@ namespace Models {
 
     void LockupClutch::TransitionState(ELockupClutchState newState)
     {
-
-
         switch (newState)
         {
             case ELockupClutchState::e_Locked:
@@ -289,7 +290,10 @@ namespace Models {
                 {"Clutch Normal Force", this->m_NormalForce.OutSignal()},
                 {"Clutch Torque Capacity", this->m_ClutchTorqueCapacity.OutSignal()},
                 {"Clutch Signed Torque", this->m_SignedClutchTorque.OutForce()},
-                {"Speed Cross", this->m_CrossingDetect.OutCrossing()}};
+                {"Clutch Speed Cross", this->m_CrossingDetect.OutCrossing()},
+                {"Clutch Speed 1", this->OutSpeed1()},
+                {"Clutch Speed 2", this->OutSpeed2()},
+                {"Clutch Transmitted Torque", this->m_TransmittedTorque.OutTorque()}};
     };
 
     void LockupClutch::UpdateSSMatrices(float b_1, float b_2, float I_1, float I_2)
