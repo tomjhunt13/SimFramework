@@ -12,7 +12,7 @@ namespace Models {
     public:
         ClutchController(std::string name = "Clutch Controller");
 
-        void SetParameters(float engagementSpeed = 50.f);
+        void SetParameters(float engagementSpeed = 50.f, float pullawayClutchMinValue = 0.2);
 
         void Configure(
                 const SimFramework::Signal<float>* inTransmissionSpeed,
@@ -31,6 +31,7 @@ namespace Models {
         // Parameters
         float m_EngagementSpeed;
         float m_ThrottleThreshold = 0.02;
+        float m_PullawayClutchMinValue;
 
         // Signals
         const SimFramework::Signal<float>* m_InTransmissionSpeed;
@@ -42,7 +43,7 @@ namespace Models {
     class VehicleController : public SimFramework::Subsystem
     {
     public:
-        void SetParameters(float clutchLagTime=1.f, float clutchEngagementSpeed=100.f);
+        void SetParameters(float clutchLagTime=1.f, float clutchEngagementSpeed=100.f, float pullawayClutchMinValue = 0.2);
 
         void Configure(
                 const SimFramework::Signal<float>* inTransmissionSpeed,

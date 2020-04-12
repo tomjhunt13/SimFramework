@@ -119,6 +119,7 @@ namespace Models {
         // Output signals
         const SimFramework::Signal<float>* OutSpeed1() const;
         const SimFramework::Signal<float>* OutSpeed2() const;
+        const SimFramework::Signal<int>* OutEngagement() const;
 
         // Subsystem functions
         SimFramework::BlockList Blocks() override;

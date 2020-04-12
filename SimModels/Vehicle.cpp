@@ -32,7 +32,7 @@ namespace Models {
         SimFramework::BlockList list = {{&(this->m_InThrottle),     &(this->m_InBrakePressure)},
                                         {},
                                         {&(this->m_Tyre), &(this->m_Road)},
-                                        {&(this->m_OutEngineSpeed), &(this->m_OutFuelFlowRate), &(this->m_OutFuelCumulative), &(this->m_OutWheelSpeed), &(this->m_OutLinearVelocity), &(this->m_OutDisplacement), &(this->m_OutCoordinates), &(this->m_OutGradient), &(this->m_OutCurrentGear)},
+                                        {&(this->m_OutEngineSpeed), &(this->m_OutFuelFlowRate), &(this->m_OutFuelCumulative), &(this->m_OutWheelSpeed), &(this->m_OutLinearVelocity), &(this->m_OutDisplacement), &(this->m_OutCoordinates), &(this->m_OutGradient), &(this->m_OutCurrentGear), &(this->m_ClutchLockState)},
                                         {&(this->m_Controller), &(this->m_Engine), &(this->m_Transmission), &(this->m_VehicleDynamics), &(this->m_LockupClutch)}};
         this->RegisterBlocks(list);
 
@@ -40,7 +40,7 @@ namespace Models {
 
     void Vehicle::SetParameters(Models::VehicleParameters parameters) {
 
-        this->m_Controller.SetParameters(parameters.GearshiftLag, parameters.ClutchEngagementSpeed);
+        this->m_Controller.SetParameters(parameters.GearshiftLag, parameters.ClutchEngagementSpeed, parameters.PullawayClutchMinValue);
 
         this->m_LockupClutch.SetParameters(parameters.EngineInitialSpeed, 0.f, parameters.EngineViscousConstant, parameters.TransmissionViscousFriction, parameters.EngineInertia, parameters.TransmissionInertia, parameters.ClutchMaxNormalForce, parameters.ClutchTorqueCapacity);
         this->m_Engine.SetParameters(parameters.EngineJSON);
@@ -83,7 +83,9 @@ namespace Models {
                 &(this->m_OutDisplacement),
                 &(this->m_OutCoordinates),
                 &(this->m_OutCurrentGear),
-                &(this->m_OutGradient)};
+                &(this->m_OutGradient),
+                &(this->m_ClutchLockState)
+        };
     };
 
     std::vector<std::pair<std::string, const SimFramework::SignalBase *> > Vehicle::LogSignals()

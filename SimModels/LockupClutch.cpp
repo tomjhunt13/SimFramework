@@ -241,6 +241,11 @@ namespace Models {
         return this->m_StateMask.OutSignal(1);
     };
 
+    const SimFramework::Signal<int>* LockupClutch::OutEngagement() const
+    {
+        return this->m_LockStateController.OutState();
+    };
+
 
     SimFramework::BlockList LockupClutch::Blocks()
     {

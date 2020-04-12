@@ -31,6 +31,7 @@ namespace Models {
         // Controller
         float GearshiftLag = 1.f;
         float ClutchEngagementSpeed = 100.f;
+        float PullawayClutchMinValue = 0.2;
 
         // Clutch
         float ClutchMaxNormalForce = 10000.f;
@@ -88,6 +89,8 @@ namespace Models {
 
         // Road
         SimFramework::Output<float>* OutGradient; // Radians
+
+        SimFramework::Output<int>* ClutchLockState;
     };
 
     class Vehicle : public SimFramework::System
@@ -117,6 +120,7 @@ namespace Models {
         SimFramework::Output<Eigen::Vector2f> m_OutCoordinates;
         SimFramework::Output<int> m_OutCurrentGear;
         SimFramework::Output<float> m_OutGradient;
+        SimFramework::Output<int> m_ClutchLockState;
 
         // Blocks - System
         Tyre m_Tyre;

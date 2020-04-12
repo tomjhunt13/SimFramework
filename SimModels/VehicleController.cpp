@@ -6,9 +6,10 @@ namespace Models {
     ClutchController::ClutchController(std::string name) :
             Function(name) {};
 
-    void ClutchController::SetParameters(float engagementSpeed)
+    void ClutchController::SetParameters(float engagementSpeed, float pullawayClutchMinValue)
     {
         this->m_EngagementSpeed = engagementSpeed;
+        this->m_PullawayClutchMinValue = pullawayClutchMinValue;
     }
 
     void ClutchController::Configure(
@@ -69,7 +70,7 @@ namespace Models {
         // If throttle is above threshold then assume clutch should be trying to engage
         if (throttle > this->m_ThrottleThreshold)
         {
-            return 0.5 + 0.9 * (transmissionSpeed / this->m_EngagementSpeed);
+            return this->m_PullawayClutchMinValue + (1.f - this->m_PullawayClutchMinValue) * (transmissionSpeed / this->m_EngagementSpeed);
         }
 
         // Else speed is in range [0, engagement speed] and throttle below threshold so release clutch
@@ -79,10 +80,10 @@ namespace Models {
 
 
 
-    void VehicleController::SetParameters(float clutchLagTime, float clutchEngagementSpeed)
+    void VehicleController::SetParameters(float clutchLagTime, float clutchEngagementSpeed, float pullawayClutchMinValue)
     {
         this->m_GearChangeTrigger.SetParameters(0.f, clutchLagTime);
-        this->m_ClutchController.SetParameters(clutchEngagementSpeed);
+        this->m_ClutchController.SetParameters(clutchEngagementSpeed, pullawayClutchMinValue);
     }
 
     void VehicleController::Configure(
