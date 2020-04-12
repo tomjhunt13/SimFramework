@@ -108,7 +108,7 @@ namespace Models {
     class LockupClutch : public SimFramework::Subsystem {
     public:
 
-        void SetParameters(float initSpeed1=0.f, float initSpeed2=0.f, float b_1=1.f, float b_2=1.f, float I_1=1.f, float I_2=1.f, float peakClutchTorque = 400.f);
+        void SetParameters(float initSpeed1=0.f, float initSpeed2=0.f, float b_1=1.f, float b_2=1.f, float I_1=1.f, float I_2=1.f, float MaxNormalForce=100.f, float ClutchTorqueCapacity = 400.f);
 
         void Configure(
                 const SimFramework::Signal<float>* inTorque1,
@@ -154,7 +154,9 @@ namespace Models {
         LockupClutchController m_LockStateController;
 
         // Clutch
-        CoulombFriction m_ClutchTorque;
+        SimFramework::Gain<float, float, float> m_NormalForce;
+        SimFramework::Gain<float, float, float> m_ClutchTorqueCapacity;
+        CoulombFriction m_SignedClutchTorque;
     };
 
 }; // namespace Models

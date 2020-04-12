@@ -8,8 +8,8 @@ int main() {
 
 
 //    SandboxMassSpringDamper();
-    SandboxLockupClutch();
-//    SandboxFullModel();
+//    SandboxLockupClutch();
+    SandboxFullModel();
 
 
 

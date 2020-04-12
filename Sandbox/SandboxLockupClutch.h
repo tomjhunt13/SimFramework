@@ -40,8 +40,15 @@ public:
     TestClutchLockup(float dt=0.01) : System(dt)
     {
         this->m_LockupClutch.Configure(this->m_Torque1.OutSignal(), this->m_Torque2.OutSignal(), this->m_Alpha.OutSignal());
+
+        // IO
+        this->m_Alpha.Configure(0.f);
+        this->m_Torque1.Configure(0.f);
+        this->m_Torque2.Configure(0.f);
         this->m_OutSpeed1.Configure(this->m_LockupClutch.OutSpeed1(), 0.f);
         this->m_OutSpeed2.Configure(this->m_LockupClutch.OutSpeed2(), 0.f);
+
+
 
         SimFramework::BlockList list = {{&(this->m_Torque1), &(this->m_Torque2), &(this->m_Alpha)},
                                         {},
@@ -64,7 +71,12 @@ public:
 
 
 private:
-    std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override { return {}; };
+    std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override
+    {
+        return {{"Speed 1", this->m_LockupClutch.OutSpeed1()},
+                {"Speed 2", this->m_LockupClutch.OutSpeed2()},
+                {"Alpha", this->m_Alpha.OutSignal()}};
+    };
 
 
     // Input
@@ -81,12 +93,20 @@ private:
 };
 
 
-void SandboxLockupClutch() {
 
-
+void Test1()
+{
+    /*
+     * Input torque T_1 on side 1 with alpha = 0:
+     *      clutch is unlocked
+     *      w_1 = T_1 / b_1
+     *      w_2 = 0
+     *
+     * Set alpha = 1
+     *      clutch should be unlocked until w_2 = w_1
+     */
     // Set up system
     TestClutchLockup sys;
-    TestClutchLockupBlocks blocks = sys.Blocks();
 
     TestClutchLockupParameters parameters;
     parameters.I_1 = 1.f;
@@ -99,9 +119,13 @@ void SandboxLockupClutch() {
 
     sys.SetParameters(parameters);
 
+    TestClutchLockupBlocks blocks = sys.Blocks();
+
     // Initial input values
-    blocks.Torque1->WriteValue(10.f);
-    blocks.Alpha->WriteValue(1.f);
+//    blocks.Torque1->WriteValue(10.f);
+    blocks.Torque2->WriteValue(-10.f);
+
+    blocks.Alpha->WriteValue(0.f);
 
     sys.Initialise(0);
 
@@ -110,12 +134,18 @@ void SandboxLockupClutch() {
     for (float t = 0.f; t <= 300.f; t += 0.1) {
 
 
+        if (counter == 300)
+        {
+            blocks.Alpha->WriteValue(1.f);
+        }
+
         if (counter == 600)
         {
             blocks.Alpha->WriteValue(0.f);
+            blocks.Torque2->WriteValue(10.f);
         }
 
-        if (counter == 1200)
+        if (counter == 900)
         {
             blocks.Alpha->WriteValue(1.f);
         }
@@ -126,6 +156,16 @@ void SandboxLockupClutch() {
 
         counter ++;
     }
+
+}
+
+void SandboxLockupClutch() {
+
+
+
+
+    Test1();
+
 };
 
 #endif //FRAMEWORK_SANDBOXLOCKUPCLUTCH_H

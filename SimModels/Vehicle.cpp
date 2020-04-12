@@ -42,7 +42,7 @@ namespace Models {
 
         this->m_Controller.SetParameters(parameters.GearshiftLag);
 
-        this->m_LockupClutch.SetParameters(parameters.EngineInitialSpeed, 0.f, parameters.EngineViscousConstant, parameters.TransmissionViscousFriction, parameters.EngineInertia, parameters.TransmissionInertia);
+        this->m_LockupClutch.SetParameters(parameters.EngineInitialSpeed, 0.f, parameters.EngineViscousConstant, parameters.TransmissionViscousFriction, parameters.EngineInertia, parameters.TransmissionInertia, parameters.ClutchMaxNormalForce, parameters.ClutchTorqueCapacity);
         this->m_Engine.SetParameters(parameters.EngineJSON);
         this->m_Transmission.SetParameters(parameters.GearRatios);
         this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho, parameters.PeakBrakeForce, parameters.RollingResistance);

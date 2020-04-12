@@ -170,22 +170,27 @@ namespace Models {
 
 
 
-    void LockupClutch::SetParameters(float initSpeed1, float initSpeed2, float b_1, float b_2, float I_1, float I_2, float peakClutchTorque)
+    void LockupClutch::SetParameters(float initSpeed1, float initSpeed2, float b_1, float b_2, float I_1, float I_2, float MaxNormalForce, float ClutchTorqueCapacity)
     {
         // Set up state space matrices
         this->UpdateSSMatrices(b_1, b_2, I_1, I_2);
 
         this->m_CrossingDetect.SetParameters(0, false);
 
-        this->m_ClutchTorque.SetParameters(peakClutchTorque);
+        // Set up clutch
+        this->m_NormalForce.SetGain(MaxNormalForce);
+        this->m_ClutchTorqueCapacity.SetGain(ClutchTorqueCapacity);
+        this->m_SignedClutchTorque.SetParameters(1.f);
 
-        // Initialise system
+        // Initialise system states
         Eigen::Vector<float, 1> initLocked;
         initLocked << initSpeed1;
         this->m_LockedState.SetInitialConditions(initLocked);
 
         Eigen::Vector2f initUnlocked = {initSpeed1, initSpeed2};
         this->m_UnLockedState.SetInitialConditions(initUnlocked);
+
+        this->m_Switch.SetIndex(0);
 
     };
 
@@ -197,7 +202,7 @@ namespace Models {
             const SimFramework::Signal<float>* inClutchEngagement)
     {
         // Vector inputs
-        this->m_UnlockedInput.Configure({this->m_ClutchTorque.OutForce(), inTorque1, inTorque2});
+        this->m_UnlockedInput.Configure({this->m_ClutchTorqueCapacity.OutSignal(), inTorque1, inTorque2});
         this->m_LockedInput.Configure({inTorque1, inTorque2});
 
         // State space
@@ -214,11 +219,12 @@ namespace Models {
         // Lock state manager
         this->m_TransmittedTorque.Configure(this->OutSpeed1(), inTorque1, inTorque2);
         this->m_CrossingDetect.Configure(this->m_RelativeSpeed.OutSignal());
-        this->m_LockStateController.Configure(this->m_CrossingDetect.OutCrossing(), this->m_TransmittedTorque.OutTorque(), this->m_ClutchTorque.OutForce(), this);
+        this->m_LockStateController.Configure(this->m_CrossingDetect.OutCrossing(), this->m_TransmittedTorque.OutTorque(), this->m_ClutchTorqueCapacity.OutSignal(), this);
 
         // Clutch
-        this->m_ClutchTorque.Configure(this->m_RelativeSpeed.OutSignal(), inClutchEngagement);
-
+        this->m_NormalForce.Configure(inClutchEngagement);
+        this->m_ClutchTorqueCapacity.Configure(this->m_NormalForce.OutSignal());
+        this->m_SignedClutchTorque.Configure(this->m_RelativeSpeed.OutSignal(), this->m_ClutchTorqueCapacity.OutSignal());
     }
 
 
@@ -238,8 +244,7 @@ namespace Models {
         // Construct system
         return {{},
                 {&(this->m_UnLockedState), &(this->m_LockedState)},
-                {&(this->m_UnlockedInput), &(this->m_LockedInput), &(this->m_Switch), &(this->m_StateMask), &(this->m_RelativeSpeed), &(this->m_TransmittedTorque), &(this->m_CrossingDetect), &(this->m_ClutchTorque)},
-                {&(this->m_LockStateController)},
+                {&(this->m_UnlockedInput), &(this->m_LockedInput), &(this->m_Switch), &(this->m_StateMask), &(this->m_RelativeSpeed), &(this->m_TransmittedTorque), &(this->m_CrossingDetect), &(this->m_NormalForce), &(this->m_ClutchTorqueCapacity), &(this->m_SignedClutchTorque)},                {&(this->m_LockStateController)},
                 {}};
     };
 
@@ -280,8 +285,10 @@ namespace Models {
 
     std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LockupClutch::LogSignals()
     {
-        return {{"Lock State", this->m_LockStateController.OutState()},
-                {"Max Clutch Torque", this->m_ClutchTorque.OutForce()},
+        return {{"Clutch Lock State", this->m_LockStateController.OutState()},
+                {"Clutch Normal Force", this->m_NormalForce.OutSignal()},
+                {"Clutch Torque Capacity", this->m_ClutchTorqueCapacity.OutSignal()},
+                {"Clutch Signed Torque", this->m_SignedClutchTorque.OutForce()},
                 {"Speed Cross", this->m_CrossingDetect.OutCrossing()}};
     };
 

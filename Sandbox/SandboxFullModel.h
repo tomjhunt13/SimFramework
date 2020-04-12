@@ -14,7 +14,8 @@ void SandboxFullModel() {
     vehicleParameters.Mass = 1500.f;
     vehicleParameters.GearshiftLag = 0.75;
     vehicleParameters.A = 2.5;
-    vehicleParameters.PeakClutchTorque = 100.f;
+    vehicleParameters.ClutchMaxNormalForce = 50.f;
+    vehicleParameters.ClutchTorqueCapacity = 1.f;
     vehicleParameters.EngineInertia = 0.2f;
     vehicleParameters.LogFrequency = 1;
     vehicleParameters.LogOutputFile = "LogOut.csv";

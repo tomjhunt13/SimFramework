@@ -32,7 +32,8 @@ namespace Models {
         float GearshiftLag = 1.f;
 
         // Clutch
-        float PeakClutchTorque = 250.f;
+        float ClutchMaxNormalForce=100.f;
+        float ClutchTorqueCapacity = 400.f;
 
         // Transmission
         std::vector<float> GearRatios = {11.f, 7.3, 5.5, 3.8, 2.5, 2.f};
