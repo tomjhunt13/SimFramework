@@ -140,6 +140,8 @@ namespace Models {
                     this->m_LockState = ELockupClutchState::e_Unlocked;
                 }
 
+                this->m_StateSignal.Write(1);
+
                 break;
             }
 
@@ -151,10 +153,20 @@ namespace Models {
                     this->m_LockState = ELockupClutchState::e_Locked;
                 }
 
+                this->m_StateSignal.Write(0);
+
                 break;
             }
         }
     };
+    const SimFramework::Signal<int>* LockupClutchController::OutState() const
+    {
+        return &(this->m_StateSignal);
+    };
+
+
+
+
 
 
 
@@ -265,6 +277,13 @@ namespace Models {
             }
         }
     }
+
+    std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LockupClutch::LogSignals()
+    {
+        return {{"Lock State", this->m_LockStateController.OutState()},
+                {"Max Clutch Torque", this->m_ClutchTorque.OutForce()},
+                {"Speed Cross", this->m_CrossingDetect.OutCrossing()}};
+    };
 
     void LockupClutch::UpdateSSMatrices(float b_1, float b_2, float I_1, float I_2)
     {

@@ -88,6 +88,7 @@ namespace Models {
                 const SimFramework::Signal<float>* inClutchTorqueLimit,
                 LockupClutch* lockupModel);
 
+        const SimFramework::Signal<int>* OutState() const;
         std::vector<const SimFramework::SignalBase*> InputSignals() const override;
         std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
         void Update(float dt) override;
@@ -98,6 +99,7 @@ namespace Models {
         const SimFramework::Signal<bool>* m_SpeedMatch;
         const SimFramework::Signal<float>* m_TransmittedTorque;
         const SimFramework::Signal<float>* m_ClutchTorqueLimit;
+        SimFramework::Signal<int> m_StateSignal;
         LockupClutch* m_LockupModel;
     };
 
@@ -120,7 +122,7 @@ namespace Models {
 
         // Subsystem functions
         SimFramework::BlockList Blocks() override;
-        std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override { return {}; };
+        std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override;
 
 
         void TransitionState(ELockupClutchState newState);

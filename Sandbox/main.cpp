@@ -1,4 +1,5 @@
 #include "SandboxMassSpringDamper.h"
+#include "SandboxLockupClutch.h"
 #include "SandboxFullModel.h"
 
 
@@ -7,7 +8,8 @@ int main() {
 
 
 //    SandboxMassSpringDamper();
-    SandboxFullModel();
+    SandboxLockupClutch();
+//    SandboxFullModel();
 
 
 

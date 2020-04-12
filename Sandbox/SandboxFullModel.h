@@ -14,7 +14,7 @@ void SandboxFullModel() {
     vehicleParameters.Mass = 1500.f;
     vehicleParameters.GearshiftLag = 0.75;
     vehicleParameters.A = 2.5;
-    vehicleParameters.PeakClutchTorque = 300.f;
+    vehicleParameters.PeakClutchTorque = 100.f;
     vehicleParameters.EngineInertia = 0.2f;
     vehicleParameters.LogFrequency = 1;
     vehicleParameters.LogOutputFile = "LogOut.csv";
@@ -36,23 +36,13 @@ void SandboxFullModel() {
 
         if (counter == 200) {
             blocks.InThrottle->WriteValue(1.f);
-            vehicle.ShiftUp();
+//            vehicle.ShiftUp();
         }
 
         if (counter % 400 == 0) {
             if (counter < 2500) {
-                vehicle.ShiftUp();
-            } //else {
-//                blocks.InThrottle->WriteValue(0.05);
-//
-//                vehicle.ShiftDown();
-//            }
-        }
-
-        if (counter == 2600)
-        {
-            blocks.InThrottle->WriteValue(0.f);
-            blocks.InBrakePressure->WriteValue(1.f);
+//                vehicle.ShiftUp();
+            }
         }
 
         vehicle.Update(t);

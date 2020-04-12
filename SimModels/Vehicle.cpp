@@ -88,12 +88,14 @@ namespace Models {
 
     std::vector<std::pair<std::string, const SimFramework::SignalBase *> > Vehicle::LogSignals()
     {
-        return {};/*{"Demand Throttle", this->m_InThrottle.OutSignal()},
+        return {{"Demand Throttle", this->m_InThrottle.OutSignal()},
                 {"Brake Pressure", this->m_InBrakePressure.OutSignal()},
                 {"Vehicle Position (x), Vehicle Position (y)", this->m_Road.OutPosition()},
                 {"Road Gradient", this->m_Road.OutGradient()},
-                {"Clutch Torque", this->m_Clutch.OutClutchTorque()},
-                {"Displacement", this->m_VehicleDynamics.OutVehiclePosition()}};*/
+                {"Wheel Speed", this->m_Transmission.OutWheelSpeed()},
+                {"Tyre Torque On Clutch", this->m_Transmission.OutClutchTorque()},
+                {"Tyre Torque", this->m_Tyre.OutTorque()},
+                {"Displacement", this->m_VehicleDynamics.OutVehiclePosition()}};
     };
 
 

@@ -43,11 +43,11 @@ namespace Models {
 
     float ClutchController::Evaluate(float transmissionSpeed, float throttle, int gear)
     {
-        // If in neutral then release clutch
-        if (gear == 0)
-        {
-            return 0.f;
-        };
+//        // If in neutral then release clutch
+//        if (gear == 0)
+//        {
+//            return 0.f;
+//        };
 
         // If clutch speed is above engagement threshold then fully engage clutch
         if (transmissionSpeed > this->m_EngagementSpeed)
