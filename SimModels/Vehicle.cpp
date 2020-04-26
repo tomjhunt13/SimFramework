@@ -10,7 +10,7 @@ namespace Models {
         this->m_Controller.Configure(this->m_LockupClutch.OutSpeed2(), this->m_InThrottle.OutSignal(), this->m_Transmission.OutGearIndex());
         this->m_Engine.Configure(this->m_Controller.OutAugmentedThrottle(), this->m_LockupClutch.OutSpeed1());
         this->m_Transmission.Configure(this->m_LockupClutch.OutSpeed2(), this->m_Wheel.OutTorque());
-        this->m_VehicleDynamics.Configure(this->m_Wheel.OutForce(), this->m_Road.OutGradient(), this->m_InBrakePressure.OutSignal());
+        this->m_VehicleDynamics.Configure(this->m_Wheel.OutForce(), this->m_Road.OutGradient());
         this->m_Wheel.Configure(this->m_InBrakePressure.OutSignal(), this->m_Transmission.OutWheelSpeed(), this->m_VehicleDynamics.OutVehicleVelocity());
 
         // Configure model blocks
@@ -46,7 +46,7 @@ namespace Models {
         this->m_LockupClutch.SetParameters(parameters.EngineInitialSpeed, 0.f, parameters.EngineViscousConstant, parameters.TransmissionViscousFriction, parameters.EngineInertia, parameters.TransmissionInertia, parameters.ClutchMaxNormalForce, parameters.ClutchTorqueCapacity);
         this->m_Engine.SetParameters(parameters.EngineJSON);
         this->m_Transmission.SetParameters(parameters.GearRatios);
-        this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho, parameters.PeakBrakeForce, parameters.RollingResistance);
+        this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho, parameters.RollingResistance);
         this->m_Road.SetProfile(parameters.RoadJSON);
 
         this->m_Wheel.SetParameters(parameters.PeakTyreForceScale, parameters.TyreRadius);
