@@ -6,7 +6,7 @@ namespace Models {
     Vehicle::Vehicle(float dt) : System(dt)
     {
         // Configure subsystems
-        this->m_LockupClutch.Configure(this->m_Engine.OutEngineTorque(), this->m_Transmission.OutClutchTorque(), this->m_Controller.OutClutchStiffness());
+        this->m_LockupClutch.Configure(this->m_Engine.OutEngineTorque(), this->m_BrakeTyreSum.OutSignal(), this->m_Controller.OutClutchStiffness());
         this->m_Controller.Configure(this->m_LockupClutch.OutSpeed2(), this->m_InThrottle.OutSignal(), this->m_Transmission.OutGearIndex());
         this->m_Engine.Configure(this->m_Controller.OutAugmentedThrottle(), this->m_LockupClutch.OutSpeed1());
         this->m_Transmission.Configure(this->m_LockupClutch.OutSpeed2(), this->m_Tyre.OutTorque());
@@ -14,7 +14,7 @@ namespace Models {
 
         // Configure model blocks
         this->m_Tyre.Configure(this->m_Transmission.OutWheelSpeed(), this->m_VehicleDynamics.OutVehicleVelocity());
-        this->m_BrakeTyreSum.Configure({this->m_Tyre.OutTorque(), this->m_Brake.OutForce()}, {1.f, 1.f});
+        this->m_BrakeTyreSum.Configure({this->m_Transmission.OutClutchTorque(), this->m_Brake.OutForce()}, {1.f, 1.f});
         this->m_Brake.Configure(this->m_LockupClutch.OutSpeed2(), this->m_InBrakePressure.OutSignal());
         this->m_Road.Configure(this->m_VehicleDynamics.OutVehiclePosition());
 
