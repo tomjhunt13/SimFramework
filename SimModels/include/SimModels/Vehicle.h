@@ -124,6 +124,8 @@ namespace Models {
 
         // Blocks - System
         Tyre m_Tyre;
+        SimFramework::SummingJunction<float> m_BrakeTyreSum;
+        CoulombFriction m_Brake;
         Road m_Road;
 
         // Subsystems
