@@ -74,4 +74,44 @@ namespace Models {
     };
 
 
+
+    void Wheel::SetParameters(float peakBreakForce)
+    {
+        this->m_Brake.SetParameters(peakBreakForce);
+    };
+
+    void Wheel::Configure(
+            const SimFramework::Signal<float>* inBrake,
+            const SimFramework::Signal<float>* inRotationalSpeed,
+            const SimFramework::Signal<float>* inLinearSpeed)
+    {
+        this->m_Tyre.Configure(inRotationalSpeed, inLinearSpeed);
+        this->m_Brake.Configure(inRotationalSpeed, inBrake);
+        this->m_Sum.Configure({this->m_Tyre.OutTorque(), this->m_Brake.OutForce()}, {1.f, 1.f});
+    };
+
+    const SimFramework::Signal<float>* Wheel::OutForce() const
+    {
+        return this->m_Tyre.OutForce();
+    };
+
+    const SimFramework::Signal<float>* Wheel::OutTorque() const
+    {
+        return this->m_Sum.OutSignal();
+    };
+
+    SimFramework::BlockList Wheel::Blocks()
+    {
+        return {{},
+                {},
+                {&(this->m_Tyre), &(this->m_Sum), &(this->m_Brake)},
+                {},
+                {}};
+    };
+
+    std::vector<std::pair<std::string, const SimFramework::SignalBase *> > Wheel::LogSignals()
+    {
+        return {};
+    };
+
 }; // namespace Models
