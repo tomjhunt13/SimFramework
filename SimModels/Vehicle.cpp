@@ -49,7 +49,7 @@ namespace Models {
         this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho, parameters.RollingResistance);
         this->m_Road.SetProfile(parameters.RoadJSON);
 
-        this->m_Wheel.SetParameters(parameters.PeakTyreForceScale, parameters.TyreRadius);
+        this->m_Wheel.SetParameters(parameters.PeakBrakeForce, parameters.TyreRadius);
 
         this->SetLogOutputFile(parameters.LogOutputFile, parameters.LogFrequency);
     };
