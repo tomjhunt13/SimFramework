@@ -85,8 +85,12 @@ namespace Models {
         SimFramework::Signal<int> m_StateSignal;
     };
 
+
     class Powertrain : public SimFramework::Subsystem {
     public:
+
+        bool ShiftUp();
+        bool ShiftDown();
 
         void SetParameters(std::vector<float> gearRatios, float initEngineSpeed=200.f, float initWheelSpeed=0.f, float b_e=1.f, float b_w=1.f, float I_e=1.f, float I_w=1.f, float ClutchTorqueCapacity = 400.f);
 
@@ -97,9 +101,10 @@ namespace Models {
 
 
         // Output signals
-        const SimFramework::Signal<float>* OutSpeed1() const;
-        const SimFramework::Signal<float>* OutSpeed2() const;
+        const SimFramework::Signal<float>* OutEngineSpeed() const;
+        const SimFramework::Signal<float>* OutWheelSpeed() const;
         const SimFramework::Signal<int>* OutEngagement() const;
+        const SimFramework::Signal<int>* OutGearIndex() const;
 
         // Subsystem functions
         SimFramework::BlockList Blocks() override;

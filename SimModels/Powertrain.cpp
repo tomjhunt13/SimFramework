@@ -143,8 +143,45 @@ namespace Models {
 
 
 
+    bool Powertrain::ShiftUp()
+    {
+        // Ignore if in top gear
+        if (this->m_GearIndex == this->m_Ratios.size() - 1)
+        {
+            return false;
+        }
 
+        // Else increment gear
+        this->m_GearIndex += 1;
 
+        // Change gear
+        this->SetGearRatio();
+
+        // Update input block
+        this->m_InGearIndex.WriteValue(this->m_GearIndex);
+
+        return true;
+    };
+
+    bool Powertrain::ShiftDown()
+    {
+        // Ignore if in bottom gear
+        if (this->m_GearIndex == 0)
+        {
+            return false;
+        }
+
+        // Else decrement gear
+        this->m_GearIndex -= 1;
+
+        // Change gear
+        this->SetGearRatio();
+
+        // Update input block
+        this->m_InGearIndex.WriteValue(this->m_GearIndex);
+
+        return true;
+    };
 
     void Powertrain::SetParameters(std::vector<float> gearRatios, float initEngineSpeed, float initWheelSpeed, float b_e, float b_w, float I_e, float I_w, float ClutchTorqueCapacity)
     {
@@ -207,7 +244,7 @@ namespace Models {
 
         // Lock state manager
         this->m_CrossingDetect.Configure(this->m_RelativeSpeed.OutSignal());
-        this->m_LockStateController.Configure(this->OutSpeed1(), inTorqueEngine, inTorqueWheel, this->m_CrossingDetect.OutCrossing(), this->m_ClutchTorqueCapacity.OutSignal(), this);
+        this->m_LockStateController.Configure(this->OutEngineSpeed(), inTorqueEngine, inTorqueWheel, this->m_CrossingDetect.OutCrossing(), this->m_ClutchTorqueCapacity.OutSignal(), this);
 
         // Clutch
         this->m_ClutchTorqueCapacity.Configure(inClutchEngagement);
@@ -215,12 +252,12 @@ namespace Models {
     }
 
 
-    const SimFramework::Signal<float>* Powertrain::OutSpeed1() const
+    const SimFramework::Signal<float>* Powertrain::OutEngineSpeed() const
     {
         return this->m_StateMask.OutSignal(0);
     };
 
-    const SimFramework::Signal<float>* Powertrain::OutSpeed2() const
+    const SimFramework::Signal<float>* Powertrain::OutWheelSpeed() const
     {
         return this->m_StateMask.OutSignal(1);
     };
@@ -230,11 +267,16 @@ namespace Models {
         return this->m_LockStateController.OutState();
     };
 
+    const SimFramework::Signal<int>* Powertrain::OutGearIndex() const
+    {
+        return this->m_InGearIndex.OutSignal();
+    };
+
 
     SimFramework::BlockList Powertrain::Blocks()
     {
         // Construct system
-        return {{},
+        return {{&(this->m_InGearIndex)},
                 {&(this->m_UnLockedState), &(this->m_LockedState)},
                 {&(this->m_UnlockedInput), &(this->m_LockedInput), &(this->m_Switch), &(this->m_StateMask), &(this->m_RelativeSpeed), &(this->m_CrossingDetect), &(this->m_ClutchTorqueCapacity), &(this->m_SignedClutchTorque)},                {&(this->m_LockStateController)},
                 {}};
