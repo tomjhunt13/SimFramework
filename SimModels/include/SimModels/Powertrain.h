@@ -1,6 +1,9 @@
 #ifndef FRAMEWORK_POWERTRAIN_H
 #define FRAMEWORK_POWERTRAIN_H
 
+#include <cmath>
+#include "Eigen/Dense"
+
 #include "SimFramework/Framework.h"
 #include "SimFramework/Components.h"
 
