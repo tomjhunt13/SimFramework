@@ -88,7 +88,7 @@ namespace Models {
     class Powertrain : public SimFramework::Subsystem {
     public:
 
-        void SetParameters(float initSpeed1=0.f, float initSpeed2=0.f, float b_1=1.f, float b_2=1.f, float I_1=1.f, float I_2=1.f, float MaxNormalForce=100.f, float ClutchTorqueCapacity = 400.f);
+        void SetParameters(std::vector<float> gearRatios, float initEngineSpeed=200.f, float initWheelSpeed=0.f, float b_e=1.f, float b_w=1.f, float I_e=1.f, float I_w=1.f, float ClutchTorqueCapacity = 400.f);
 
         void Configure(
                 const SimFramework::Signal<float>* inTorqueEngine,
@@ -111,8 +111,16 @@ namespace Models {
 
     private:
 
+        void SetGearRatio();
         void UpdateSSMatrices(float G, float b_e, float b_w, float I_e, float I_w);
 
+        // Parameters
+        std::vector<float> m_Ratios;
+        int m_GearIndex;
+        float b_e;
+        float b_w;
+        float I_e;
+        float I_w;
 
         // Vector inputs
         SimFramework::Vectorise<float, Eigen::Vector3f> m_UnlockedInput;
@@ -136,6 +144,9 @@ namespace Models {
         // Clutch
         SimFramework::Gain<float, float, float> m_ClutchTorqueCapacity;
         CoulombFriction m_SignedClutchTorque;
+
+        // Gear index monitoring
+        SimFramework::Input<int> m_InGearIndex;
     };
 
 }; // namespace Models

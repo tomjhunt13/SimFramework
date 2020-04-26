@@ -146,31 +146,41 @@ namespace Models {
 
 
 
-    void Powertrain::SetParameters(float initSpeed1, float initSpeed2, float b_1, float b_2, float I_1, float I_2, float MaxNormalForce, float ClutchTorqueCapacity)
+    void Powertrain::SetParameters(std::vector<float> gearRatios, float initEngineSpeed, float initWheelSpeed, float b_e, float b_w, float I_e, float I_w, float ClutchTorqueCapacity)
     {
-        // Set up state space matrices
-        this->UpdateSSMatrices(b_1, b_2, I_1, I_2);
+        // Set up gear ratios
+        std::vector<float> ratios(1 + gearRatios.size());
+        ratios[0] = gearRatios[0];
+        for (int i = 0; i < gearRatios.size(); i++)
+        {
+            ratios[i+1] = gearRatios[i];
+        }
+        this->m_Ratios = ratios;
+
+        this->m_GearIndex = 0;
+        this->SetGearRatio();
+        this->m_InGearIndex.WriteValue(this->m_GearIndex);
+
+        // SS parameters
+        this->b_e = b_e;
+        this->b_w= b_w;
+        this->I_e = I_e;
+        this->I_w = I_w;
 
         this->m_CrossingDetect.SetParameters(0, true);
 
-
-        this->m_TransmittedTorque.SetParameters(b_1, b_2, I_1, I_2);
-
         // Set up clutch
-        this->m_NormalForce.SetGain(MaxNormalForce);
         this->m_ClutchTorqueCapacity.SetGain(ClutchTorqueCapacity);
         this->m_SignedClutchTorque.SetParameters(1.f);
 
         // Initialise system states
         Eigen::Vector<float, 1> initLocked;
-        initLocked << initSpeed1;
+        initLocked << initEngineSpeed;
         this->m_LockedState.SetInitialConditions(initLocked);
 
-        Eigen::Vector2f initUnlocked = {initSpeed1, initSpeed2};
+        Eigen::Vector2f initUnlocked = {initEngineSpeed, initWheelSpeed};
         this->m_UnLockedState.SetInitialConditions(initUnlocked);
-
         this->m_Switch.SetIndex(0);
-
     };
 
 
@@ -271,6 +281,14 @@ namespace Models {
                 {"Clutch Speed Cross", this->m_CrossingDetect.OutCrossing()},
                 {"Clutch Speed 1", this->OutSpeed1()},
                 {"Clutch Speed 2", this->OutSpeed2()}};
+    };
+
+
+    void Powertrain::SetGearRatio()
+    {
+        float G = this->m_Ratios[this->m_GearIndex];
+
+        this->UpdateSSMatrices(G, this->b_e, this->b_w, this->I_e, this->I_w);
     };
 
     void Powertrain::UpdateSSMatrices(float G, float b_e, float b_w, float I_e, float I_w)
