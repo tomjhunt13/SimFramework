@@ -8,75 +8,12 @@
 
 namespace Models {
 
-    class Clutch : public SimFramework::Function
-    {
-    public:
-        Clutch(std::string name = "Clutch");
-
-        void Configure(
-                const SimFramework::Signal<float>* inEngineSpeed,
-                const SimFramework::Signal<float>* inTransmissionSpeed,
-                const SimFramework::Signal<float>* inClutchStiffness);
-
-        const SimFramework::Signal<float>* OutClutchTorque() const;
-
-        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
-        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
-        void Update() override;
-
-    private:
-        // Signals
-        const SimFramework::Signal<float>* m_InEngineSpeed;
-        const SimFramework::Signal<float>* m_InTransmissionSpeed;
-        const SimFramework::Signal<float>* m_InClutchStiffness;
-        SimFramework::Signal<float> m_OutClutchTorque;
-    };
-
-
-
-
-
     class LinearTrigger : public SimFramework::TriggerFunction {
     public:
         LinearTrigger(std::string name = "Linear Trigger");
         void SetParameters(float defaultValue = 0.f, float t_end = 1.f);
 
         float Evaluate(float t);
-    };
-
-
-    class Tyre : public SimFramework::Function
-    {
-    public:
-        Tyre(std::string name = "Tyre");
-
-        void Configure(const SimFramework::Signal<float>* inRotationalSpeed,
-                       const SimFramework::Signal<float>* inLinearSpeed);
-
-        const SimFramework::Signal<float>*  OutForce() const;
-        const SimFramework::Signal<float>*  OutTorque() const;
-
-        void SetParameters(float radius=0.2, float Fz=15000,  float D=1, float C=1.9, float B=10, float E=0.97);
-
-        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
-        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
-        void Update() override;
-
-    private:
-        // Parameters
-        float radius;
-        float Fz;
-        float B;
-        float C;
-        float D;
-        float E;
-        float V_threshold = 0.001;
-
-        // Signals
-        const SimFramework::Signal<float>* m_RotationalSpeed;
-        const SimFramework::Signal<float>* m_LinearSpeed;
-        SimFramework::Signal<float> m_Force;
-        SimFramework::Signal<float> m_Torque;
     };
 
 

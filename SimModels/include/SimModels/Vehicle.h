@@ -16,6 +16,7 @@
 #include "SimModels/Transmission.h"
 #include "SimModels/Road.h"
 #include "SimModels/LockupClutch.h"
+#include "SimModels/Wheel.h"
 
 
 namespace Models {
