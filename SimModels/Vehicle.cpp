@@ -14,6 +14,8 @@ namespace Models {
 
         // Configure model blocks
         this->m_Tyre.Configure(this->m_Transmission.OutWheelSpeed(), this->m_VehicleDynamics.OutVehicleVelocity());
+        this->m_BrakeTyreSum.Configure({this->m_Tyre.OutTorque(), this->m_Brake.OutForce()}, {1.f, 1.f});
+        this->m_Brake.Configure(this->m_LockupClutch.OutSpeed2(), this->m_InBrakePressure.OutSignal());
         this->m_Road.Configure(this->m_VehicleDynamics.OutVehiclePosition());
 
         // Configure IO blocks
@@ -32,7 +34,7 @@ namespace Models {
 
         SimFramework::BlockList list = {{&(this->m_InThrottle),     &(this->m_InBrakePressure)},
                                         {},
-                                        {&(this->m_Tyre), &(this->m_Road)},
+                                        {&(this->m_Tyre), &(this->m_Road), &(this->m_BrakeTyreSum), &(this->m_Brake)},
                                         {&(this->m_OutEngineSpeed), &(this->m_OutFuelFlowRate), &(this->m_OutFuelCumulative), &(this->m_OutWheelSpeed), &(this->m_OutLinearVelocity), &(this->m_OutDisplacement), &(this->m_OutCoordinates), &(this->m_OutGradient), &(this->m_OutCurrentGear), &(this->m_OutClutchLockState)},
                                         {&(this->m_Controller), &(this->m_Engine), &(this->m_Transmission), &(this->m_VehicleDynamics), &(this->m_LockupClutch)}};
         this->RegisterBlocks(list);
@@ -49,6 +51,7 @@ namespace Models {
         this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho, parameters.PeakBrakeForce, parameters.RollingResistance);
         this->m_Road.SetProfile(parameters.RoadJSON);
 
+        this->m_Brake.SetParameters(parameters.PeakBrakeForce);
         this->m_Tyre.SetParameters(parameters.TyreRadius, parameters.Mass * 9.81 / 2.f, parameters.PeakTyreForceScale);
 
         this->SetLogOutputFile(parameters.LogOutputFile, parameters.LogFrequency);
@@ -80,7 +83,7 @@ namespace Models {
                 &(this->m_OutEngineSpeed),
                 &(this->m_OutFuelFlowRate),
                 &(this->m_OutFuelCumulative),
-                &(this->m_OutLinearVelocity),
+                &(this->m_OutWheelSpeed),
                 &(this->m_OutLinearVelocity),
                 &(this->m_OutDisplacement),
                 &(this->m_OutCoordinates),
