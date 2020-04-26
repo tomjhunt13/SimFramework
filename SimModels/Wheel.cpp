@@ -75,9 +75,10 @@ namespace Models {
 
 
 
-    void Wheel::SetParameters(float peakBreakForce)
+    void Wheel::SetParameters(float peakBreakForce, float wheelRadius)
     {
         this->m_Brake.SetParameters(peakBreakForce);
+        this->m_Tyre.SetParameters(wheelRadius);
     };
 
     void Wheel::Configure(

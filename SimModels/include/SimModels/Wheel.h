@@ -43,7 +43,7 @@ namespace Models {
 
     class Wheel : public SimFramework::Subsystem {
     public:
-        void SetParameters(float peakBreakForce=100.f);
+        void SetParameters(float peakBreakForce=100.f, float wheelRadius=0.2);
 
         void Configure(
                 const SimFramework::Signal<float>* inBrake,

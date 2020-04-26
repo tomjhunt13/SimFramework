@@ -124,7 +124,7 @@ namespace Models {
         SimFramework::Output<int> m_OutClutchLockState;
 
         // Blocks - System
-        Tyre m_Tyre;
+//        Tyre m_Tyre;
         Road m_Road;
 
         // Subsystems
@@ -133,6 +133,7 @@ namespace Models {
         Transmission m_Transmission;
         Engine m_Engine;
         VehicleDynamics m_VehicleDynamics;
+        Wheel m_Wheel;
     };
 
 }; // namespace Models
