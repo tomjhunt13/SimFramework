@@ -146,7 +146,7 @@ namespace Models {
 
 
 
-    void LockupClutch::SetParameters(float initSpeed1, float initSpeed2, float b_1, float b_2, float I_1, float I_2, float MaxNormalForce, float ClutchTorqueCapacity)
+    void Powertrain::SetParameters(float initSpeed1, float initSpeed2, float b_1, float b_2, float I_1, float I_2, float MaxNormalForce, float ClutchTorqueCapacity)
     {
         // Set up state space matrices
         this->UpdateSSMatrices(b_1, b_2, I_1, I_2);
@@ -175,14 +175,14 @@ namespace Models {
 
 
 
-    void LockupClutch::Configure(
-            const SimFramework::Signal<float>* inTorque1,
-            const SimFramework::Signal<float>* inTorque2,
+    void Powertrain::Configure(
+            const SimFramework::Signal<float>* inTorqueEngine,
+            const SimFramework::Signal<float>* inTorqueWheel,
             const SimFramework::Signal<float>* inClutchEngagement)
     {
         // Vector inputs
-        this->m_UnlockedInput.Configure({this->m_SignedClutchTorque.OutForce(), inTorque1, inTorque2});
-        this->m_LockedInput.Configure({inTorque1, inTorque2});
+        this->m_UnlockedInput.Configure({this->m_SignedClutchTorque.OutForce(), inTorqueEngine, inTorqueWheel});
+        this->m_LockedInput.Configure({inTorqueEngine, inTorqueWheel});
 
         // State space
         this->m_UnLockedState.Configure(this->m_UnlockedInput.OutSignal());
@@ -196,43 +196,41 @@ namespace Models {
         this->m_RelativeSpeed.Configure({this->m_StateMask.OutSignal(0), this->m_StateMask.OutSignal(1)}, {1.f, -1.f});
 
         // Lock state manager
-        this->m_TransmittedTorque.Configure(this->OutSpeed1(), inTorque1, inTorque2);
         this->m_CrossingDetect.Configure(this->m_RelativeSpeed.OutSignal());
-        this->m_LockStateController.Configure(this->m_CrossingDetect.OutCrossing(), this->m_TransmittedTorque.OutTorque(), this->m_ClutchTorqueCapacity.OutSignal(), this);
+        this->m_LockStateController.Configure(this->OutSpeed1(), inTorqueEngine, inTorqueWheel, this->m_CrossingDetect.OutCrossing(), this->m_ClutchTorqueCapacity.OutSignal(), this);
 
         // Clutch
-        this->m_NormalForce.Configure(inClutchEngagement);
-        this->m_ClutchTorqueCapacity.Configure(this->m_NormalForce.OutSignal());
+        this->m_ClutchTorqueCapacity.Configure(inClutchEngagement);
         this->m_SignedClutchTorque.Configure(this->m_RelativeSpeed.OutSignal(), this->m_ClutchTorqueCapacity.OutSignal());
     }
 
 
-    const SimFramework::Signal<float>* LockupClutch::OutSpeed1() const
+    const SimFramework::Signal<float>* Powertrain::OutSpeed1() const
     {
         return this->m_StateMask.OutSignal(0);
     };
 
-    const SimFramework::Signal<float>* LockupClutch::OutSpeed2() const
+    const SimFramework::Signal<float>* Powertrain::OutSpeed2() const
     {
         return this->m_StateMask.OutSignal(1);
     };
 
-    const SimFramework::Signal<int>* LockupClutch::OutEngagement() const
+    const SimFramework::Signal<int>* Powertrain::OutEngagement() const
     {
         return this->m_LockStateController.OutState();
     };
 
 
-    SimFramework::BlockList LockupClutch::Blocks()
+    SimFramework::BlockList Powertrain::Blocks()
     {
         // Construct system
         return {{},
                 {&(this->m_UnLockedState), &(this->m_LockedState)},
-                {&(this->m_UnlockedInput), &(this->m_LockedInput), &(this->m_Switch), &(this->m_StateMask), &(this->m_RelativeSpeed), &(this->m_TransmittedTorque), &(this->m_CrossingDetect), &(this->m_NormalForce), &(this->m_ClutchTorqueCapacity), &(this->m_SignedClutchTorque)},                {&(this->m_LockStateController)},
+                {&(this->m_UnlockedInput), &(this->m_LockedInput), &(this->m_Switch), &(this->m_StateMask), &(this->m_RelativeSpeed), &(this->m_CrossingDetect), &(this->m_ClutchTorqueCapacity), &(this->m_SignedClutchTorque)},                {&(this->m_LockStateController)},
                 {}};
     };
 
-    void LockupClutch::TransitionState(ELockupClutchState newState)
+    void Powertrain::TransitionState(ELockupClutchState newState)
     {
         switch (newState)
         {
@@ -241,7 +239,7 @@ namespace Models {
                 // Change switch indices
                 this->m_Switch.SetIndex(1);
 
-                // Initialise state space models
+                // When locking, state speed is engine speed
                 Eigen::Vector<float, 1> initialConditions;
                 initialConditions << this->m_StateMask.OutSignal(0)->Read();
                 this->m_LockedState.SetInitialConditions(initialConditions);
@@ -265,30 +263,29 @@ namespace Models {
         }
     }
 
-    std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LockupClutch::LogSignals()
+    std::vector<std::pair<std::string, const SimFramework::SignalBase *> > Powertrain::LogSignals()
     {
         return {{"Clutch Lock State", this->m_LockStateController.OutState()},
-                {"Clutch Normal Force", this->m_NormalForce.OutSignal()},
                 {"Clutch Torque Capacity", this->m_ClutchTorqueCapacity.OutSignal()},
                 {"Clutch Signed Torque", this->m_SignedClutchTorque.OutForce()},
                 {"Clutch Speed Cross", this->m_CrossingDetect.OutCrossing()},
                 {"Clutch Speed 1", this->OutSpeed1()},
-                {"Clutch Speed 2", this->OutSpeed2()},
-                {"Clutch Transmitted Torque", this->m_TransmittedTorque.OutTorque()}};
+                {"Clutch Speed 2", this->OutSpeed2()}};
     };
 
-    void LockupClutch::UpdateSSMatrices(float b_1, float b_2, float I_1, float I_2)
+    void Powertrain::UpdateSSMatrices(float G, float b_e, float b_w, float I_e, float I_w)
     {
-
         // Set up state space matrices for locked state
+        float I_eff = I_w + G * G * I_e;
+
         Eigen::Matrix<float, 1, 1> lockedA;
-        lockedA << - (b_1 + b_2) / (I_1 + I_2);
+        lockedA << - (G * G * b_e + b_w) / I_eff;
 
         Eigen::Matrix<float, 1, 2> lockedB;
-        lockedB << 1.f / (I_1 + I_2), - 1.f / (I_1 + I_2);
+        lockedB << (G * G) / I_eff, - G / I_eff;
 
         Eigen::Matrix<float, 2, 1> lockedC;
-        lockedC << 1.f, 1.f;
+        lockedC << 1.f, 1.f / G;
 
         Eigen::Matrix<float, 2, 2> lockedD = Eigen::Matrix<float, 2, 2>::Zero();
 
@@ -296,10 +293,10 @@ namespace Models {
 
         // Set up state space matrices for unlocked state
         Eigen::Matrix<float, 2, 2> unlockedA;
-        unlockedA << - b_1 / I_1, 0.f, 0.f, - b_2 / I_2;
+        unlockedA << - b_e / I_e, 0.f, 0.f, - b_w / I_w;
 
         Eigen::Matrix<float, 2, 3> unlockedB;
-        unlockedB << - 1.f / I_1, 1.f / I_1, 0.f, 1.f / I_2, 0, - 1.f / I_2;
+        unlockedB << - 1.f / I_e, 1.f / I_e, 0.f, G / I_w, 0, - 1.f / I_w;
 
         Eigen::Matrix<float, 2, 2> unlockedC;
         unlockedC << 1.f, 0.f, 0.f, 1.f;
