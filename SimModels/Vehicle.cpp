@@ -48,7 +48,7 @@ namespace Models {
         this->m_LockupClutch.SetParameters(parameters.EngineInitialSpeed, 0.f, parameters.EngineViscousConstant, parameters.TransmissionViscousFriction, parameters.EngineInertia, parameters.TransmissionInertia, parameters.ClutchMaxNormalForce, parameters.ClutchTorqueCapacity);
         this->m_Engine.SetParameters(parameters.EngineJSON);
         this->m_Transmission.SetParameters(parameters.GearRatios);
-        this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho, parameters.PeakBrakeForce, parameters.RollingResistance);
+        this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho, parameters.RollingResistance);
         this->m_Road.SetProfile(parameters.RoadJSON);
 
         this->m_Brake.SetParameters(parameters.PeakBrakeForce);

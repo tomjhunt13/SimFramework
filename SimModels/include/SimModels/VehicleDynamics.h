@@ -14,7 +14,7 @@ namespace Models {
     public:
         VehicleDynamics();
 
-        void SetParameters(float initialPosition=0.f, float initialVelocity=0.f, float mass=1000.f, float Cd=0.3, float A=2.5, float rho=1.225, float peakBrakeForce=300.f, float rollingResistance=0.015);
+        void SetParameters(float initialPosition=0.f, float initialVelocity=0.f, float mass=1000.f, float Cd=0.3, float A=2.5, float rho=1.225, float rollingResistance=0.015);
 
         void Configure(
                 const SimFramework::Signal<float>* inTyreForce,
@@ -32,10 +32,9 @@ namespace Models {
         SimFramework::ConstantBlock<float> m_ConstWeight;
         AeroDrag m_AeroDrag;
         Gravity m_Gravity;
-        CoulombFriction m_Brake;
         CoulombFriction m_RollingResistance;
-        SimFramework::Vectorise<float, Eigen::Vector<float, 5>> m_Vectorise;
-        SimFramework::StateSpace<Eigen::Vector<float, 5>, Eigen::Vector2f, 5, 2, 2> m_StateSpace;
+        SimFramework::Vectorise<float, Eigen::Vector<float, 4>> m_Vectorise;
+        SimFramework::StateSpace<Eigen::Vector<float, 4>, Eigen::Vector2f, 4, 2, 2> m_StateSpace;
         SimFramework::Mask<Eigen::Vector2f, float, 2> m_Mask;
 
     };
