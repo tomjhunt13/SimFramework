@@ -34,7 +34,6 @@ namespace Models {
         float PullawayClutchMinValue = 0.2;
 
         // Clutch
-        float ClutchMaxNormalForce = 10000.f;
         float ClutchTorqueCapacity = 400.f;
 
         // Transmission

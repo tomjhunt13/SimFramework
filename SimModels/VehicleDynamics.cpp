@@ -67,7 +67,7 @@ namespace Models {
     std::vector<std::pair<std::string, const SimFramework::SignalBase *> > VehicleDynamics::LogSignals()
     {
         return {{"Vehicle Position, Vehicle Velocity", this->m_StateSpace.OutSignal()},
-                {"Vehicle Tyre Force, Vehicle Aero Drag, Vehicle Gravity Force, Vehicle Brake Force, Vehicle RollingResistance", this->m_Vectorise.OutSignal()}};
+                {"Vehicle Tyre Force, Vehicle Aero Drag, Vehicle Gravity Force, Vehicle RollingResistance", this->m_Vectorise.OutSignal()}};
     };
 
 

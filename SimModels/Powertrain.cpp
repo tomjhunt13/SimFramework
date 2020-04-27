@@ -185,6 +185,12 @@ namespace Models {
 
     void Powertrain::SetParameters(std::vector<float> gearRatios, float initEngineSpeed, float initWheelSpeed, float b_e, float b_w, float I_e, float I_w, float ClutchTorqueCapacity)
     {
+        // SS parameters
+        this->b_e = b_e;
+        this->b_w= b_w;
+        this->I_e = I_e;
+        this->I_w = I_w;
+
         // Set up gear ratios
         std::vector<float> ratios(1 + gearRatios.size());
         ratios[0] = gearRatios[0];
@@ -198,11 +204,6 @@ namespace Models {
         this->SetGearRatio();
         this->m_InGearIndex.WriteValue(this->m_GearIndex);
 
-        // SS parameters
-        this->b_e = b_e;
-        this->b_w= b_w;
-        this->I_e = I_e;
-        this->I_w = I_w;
 
         this->m_CrossingDetect.SetParameters(0, true);
 
@@ -278,7 +279,8 @@ namespace Models {
         // Construct system
         return {{&(this->m_InGearIndex)},
                 {&(this->m_UnLockedState), &(this->m_LockedState)},
-                {&(this->m_UnlockedInput), &(this->m_LockedInput), &(this->m_Switch), &(this->m_StateMask), &(this->m_RelativeSpeed), &(this->m_CrossingDetect), &(this->m_ClutchTorqueCapacity), &(this->m_SignedClutchTorque)},                {&(this->m_LockStateController)},
+                {&(this->m_UnlockedInput), &(this->m_LockedInput), &(this->m_Switch), &(this->m_StateMask), &(this->m_RelativeSpeed), &(this->m_CrossingDetect), &(this->m_ClutchTorqueCapacity), &(this->m_SignedClutchTorque)},
+                {&(this->m_LockStateController)},
                 {}};
     };
 
@@ -329,7 +331,7 @@ namespace Models {
     void Powertrain::SetGearRatio()
     {
         float G = this->m_Ratios[this->m_GearIndex];
-
+        this->m_LockStateController.SetParameters(G, this->b_e, this->b_w, this->I_e, this->I_w);
         this->UpdateSSMatrices(G, this->b_e, this->b_w, this->I_e, this->I_w);
     };
 

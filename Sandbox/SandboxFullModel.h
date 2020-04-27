@@ -14,14 +14,13 @@ void SandboxFullModel() {
     vehicleParameters.Mass = 1500.f;
     vehicleParameters.GearshiftLag = 0.75;
     vehicleParameters.A = 2.5;
-    vehicleParameters.ClutchMaxNormalForce = 500.f;
-    vehicleParameters.ClutchTorqueCapacity = 1.f;
+    vehicleParameters.ClutchTorqueCapacity = 500.f;
     vehicleParameters.EngineInertia = 0.2f;
     vehicleParameters.TransmissionInertia = 4.f;
     vehicleParameters.LogFrequency = 1;
-    vehicleParameters.GearRatios = {10};
+    vehicleParameters.GearRatios = {15};
     vehicleParameters.InitialVelocity = 0;
-    vehicleParameters.PullawayClutchMinValue = 0.1;
+    vehicleParameters.PullawayClutchMinValue = 0.3;
     vehicleParameters.LogOutputFile = "LogOut.csv";
 
 
@@ -33,7 +32,7 @@ void SandboxFullModel() {
     blocks.InThrottle->WriteValue(1.f);
 
 
-    float dt = 0.1;
+    float dt = 0.01;
     int counter = 1;
     for (float t = 0.f; t <= 500.f; t += dt) {
 

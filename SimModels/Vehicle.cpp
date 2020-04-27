@@ -44,7 +44,7 @@ namespace Models {
 
         this->m_Controller.SetParameters(parameters.GearshiftLag, parameters.ClutchEngagementSpeed, parameters.PullawayClutchMinValue);
 
-        this->m_Powertrain.SetParameters(parameters.GearRatios, parameters.EngineInitialSpeed, 0.f, parameters.EngineViscousConstant, parameters.TransmissionViscousFriction, parameters.EngineInertia, parameters.TransmissionInertia, parameters.ClutchTorqueCapacity);
+        this->m_Powertrain.SetParameters(parameters.GearRatios, parameters.EngineInitialSpeed, 0.1, parameters.EngineViscousConstant, parameters.TransmissionViscousFriction, parameters.EngineInertia, parameters.TransmissionInertia, parameters.ClutchTorqueCapacity);
         this->m_Engine.SetParameters(parameters.EngineJSON);
         this->m_VehicleDynamics.SetParameters(parameters.InitialPosition, parameters.InitialVelocity, parameters.Mass, parameters.Cd, parameters.A, parameters.rho, parameters.RollingResistance);
         this->m_Road.SetProfile(parameters.RoadJSON);

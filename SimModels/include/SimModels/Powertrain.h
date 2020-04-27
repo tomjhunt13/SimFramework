@@ -113,9 +113,7 @@ namespace Models {
         SimFramework::BlockList Blocks() override;
         std::vector<std::pair<std::string, const SimFramework::SignalBase *> > LogSignals() override;
 
-
         void TransitionState(ELockupClutchState newState);
-
 
     private:
 
