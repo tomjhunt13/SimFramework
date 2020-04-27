@@ -241,7 +241,7 @@ namespace Models {
 
         // Speed mask outputs
         this->m_StateMask.Configure(this->m_Switch.OutSignal());
-        this->m_RelativeSpeed.Configure({this->m_StateMask.OutSignal(0), this->m_StateMask.OutSignal(1)}, {1.f, -1.f});
+        this->m_RelativeSpeed.Configure({this->OutEngineSpeed(), this->m_StateMask.OutSignal(0)}, {1.f, -1.f});
 
         // Lock state manager
         this->m_CrossingDetect.Configure(this->m_RelativeSpeed.OutSignal());
@@ -255,12 +255,12 @@ namespace Models {
 
     const SimFramework::Signal<float>* Powertrain::OutEngineSpeed() const
     {
-        return this->m_StateMask.OutSignal(0);
+        return this->m_StateMask.OutSignal(1);
     };
 
     const SimFramework::Signal<float>* Powertrain::OutWheelSpeed() const
     {
-        return this->m_StateMask.OutSignal(1);
+        return this->m_StateMask.OutSignal(2);
     };
 
     const SimFramework::Signal<int>* Powertrain::OutEngagement() const
@@ -295,7 +295,7 @@ namespace Models {
 
                 // When locking, state speed is engine speed
                 Eigen::Vector<float, 1> initialConditions;
-                initialConditions << this->m_StateMask.OutSignal(0)->Read();
+                initialConditions << this->m_StateMask.OutSignal(1)->Read();
                 this->m_LockedState.SetInitialConditions(initialConditions);
                 this->m_LockedState.Initialise(0.f);
 
@@ -308,7 +308,7 @@ namespace Models {
                 this->m_Switch.SetIndex(0);
 
                 // Initialise state space models
-                Eigen::Vector2f initialConditions = {this->m_StateMask.OutSignal(0)->Read(), this->m_StateMask.OutSignal(1)->Read()};
+                Eigen::Vector2f initialConditions = {this->m_StateMask.OutSignal(1)->Read(), this->m_StateMask.OutSignal(2)->Read()};
                 this->m_UnLockedState.SetInitialConditions(initialConditions);
                 this->m_UnLockedState.Initialise(0.f);
 
@@ -346,10 +346,10 @@ namespace Models {
         Eigen::Matrix<float, 1, 2> lockedB;
         lockedB << (G * G) / I_eff, - G / I_eff;
 
-        Eigen::Matrix<float, 2, 1> lockedC;
-        lockedC << 1.f, 1.f / G;
+        Eigen::Matrix<float, 3, 1> lockedC;
+        lockedC << 1.f, 1.f, 1.f / G;
 
-        Eigen::Matrix<float, 2, 2> lockedD = Eigen::Matrix<float, 2, 2>::Zero();
+        Eigen::Matrix<float, 3, 2> lockedD = Eigen::Matrix<float, 3, 2>::Zero();
 
         this->m_LockedState.SetMatrices(lockedA, lockedB, lockedC, lockedD);
 
@@ -360,10 +360,10 @@ namespace Models {
         Eigen::Matrix<float, 2, 3> unlockedB;
         unlockedB << - 1.f / I_e, 1.f / I_e, 0.f, G / I_w, 0, - 1.f / I_w;
 
-        Eigen::Matrix<float, 2, 2> unlockedC;
-        unlockedC << 1.f, 0.f, 0.f, 1.f;
+        Eigen::Matrix<float, 3, 2> unlockedC;
+        unlockedC << 0.f, G, 1.f, 0.f, 0.f, 1.f;
 
-        Eigen::Matrix<float, 2, 3> unlockedD = Eigen::Matrix<float, 2, 3>::Zero();
+        Eigen::Matrix<float, 3, 3> unlockedD = Eigen::Matrix<float, 3, 3>::Zero();
 
         this->m_UnLockedState.SetMatrices(unlockedA, unlockedB, unlockedC, unlockedD);
     };

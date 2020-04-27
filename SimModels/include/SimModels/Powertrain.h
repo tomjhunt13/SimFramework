@@ -133,14 +133,14 @@ namespace Models {
         SimFramework::Vectorise<float, Eigen::Vector2f> m_LockedInput;
 
         // State space
-        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector2f, 3, 2, 2> m_UnLockedState;
-        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector2f, 2, 1, 2> m_LockedState;
+        SimFramework::StateSpace<Eigen::Vector3f, Eigen::Vector3f, 3, 2, 3> m_UnLockedState;
+        SimFramework::StateSpace<Eigen::Vector2f, Eigen::Vector3f, 2, 1, 3> m_LockedState;
 
         // Switch
-        SimFramework::Switch<Eigen::Vector2f> m_Switch;
+        SimFramework::Switch<Eigen::Vector3f> m_Switch;
 
         // Mask outputs
-        SimFramework::Mask<Eigen::Vector2f, float, 2> m_StateMask;
+        SimFramework::Mask<Eigen::Vector3f, float, 3> m_StateMask;
         SimFramework::SummingJunction<float> m_RelativeSpeed;
 
         // Lock state manager
