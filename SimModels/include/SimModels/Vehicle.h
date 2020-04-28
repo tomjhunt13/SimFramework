@@ -42,7 +42,7 @@ namespace Models {
         float TransmissionViscousFriction = 0.05;
 
         // Brake
-        float PeakBrakeForce = 300.f;
+        float PeakBrakeForce = 1000.f;
 
         // Tyre
         float TyreRadius = 0.2;
@@ -83,12 +83,11 @@ namespace Models {
         SimFramework::Output<float>* OutDisplacement;
         SimFramework::Output<Eigen::Vector2f>* OutCoordinates;
 
-        // Transmission
-        SimFramework::Output<int>* OutCurrentGear;
-
         // Road
         SimFramework::Output<float>* OutGradient; // Radians
 
+        // Powertrain
+        SimFramework::Output<int>* OutCurrentGear;
         SimFramework::Output<int>* OutClutchLockState;
     };
 
@@ -130,7 +129,6 @@ namespace Models {
         // Subsystems
         VehicleController m_Controller;
         Powertrain m_Powertrain;
-//        Transmission m_Transmission;
         Engine m_Engine;
         VehicleDynamics m_VehicleDynamics;
     };

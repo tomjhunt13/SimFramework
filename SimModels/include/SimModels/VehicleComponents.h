@@ -2,7 +2,7 @@
 #define FRAMEWORK_VEHICLECOMPONENTS_H
 
 #include <cmath>
-#include "SimFramework/Utilities.h"
+
 #include "SimFramework/Framework.h"
 #include "SimFramework/Components.h"
 
@@ -16,6 +16,28 @@ namespace Models {
         float Evaluate(float t);
     };
 
+    class CoulombFriction : public SimFramework::Function
+    {
+    public:
+        CoulombFriction(std::string name="Coulomb Friction");
+
+        void SetParameters(float mu=1.f);
+        void Configure(const SimFramework::Signal<float>* inVelocity, const SimFramework::Signal<float>* inNormalForce);
+        const SimFramework::Signal<float>* OutForce() const;
+
+        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
+        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
+        void Update() override;
+
+    private:
+        // Parameters
+        float mu;
+
+        // Signals
+        const SimFramework::Signal<float>* m_Velocity;
+        const SimFramework::Signal<float>* m_NormalForce;
+        SimFramework::Signal<float> m_Force;
+    };
 
     class Tyre : public SimFramework::Function
     {
@@ -49,29 +71,6 @@ namespace Models {
         const SimFramework::Signal<float>* m_LinearSpeed;
         SimFramework::Signal<float> m_Force;
         SimFramework::Signal<float> m_Torque;
-    };
-
-    class CoulombFriction : public SimFramework::Function
-    {
-    public:
-        CoulombFriction(std::string name="Coulomb Friction");
-
-        void SetParameters(float mu=1.f);
-        void Configure(const SimFramework::Signal<float>* inVelocity, const SimFramework::Signal<float>* inNormalForce);
-        const SimFramework::Signal<float>* OutForce() const;
-
-        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
-        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
-        void Update() override;
-
-    private:
-        // Parameters
-        float mu;
-
-        // Signals
-        const SimFramework::Signal<float>* m_Velocity;
-        const SimFramework::Signal<float>* m_NormalForce;
-        SimFramework::Signal<float> m_Force;
     };
 
 }; // namespace Models
