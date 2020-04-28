@@ -59,7 +59,7 @@ namespace Models {
 
     void Vehicle::ShiftUp()
     {
-        if (this->m_Powertrain.ShiftUp() && this->m_Powertrain.OutGearIndex()->Read() != 0)
+        if (this->m_Powertrain.ShiftUp())
         {
             this->m_Controller.Trigger();
         }
@@ -98,7 +98,8 @@ namespace Models {
                 {"Road Gradient", this->m_Road.OutGradient()},
                 {"Wheel Speed", this->m_Powertrain.OutWheelSpeed()},
                 {"Tyre Torque", this->m_Tyre.OutTorque()},
-                {"Displacement", this->m_VehicleDynamics.OutVehiclePosition()}};
+                {"Displacement", this->m_VehicleDynamics.OutVehiclePosition()}
+        };
     };
 
 
