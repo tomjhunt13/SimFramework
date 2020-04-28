@@ -105,6 +105,7 @@ namespace Models {
 
         // Output signals
         const SimFramework::Signal<float>* OutEngineSpeed() const;
+        const SimFramework::Signal<float>* OutClutchSpeed() const;
         const SimFramework::Signal<float>* OutWheelSpeed() const;
         const SimFramework::Signal<int>* OutEngagement() const;
         const SimFramework::Signal<int>* OutGearIndex() const;

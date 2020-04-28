@@ -258,6 +258,11 @@ namespace Models {
         return this->m_StateMask.OutSignal(1);
     };
 
+    const SimFramework::Signal<float>* Powertrain::OutClutchSpeed() const
+    {
+        return this->m_StateMask.OutSignal(0);
+    };
+
     const SimFramework::Signal<float>* Powertrain::OutWheelSpeed() const
     {
         return this->m_StateMask.OutSignal(2);

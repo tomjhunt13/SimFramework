@@ -8,6 +8,52 @@
 
 namespace Models {
 
+    class AeroDrag : public SimFramework::Function
+    {
+    public:
+        AeroDrag(std::string name="Aero Drag");
+
+        void SetParameters(float Cd=0.3, float A=2.5, float rho=1.225);
+        void Configure(const SimFramework::Signal<float>* inSpeed);
+        const SimFramework::Signal<float>* OutForce() const;
+
+        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
+        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
+        void Update() override;
+
+    private:
+        // Parameters
+        float Cd;
+        float A;
+        float rho;
+
+        // Signals
+        const SimFramework::Signal<float>* m_Speed;
+        SimFramework::Signal<float> m_Force;
+    };
+
+    class Gravity : public SimFramework::Function
+    {
+    public:
+        Gravity(std::string name="Gravity");
+
+        void SetParameters(float mass=1000.f);
+        void Configure(const SimFramework::Signal<float>* inGradient);
+        const SimFramework::Signal<float>* OutForce() const;
+
+        std::vector<const SimFramework::SignalBase*> InputSignals() const override;
+        std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
+        void Update() override;
+
+    private:
+        // Parameters
+        float mass;
+        const float g=9.81;
+
+        // Signals
+        const SimFramework::Signal<float>* m_Gradient;
+        SimFramework::Signal<float> m_Force;
+    };
 
     class VehicleDynamics : public SimFramework::Subsystem
     {
@@ -36,7 +82,6 @@ namespace Models {
         SimFramework::Vectorise<float, Eigen::Vector<float, 4>> m_Vectorise;
         SimFramework::StateSpace<Eigen::Vector<float, 4>, Eigen::Vector2f, 4, 2, 2> m_StateSpace;
         SimFramework::Mask<Eigen::Vector2f, float, 2> m_Mask;
-
     };
 
 }; // namespace Models

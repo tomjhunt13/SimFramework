@@ -7,7 +7,7 @@ namespace Models {
     {
         // Configure subsystems
         this->m_Powertrain.Configure(this->m_Engine.OutEngineTorque(), this->m_BrakeTyreSum.OutSignal(), this->m_Controller.OutClutchStiffness());
-        this->m_Controller.Configure(this->m_Powertrain.OutEngineSpeed(), this->m_InThrottle.OutSignal(), this->m_Powertrain.OutGearIndex());
+        this->m_Controller.Configure(this->m_Powertrain.OutClutchSpeed(), this->m_InThrottle.OutSignal(), this->m_Powertrain.OutGearIndex());
         this->m_Engine.Configure(this->m_Controller.OutAugmentedThrottle(), this->m_Powertrain.OutEngineSpeed());
         this->m_VehicleDynamics.Configure(this->m_Tyre.OutForce(), this->m_Road.OutGradient(), this->m_InBrakePressure.OutSignal());
 

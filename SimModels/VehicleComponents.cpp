@@ -5,45 +5,6 @@
 
 namespace Models {
 
-    Clutch::Clutch(std::string name) : Function(name) {};
-
-    void Clutch::Configure(
-            const SimFramework::Signal<float>* inEngineSpeed,
-            const SimFramework::Signal<float>* inTransmissionSpeed,
-            const SimFramework::Signal<float>* inClutchStiffness)
-    {
-        this->m_InEngineSpeed = inEngineSpeed;
-        this->m_InTransmissionSpeed = inTransmissionSpeed;
-        this->m_InClutchStiffness = inClutchStiffness;
-    };
-
-    const SimFramework::Signal<float>* Clutch::OutClutchTorque() const
-    {
-        return &(this->m_OutClutchTorque);
-    };
-
-
-    std::vector<const SimFramework::SignalBase*> Clutch::InputSignals() const
-    {
-        return {this->m_InEngineSpeed, this->m_InTransmissionSpeed, this->m_InClutchStiffness};
-    };
-
-    std::vector<const SimFramework::SignalBase*> Clutch::OutputSignals() const
-    {
-        return {&(this->m_OutClutchTorque)};
-    };
-
-    void Clutch::Update()
-    {
-        float clutchStiffness = this->m_InClutchStiffness->Read();
-        float engineSpeed = this->m_InEngineSpeed->Read();
-        float transmissionSpeed = this->m_InTransmissionSpeed->Read();
-
-        float torque = clutchStiffness * (engineSpeed - transmissionSpeed);
-
-        this->m_OutClutchTorque.Write(torque);
-    };
-
 
     LinearTrigger::LinearTrigger(std::string name) : SimFramework::TriggerFunction(name) {};
 
@@ -129,44 +90,6 @@ namespace Models {
     };
 
 
-    AeroDrag::AeroDrag(std::string name) : Function(name) {};
-
-    void AeroDrag::SetParameters(float Cd, float A, float rho)
-    {
-        this->Cd = Cd;
-        this->A = A;
-        this->rho = rho;
-    }
-
-    void AeroDrag::Configure(const SimFramework::Signal<float>* inSpeed)
-    {
-        this->m_Speed = inSpeed;
-    };
-
-    const SimFramework::Signal<float>* AeroDrag::OutForce() const
-    {
-        return &(this->m_Force);
-    };
-
-
-    std::vector<const  SimFramework::SignalBase*> AeroDrag::InputSignals() const
-    {
-        return {this->m_Speed};
-    };
-
-    std::vector<const SimFramework::SignalBase*> AeroDrag::OutputSignals() const
-    {
-        return {&(this->m_Force)};
-    };
-
-    void AeroDrag::Update()
-    {
-        float speed = this->m_Speed->Read();
-        this->m_Force.Write(0.5 * this->rho * this->A * this->Cd * speed * speed);
-    };
-
-
-
     CoulombFriction::CoulombFriction(std::string name) : SimFramework::Function(name) {};
 
     void CoulombFriction::SetParameters(float mu)
@@ -215,38 +138,7 @@ namespace Models {
 
 
 
-    Gravity::Gravity(std::string name) : Function(name) {};
 
-    void Gravity::SetParameters(float mass)
-    {
-        this->mass = mass;
-    };
-
-    void Gravity::Configure(const SimFramework::Signal<float>* inGradient)
-    {
-        this->m_Gradient = inGradient;
-    };
-
-    const SimFramework::Signal<float>* Gravity::OutForce() const
-    {
-        return &(this->m_Force);
-    };
-
-    std::vector<const SimFramework::SignalBase*> Gravity::InputSignals() const
-    {
-        return {this->m_Gradient};
-    };
-
-    std::vector<const SimFramework::SignalBase*> Gravity::OutputSignals() const
-    {
-        return {this->OutForce()};
-    };
-
-    void Gravity::Update()
-    {
-        float gradient = this->m_Gradient->Read();
-        this->m_Force.Write(this->mass * this->g * std::sin(gradient));
-    };
 
 
 

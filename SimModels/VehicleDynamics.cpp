@@ -3,6 +3,77 @@
 
 namespace Models {
 
+    AeroDrag::AeroDrag(std::string name) : Function(name) {};
+
+    void AeroDrag::SetParameters(float Cd, float A, float rho)
+    {
+        this->Cd = Cd;
+        this->A = A;
+        this->rho = rho;
+    }
+
+    void AeroDrag::Configure(const SimFramework::Signal<float>* inSpeed)
+    {
+        this->m_Speed = inSpeed;
+    };
+
+    const SimFramework::Signal<float>* AeroDrag::OutForce() const
+    {
+        return &(this->m_Force);
+    };
+
+
+    std::vector<const  SimFramework::SignalBase*> AeroDrag::InputSignals() const
+    {
+        return {this->m_Speed};
+    };
+
+    std::vector<const SimFramework::SignalBase*> AeroDrag::OutputSignals() const
+    {
+        return {&(this->m_Force)};
+    };
+
+    void AeroDrag::Update()
+    {
+        float speed = this->m_Speed->Read();
+        this->m_Force.Write(0.5 * this->rho * this->A * this->Cd * speed * speed);
+    };
+
+
+    Gravity::Gravity(std::string name) : Function(name) {};
+
+    void Gravity::SetParameters(float mass)
+    {
+        this->mass = mass;
+    };
+
+    void Gravity::Configure(const SimFramework::Signal<float>* inGradient)
+    {
+        this->m_Gradient = inGradient;
+    };
+
+    const SimFramework::Signal<float>* Gravity::OutForce() const
+    {
+        return &(this->m_Force);
+    };
+
+    std::vector<const SimFramework::SignalBase*> Gravity::InputSignals() const
+    {
+        return {this->m_Gradient};
+    };
+
+    std::vector<const SimFramework::SignalBase*> Gravity::OutputSignals() const
+    {
+        return {this->OutForce()};
+    };
+
+    void Gravity::Update()
+    {
+        float gradient = this->m_Gradient->Read();
+        this->m_Force.Write(this->mass * this->g * std::sin(gradient));
+    };
+
+
     VehicleDynamics::VehicleDynamics() : m_AeroDrag("Drag"), m_Gravity("Gravity"), m_Vectorise("Vehicle Force Input"), m_StateSpace("Vehicle Dynamics"), m_Mask("Vehicle Dynamics") {};
 
     void VehicleDynamics::SetParameters(float initialPosition, float initialVelocity, float mass, float Cd, float A, float rho, float rollingResistance) {
@@ -69,6 +140,5 @@ namespace Models {
         return {{"Vehicle Position, Vehicle Velocity", this->m_StateSpace.OutSignal()},
                 {"Vehicle Tyre Force, Vehicle Aero Drag, Vehicle Gravity Force, Vehicle RollingResistance", this->m_Vectorise.OutSignal()}};
     };
-
 
 }; // namespace Models
