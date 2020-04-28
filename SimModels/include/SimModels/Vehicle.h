@@ -89,6 +89,10 @@ namespace Models {
         // Powertrain
         SimFramework::Output<int>* OutCurrentGear;
         SimFramework::Output<int>* OutClutchLockState;
+
+        // Efficiency Stats
+        SimFramework::Output<float>* OutInstantaneousFuelEfficiency;
+        SimFramework::Output<float>* OutAverageFuelEfficiency;
     };
 
     class Vehicle : public SimFramework::System
@@ -112,6 +116,8 @@ namespace Models {
         SimFramework::Output<float> m_OutEngineSpeed;
         SimFramework::Output<float> m_OutFuelFlowRate;
         SimFramework::Output<float> m_OutFuelCumulative;
+        SimFramework::Output<float> m_OutInstantaneousFuelEfficiency;
+        SimFramework::Output<float> m_OutAverageFuelEfficiency;
         SimFramework::Output<float> m_OutWheelSpeed;
         SimFramework::Output<float> m_OutLinearVelocity;
         SimFramework::Output<float> m_OutDisplacement;
@@ -122,6 +128,7 @@ namespace Models {
 
         // Blocks - System
         Tyre m_Tyre;
+        UnitConversions m_UnitConversions;
         SimFramework::SummingJunction<float> m_BrakeTyreSum;
         CoulombFriction m_Brake;
         Road m_Road;
