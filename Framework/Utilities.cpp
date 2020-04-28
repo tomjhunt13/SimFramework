@@ -17,6 +17,46 @@ namespace SimFramework {
         return RPM * 0.10471975512;
     };
 
+    float MetresToMiles(float metres)
+    {
+        return metres / 1609.34;
+    };
+
+    float MetresToKilometers(float metres)
+    {
+        return metres / 1000.f;
+    };
+
+    float SecondsToHours(float seconds)
+    {
+        return seconds / 3600.f;
+    };
+
+    float MetresPerSecondToMPH(float metresPerSecond)
+    {
+        return metresPerSecond * 2.237136;
+    };
+
+    float MetresPerSecondToKPH(float metresPerSecond)
+    {
+        return metresPerSecond * 3.6;
+    };
+
+    float MassToVolume(float mass, float density)
+    {
+        return mass / density;
+    };
+
+    float CentimetresCubedToLitres(float centimetresCubed)
+    {
+        return centimetresCubed / 1000.f;
+    };
+
+    float CentimetresCubedToGallons(float centimetresCubed)
+    {
+        return centimetresCubed * 0.000219969‬‬;
+    };
+
     const float pi()
     {
         return 3.141592653589793;

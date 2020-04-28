@@ -9,17 +9,27 @@
 #include "Interpolation.h"
 
 
-// TODO: consider putting in utility class or namespace
 namespace SimFramework {
 
 
     // Unit conversions
     float RadiansPerSecondToRPM(float radiansPerSecond);
     float RPMToRadiansPerSecond(float RPM);
+
+    float MetresToMiles(float metres);
+    float MetresToKilometers(float metres);
+    float SecondsToHours(float seconds);
+    float MetresPerSecondToMPH(float metresPerSecond);
+    float MetresPerSecondToKPH(float metresPerSecond);
+    float MassToVolume(float mass, float density); // Assumes units are consistent
+    float CentimetresCubedToLitres(float centimetresCubed);
+    float CentimetresCubedToGallons(float centimetresCubed);
+
+    // Constants
     const float pi();
 
+    // TODO: Probably put these in files where they are used
     Table3D ReadTableJSON(std::string JSONFilePath, std::string xName, std::string yName, std::string zName);
-
     std::vector<float> TimeSteps(float tMin, float tMax, float dt);
 
     // String conversion

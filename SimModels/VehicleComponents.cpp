@@ -1,5 +1,3 @@
-#include <iostream> // TODO: remove
-
 #include "SimModels/VehicleComponents.h"
 
 
@@ -80,7 +78,6 @@ namespace Models {
 
      void Tyre::SetParameters(float radius, float Fz, float D, float C, float B, float E)
      {
-        // TODO: Fz could be an input signal
         this->radius = radius;
         this->Fz = Fz;
         this->B = B;
