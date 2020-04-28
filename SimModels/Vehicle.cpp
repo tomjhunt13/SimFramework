@@ -59,8 +59,7 @@ namespace Models {
 
     void Vehicle::ShiftUp()
     {
-        // TODO: if up from neutral don't trigger
-        if (this->m_Powertrain.ShiftUp())
+        if (this->m_Powertrain.ShiftUp() && this->m_Powertrain.OutGearIndex()->Read() != 0)
         {
             this->m_Controller.Trigger();
         }
@@ -85,8 +84,8 @@ namespace Models {
                 &(this->m_OutLinearVelocity),
                 &(this->m_OutDisplacement),
                 &(this->m_OutCoordinates),
-                &(this->m_OutCurrentGear),
                 &(this->m_OutGradient),
+                &(this->m_OutCurrentGear),
                 &(this->m_OutClutchLockState)
         };
     };
