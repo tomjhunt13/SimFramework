@@ -54,7 +54,7 @@ namespace SimFramework {
 
     float CentimetresCubedToGallons(float centimetresCubed)
     {
-        return centimetresCubed * 0.000219969‬‬;
+        return centimetresCubed * 0.000219969;
     };
 
     const float pi()

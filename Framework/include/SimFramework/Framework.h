@@ -8,6 +8,22 @@
 
 #include "Utilities.h"
 
+
+/* TODO: Future style changes for Signal and Block variables
+ *
+ * Signal:
+ *  Option 1: make macro with syntax like INPUT_SIGNALS( std::vector<const SignalBase*> signals )
+ *
+ *  Option 2 (preferred): make macro with UE4 style syntax:
+ *
+ *                  SIGNAL(Input)
+ *                  const SimFramework::Signal<float>* m_Example;
+ *
+ *                  SIGNAL(Output, LogName="Log this signal")
+ *                  SimFramework::Signal<float> m_OutputExample
+ *
+ */
+
 namespace SimFramework {
 
 
@@ -58,7 +74,7 @@ namespace SimFramework {
         Block(std::string name = "Block");
         virtual ~Block() {};
 
-        // TODO: make macro with syntax like INPUT_SIGNALS( std::vector<const SignalBase*> signals )
+
         virtual std::vector<const SignalBase*> InputSignals() const = 0;
         virtual std::vector<const SignalBase*> OutputSignals() const = 0;
 
@@ -122,11 +138,7 @@ namespace SimFramework {
     {
     public:
         virtual ~Subsystem() {};
-
-        // TODO: Consider making macro with syntax BLOCKS( BlockList blocks )
         virtual BlockList Blocks() = 0;
-
-        // TODO: Consider making macro with syntax LOG_SIGNALS( std::vector<std::pair<std::string, const SignalBase*>> signals )
         virtual std::vector<std::pair<std::string, const SignalBase*>> LogSignals() { return {}; };
     };
 
@@ -139,10 +151,7 @@ namespace SimFramework {
         void Update(float t_np1);
 
     protected:
-        // TODO: Protected functions should return BlockList rather than call RegisterBlocks
         void RegisterBlocks(BlockList& blocks);
-
-        // TODO: Consider making macro with syntax LOG_SIGNALS( std::vector<std::pair<std::string, const SignalBase*>> signals )
         virtual std::vector<std::pair<std::string, const SignalBase*>> LogSignals() { return {}; };
         void SetLogOutputFile(std::string outputCSVPath, int updateFrequency);
 

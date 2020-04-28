@@ -148,9 +148,10 @@ namespace Models {
         this->m_CumulativeFuelUsageGrams = inCumulativeFuelUsageGrams;
     };
 
-    void UnitConversions::SetParameters(EUnitSystem unitSystem)
+    void UnitConversions::SetParameters(EUnitSystem unitSystem, float fuelDensity)
     {
         this->m_UnitSystem = unitSystem;
+        this->m_FuelDensity= fuelDensity;
     };
 
     const SimFramework::Signal<float>*  UnitConversions::OutEngineSpeed() const
@@ -173,8 +174,61 @@ namespace Models {
         return &(this->m_OutAverageFuelEfficiency);
     };
 
-    std::vector<const SimFramework::SignalBase*> InputSignals() const;
-    std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
-    void Update() override;
+    std::vector<const SimFramework::SignalBase*> UnitConversions::InputSignals() const
+    {
+        return {this->m_EngineSpeedRadiansPerSecond, this->m_CarSpeedMetresPerSecond, this->m_CarDisplacementMetres, this->m_FuelFlowRateGramsPerSecond, this->m_CumulativeFuelUsageGrams};
+    };
+
+    std::vector<const SimFramework::SignalBase*> UnitConversions::OutputSignals() const
+    {
+        return {this->OutEngineSpeed(), this->OutCarSpeed(), this->OutInstantFuelEfficiency(), this->OutAverageFuelEfficiency()};
+    };
+
+    void UnitConversions::Update()
+    {
+        // Read inputs
+        float engineSpeedRadians = this->m_EngineSpeedRadiansPerSecond->Read();
+        float carSpeedMetres = this->m_CarSpeedMetresPerSecond->Read();
+        float carDisplacementMetres = this->m_CarDisplacementMetres->Read();
+        float fuelFlowCentimetresCubed = SimFramework::MassToVolume(this->m_FuelFlowRateGramsPerSecond->Read(), this->m_FuelDensity);
+        float fuelCumulativeCentimetresCubed = SimFramework::MassToVolume(this->m_CumulativeFuelUsageGrams->Read(), this->m_FuelDensity);
+
+        // Compute conversions
+        float outEngineSpeed = SimFramework::RadiansPerSecondToRPM(engineSpeedRadians);
+        float outCarSpeed;
+        float outInstantFuelEff;
+        float outAvgFuelEff;
+
+        switch (this->m_UnitSystem)
+        {
+            case EUnitSystem::e_Metric:
+            {
+                outCarSpeed = SimFramework::MetresPerSecondToKPH(carSpeedMetres);
+
+                outInstantFuelEff = SimFramework::MetresToMiles(carSpeedMetres) / SimFramework::CentimetresCubedToGallons(fuelFlowCentimetresCubed);
+
+                outAvgFuelEff = SimFramework::MetresToMiles(carDisplacementMetres) / SimFramework::CentimetresCubedToGallons(fuelCumulativeCentimetresCubed);
+
+                break;
+            }
+
+            case EUnitSystem::e_Imperial:
+            {
+                outCarSpeed = SimFramework::MetresPerSecondToMPH(carSpeedMetres);
+
+                outInstantFuelEff =  100.f * (SimFramework::CentimetresCubedToLitres(fuelFlowCentimetresCubed) / (SimFramework::MetresToKilometers(carSpeedMetres)));
+
+                outAvgFuelEff =  100.f * (SimFramework::CentimetresCubedToLitres(fuelCumulativeCentimetresCubed) / (SimFramework::MetresToKilometers(carDisplacementMetres)));
+
+                break;
+            }
+        }
+
+        // Write outputs
+        this->m_OutEngineSpeed.Write(outEngineSpeed);
+        this->m_OutCarSpeed.Write(outCarSpeed);
+        this->m_OutInstantFuelEfficiency.Write(outInstantFuelEff);
+        this->m_OutAverageFuelEfficiency.Write(outAvgFuelEff);
+    };
 
 }; // namespace Models

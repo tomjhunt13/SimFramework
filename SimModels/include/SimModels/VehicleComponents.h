@@ -5,6 +5,7 @@
 
 #include "SimFramework/Framework.h"
 #include "SimFramework/Components.h"
+#include "SimFramework/Utilities.h"
 
 namespace Models {
 
@@ -90,7 +91,7 @@ namespace Models {
                        const SimFramework::Signal<float>* inFuelFlowRateGramsPerSecond,
                        const SimFramework::Signal<float>* inCumulativeFuelUsageGrams);
 
-        void SetParameters(EUnitSystem unitSystem);
+        void SetParameters(EUnitSystem unitSystem = EUnitSystem::e_Imperial, float fuelDensity = 0.7489);
 
         const SimFramework::Signal<float>*  OutEngineSpeed() const;
         const SimFramework::Signal<float>*  OutCarSpeed() const;
@@ -105,6 +106,7 @@ namespace Models {
 
         // Parameters
         EUnitSystem m_UnitSystem;
+        float m_FuelDensity;
 
         // Input Signals
         const SimFramework::Signal<float>* m_EngineSpeedRadiansPerSecond;
