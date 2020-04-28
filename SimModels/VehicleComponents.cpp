@@ -133,4 +133,48 @@ namespace Models {
         this->m_Torque.Write(Fx * this->radius);
     };
 
+
+    void UnitConversions::Configure(
+            const SimFramework::Signal<float>* inEngineSpeedRadiansPerSecond,
+            const SimFramework::Signal<float>* inCarSpeedMetresPerSecond,
+            const SimFramework::Signal<float>* inCarDisplacementMetres,
+            const SimFramework::Signal<float>* inFuelFlowRateGramsPerSecond,
+            const SimFramework::Signal<float>* inCumulativeFuelUsageGrams)
+    {
+        this->m_EngineSpeedRadiansPerSecond = inEngineSpeedRadiansPerSecond;
+        this->m_CarSpeedMetresPerSecond = inCarSpeedMetresPerSecond;
+        this->m_CarDisplacementMetres = inCarDisplacementMetres;
+        this->m_FuelFlowRateGramsPerSecond = inFuelFlowRateGramsPerSecond;
+        this->m_CumulativeFuelUsageGrams = inCumulativeFuelUsageGrams;
+    };
+
+    void UnitConversions::SetParameters(EUnitSystem unitSystem)
+    {
+        this->m_UnitSystem = unitSystem;
+    };
+
+    const SimFramework::Signal<float>*  UnitConversions::OutEngineSpeed() const
+    {
+        return &(this->m_OutEngineSpeed);
+    };
+
+    const SimFramework::Signal<float>*  UnitConversions::OutCarSpeed() const
+    {
+        return &(this->m_OutCarSpeed);
+    };
+
+    const SimFramework::Signal<float>*  UnitConversions::OutInstantFuelEfficiency() const
+    {
+        return &(this->m_OutInstantFuelEfficiency);
+    };
+
+    const SimFramework::Signal<float>*  UnitConversions::OutAverageFuelEfficiency() const
+    {
+        return &(this->m_OutAverageFuelEfficiency);
+    };
+
+    std::vector<const SimFramework::SignalBase*> InputSignals() const;
+    std::vector<const SimFramework::SignalBase*> OutputSignals() const override;
+    void Update() override;
+
 }; // namespace Models
