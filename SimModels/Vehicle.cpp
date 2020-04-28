@@ -54,6 +54,7 @@ namespace Models {
 
         this->m_Brake.SetParameters(parameters.PeakBrakeForce);
         this->m_Tyre.SetParameters(parameters.TyreRadius, parameters.Mass * 9.81 / 2.f, parameters.PeakTyreForceScale);
+        this->m_UnitConversions.SetParameters(parameters.Units, parameters.FuelDensity);
 
         this->SetLogOutputFile(parameters.LogOutputFile, parameters.LogFrequency);
     };

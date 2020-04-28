@@ -60,6 +60,10 @@ namespace Models {
         float rho = 1.225;
         float RollingResistance = 0.015;
 
+        // Stats
+        EUnitSystem Units = EUnitSystem::e_Imperial;
+        float FuelDensity = 0.7489;
+
         // Admin
         int LogFrequency = 5; // Number of complete updates until next log
         std::string LogOutputFile = "LogOut.csv";
