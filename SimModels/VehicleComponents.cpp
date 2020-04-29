@@ -190,10 +190,12 @@ namespace Models {
         float engineSpeedRadians = this->m_EngineSpeedRadiansPerSecond->Read();
         float carSpeedMetres = this->m_CarSpeedMetresPerSecond->Read();
         float carDisplacementMetres = this->m_CarDisplacementMetres->Read();
-        float fuelFlowCentimetresCubed = SimFramework::MassToVolume(this->m_FuelFlowRateGramsPerSecond->Read(), this->m_FuelDensity);
-        float fuelCumulativeCentimetresCubed = SimFramework::MassToVolume(this->m_CumulativeFuelUsageGrams->Read(), this->m_FuelDensity);
+        float fuelFlowGrams = this->m_FuelFlowRateGramsPerSecond->Read();
+        float fuelCumulativeGrams = this->m_CumulativeFuelUsageGrams->Read();
 
         // Compute conversions
+        float fuelFlowCentimetresCubed = SimFramework::MassToVolume(fuelFlowGrams, this->m_FuelDensity);
+        float fuelCumulativeCentimetresCubed = SimFramework::MassToVolume(fuelCumulativeGrams, this->m_FuelDensity);
         float outEngineSpeed = SimFramework::RadiansPerSecondToRPM(engineSpeedRadians);
         float outCarSpeed;
         float outInstantFuelEff;
@@ -205,9 +207,9 @@ namespace Models {
             {
                 outCarSpeed = SimFramework::MetresPerSecondToKPH(carSpeedMetres);
 
-                outInstantFuelEff = SimFramework::MetresToMiles(carSpeedMetres) / SimFramework::CentimetresCubedToGallons(fuelFlowCentimetresCubed);
+                outInstantFuelEff =  100.f * (SimFramework::CentimetresCubedToLitres(fuelFlowCentimetresCubed) / (SimFramework::MetresToKilometers(carSpeedMetres)));
 
-                outAvgFuelEff = SimFramework::MetresToMiles(carDisplacementMetres) / SimFramework::CentimetresCubedToGallons(fuelCumulativeCentimetresCubed);
+                outAvgFuelEff =  100.f * (SimFramework::CentimetresCubedToLitres(fuelCumulativeCentimetresCubed) / (SimFramework::MetresToKilometers(carDisplacementMetres)));
 
                 break;
             }
@@ -216,9 +218,9 @@ namespace Models {
             {
                 outCarSpeed = SimFramework::MetresPerSecondToMPH(carSpeedMetres);
 
-                outInstantFuelEff =  100.f * (SimFramework::CentimetresCubedToLitres(fuelFlowCentimetresCubed) / (SimFramework::MetresToKilometers(carSpeedMetres)));
+                outInstantFuelEff = SimFramework::MetresToMiles(carSpeedMetres) / SimFramework::CentimetresCubedToGallons(fuelFlowCentimetresCubed);
 
-                outAvgFuelEff =  100.f * (SimFramework::CentimetresCubedToLitres(fuelCumulativeCentimetresCubed) / (SimFramework::MetresToKilometers(carDisplacementMetres)));
+                outAvgFuelEff = SimFramework::MetresToMiles(carDisplacementMetres) / SimFramework::CentimetresCubedToGallons(fuelCumulativeCentimetresCubed);
 
                 break;
             }
