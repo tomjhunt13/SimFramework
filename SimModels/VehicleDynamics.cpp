@@ -36,7 +36,18 @@ namespace Models {
     void AeroDrag::Update()
     {
         float speed = this->m_Speed->Read();
-        this->m_Force.Write(0.5 * this->rho * this->A * this->Cd * speed * speed);
+
+        // Calculate output force
+        float force = 0.5 * this->rho * this->A * this->Cd * speed * speed;
+
+        // Determine directionality
+        if (speed < 0)
+        {
+            force *= -1.f;
+        };
+
+        // Write output
+        this->m_Force.Write(force);
     };
 
 
