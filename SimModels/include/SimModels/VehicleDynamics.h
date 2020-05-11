@@ -64,8 +64,7 @@ namespace Models {
 
         void Configure(
                 const SimFramework::Signal<float>* inTyreForce,
-                const SimFramework::Signal<float>* inGradient,
-                const SimFramework::Signal<float>* inBrakePedal);
+                const SimFramework::Signal<float>* inGradient);
 
         const SimFramework::Signal<float>* OutVehiclePosition() const;
         const SimFramework::Signal<float>* OutVehicleVelocity() const;

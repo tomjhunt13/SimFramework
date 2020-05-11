@@ -329,6 +329,7 @@ namespace Models {
                 {"Clutch Signed Torque", this->m_SignedClutchTorque.OutForce()},
                 {"Clutch Speed Cross", this->m_CrossingDetect.OutCrossing()},
                 {"Clutch Engine Speed", this->OutEngineSpeed()},
+                {"Clutch Transmission Speed", this->OutClutchSpeed()},
                 {"Clutch Wheel Speed", this->OutWheelSpeed()}};
     };
 

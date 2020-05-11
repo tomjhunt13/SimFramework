@@ -115,8 +115,7 @@ namespace Models {
 
     void VehicleDynamics::Configure(
             const SimFramework::Signal<float>* inTyreForce,
-            const SimFramework::Signal<float>* inGradient,
-            const SimFramework::Signal<float>* inBrakePedal)
+            const SimFramework::Signal<float>* inGradient)
     {
         // Configure blocks
         this->m_AeroDrag.Configure(this->OutVehicleVelocity());
