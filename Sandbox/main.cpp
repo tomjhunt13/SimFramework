@@ -9,7 +9,7 @@
 
 int main() {
 
-//    ReportResults_Mass();
+    ReportResults_Mass();
 //    ReportResults_Aero();
 //    ReportResults_TransmissionAndClutch();
 
@@ -17,7 +17,7 @@ int main() {
 
 //    SandboxMassSpringDamper();
 //    SandboxLockupClutch();
-    SandboxFullModel();
+//    SandboxFullModel();
 
 
 

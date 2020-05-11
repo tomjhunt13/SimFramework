@@ -5,7 +5,6 @@
 #include "ReportResults_VehicleDynamics.h"
 
 
-
 void ReportResults_Mass()
 {
     // Parameters
@@ -17,6 +16,7 @@ void ReportResults_Mass()
     baseParameters.A = 2.5;
     baseParameters.rho = 1.225;
     baseParameters.rollingResistance = 0.015;
+    baseParameters.PeakBrakeForce = 5000;
 
     // Logging
     baseParameters.LogOutputFile = "../Sandbox/Data/Results/Mass_Base.csv";
@@ -64,43 +64,40 @@ void ReportResults_Mass()
     std::vector<Report::TestVehicleDynamics*> vehicles = {&veryLightVehicle, &lightVehicle, &baseVehicle, &heavyVehicle, &veryHeavyVehicle};
     std::vector<Report::TestVehicleDynamicsBlocks*> blocks = {&veryLightBlocks, &lightBlocks, &baseBlocks, &heavyBlocks, &veryHeavyBlocks};
 
-//    // Initialise
-//    for (auto v : vehicles)
-//    {
-//        v->Initialise(0.f);
-//    }
-//
-//    // Write throttle and brake values
-//    for (auto b : blocks)
-//    {
-//        b->TyreForce->WriteValue(1.f);
-//        b->InBrakePressure->WriteValue(0.f);
-//    }
-//
-//    float dt = 0.00025;
-//    int counter = 1;
-//    for (float t = 0.f; t <= 25.f; t += dt) {
-//
-//        if (counter == 60000) {
-//            for (auto b : blocks)
-//            {
-//                b->InThrottle->WriteValue(0.f);
-//                b->InBrakePressure->WriteValue(1.f);
-//            }
-//            for (auto v : vehicles)
-//            {
-//                v->ShiftDown();
-//            }
-//        }
-//
-//        // Update
-//        for (auto v : vehicles)
-//        {
-//            v->Update(t);
-//        }
-//
-//        counter++;
-//    }
+    // Initialise
+    for (auto v : vehicles)
+    {
+        v->Initialise(0.f);
+    }
+
+    // Write throttle and brake values
+    for (auto b : blocks)
+    {
+        b->TyreForce->WriteValue(10000.f);
+        b->Gradient->WriteValue(0.f);
+        b->BrakePedal->WriteValue(0.f);
+    }
+
+    float dt = 0.1;
+    int counter = 1;
+    for (float t = 0.f; t <= 400.f; t += dt) {
+
+        if (counter == 2000) {
+            for (auto b : blocks)
+            {
+                b->TyreForce->WriteValue(0.f);
+//                b->BrakePedal->WriteValue(1.f);
+            }
+        }
+
+        // Update
+        for (auto v : vehicles)
+        {
+            v->Update(t);
+        }
+
+        counter++;
+    }
 
 }
 
