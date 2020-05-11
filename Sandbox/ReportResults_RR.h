@@ -1,26 +1,26 @@
-#ifndef FRAMEWORK_REPORTRESULTS_AERO_H
-#define FRAMEWORK_REPORTRESULTS_AERO_H
+#ifndef FRAMEWORK_REPORTRESULTS_RR_H
+#define FRAMEWORK_REPORTRESULTS_RR_H
 
 #include <vector>
 #include "ReportResults_VehicleDynamics.h"
 
-
-void ReportResults_Aero()
+void ReportResults_RR()
 {
 
     // Parameters
     Report::TestVehicleDynamicsParameters baseParameters;
     baseParameters.initialPosition = 0;
-    baseParameters.initialVelocity = 0;
-    baseParameters.mass = 1500;
-    baseParameters.Cd = 1;
+    baseParameters.initialVelocity = 40;
+    baseParameters.mass = 1000;
+    baseParameters.Cd = 0;
     baseParameters.A = 1;
     baseParameters.rho = 1;
-    baseParameters.rollingResistance = 0.f;
+    baseParameters.rollingResistance = 0.04;
     baseParameters.PeakBrakeForce = 5000;
+    baseParameters.g = 10;
 
     // Logging
-    baseParameters.LogOutputFile = "../Sandbox/Data/Results/Aero_Base.csv";
+    baseParameters.LogOutputFile = "../Sandbox/Data/Results/RR_Base.csv";
     baseParameters.LogFrequency = 1;
 
 
@@ -31,32 +31,32 @@ void ReportResults_Aero()
 
     // Initialise high drag vehicle
     Report::TestVehicleDynamicsParameters highDragParameters = baseParameters;
-    highDragParameters.Cd = 2;
-    highDragParameters.LogOutputFile = "../Sandbox/Data/Results/Aero_HighDrag.csv";
+    highDragParameters.rollingResistance = 0.08;
+    highDragParameters.LogOutputFile = "../Sandbox/Data/Results/RR_HighDrag.csv";
     Report::TestVehicleDynamics highDragVehicle;
     highDragVehicle.SetParameters(highDragParameters);
     Report::TestVehicleDynamicsBlocks highDragBlocks = highDragVehicle.Blocks();
 
     // Initialise very high drag vehicle
     Report::TestVehicleDynamicsParameters veryHighDragParameters = baseParameters;
-    veryHighDragParameters.Cd = 4;
-    veryHighDragParameters.LogOutputFile = "../Sandbox/Data/Results/Aero_VeryHighDrag.csv";
+    veryHighDragParameters.rollingResistance = 0.16;
+    veryHighDragParameters.LogOutputFile = "../Sandbox/Data/Results/RR_VeryHighDrag.csv";
     Report::TestVehicleDynamics veryHighDragVehicle;
     veryHighDragVehicle.SetParameters(veryHighDragParameters);
     Report::TestVehicleDynamicsBlocks veryHighDragBlocks = veryHighDragVehicle.Blocks();
 
     // Initialise low drag vehicle
     Report::TestVehicleDynamicsParameters lowDragParameters = baseParameters;
-    lowDragParameters.Cd = 0.5;
-    lowDragParameters.LogOutputFile = "../Sandbox/Data/Results/Aero_LowDrag.csv";
+    lowDragParameters.rollingResistance = 0.02;
+    lowDragParameters.LogOutputFile = "../Sandbox/Data/Results/RR_LowDrag.csv";
     Report::TestVehicleDynamics lowDragVehicle;
     lowDragVehicle.SetParameters(lowDragParameters);
     Report::TestVehicleDynamicsBlocks lowDragBlocks = lowDragVehicle.Blocks();
 
     // Initialise very low drag vehicle
     Report::TestVehicleDynamicsParameters veryLowDragParameters = baseParameters;
-    veryLowDragParameters.Cd = 0.25;
-    veryLowDragParameters.LogOutputFile = "../Sandbox/Data/Results/Aero_VeryLowDrag.csv";
+    veryLowDragParameters.rollingResistance = 0.01;
+    veryLowDragParameters.LogOutputFile = "../Sandbox/Data/Results/RR_VeryLowDrag.csv";
     Report::TestVehicleDynamics veryLowDragVehicle;
     veryLowDragVehicle.SetParameters(veryLowDragParameters);
     Report::TestVehicleDynamicsBlocks veryLowDragBlocks = veryLowDragVehicle.Blocks();
@@ -74,7 +74,7 @@ void ReportResults_Aero()
     // Write throttle and brake values
     for (auto b : blocks)
     {
-        b->TyreForce->WriteValue(10000.f);
+        b->TyreForce->WriteValue(0.f);
         b->Gradient->WriteValue(0.f);
         b->BrakePedal->WriteValue(0.f);
     }
@@ -83,13 +83,6 @@ void ReportResults_Aero()
     int counter = 1;
     for (float t = 0.f; t <= 400.f; t += dt) {
 
-        if (counter == 2000) {
-            for (auto b : blocks)
-            {
-                b->TyreForce->WriteValue(0.f);
-//                b->BrakePedal->WriteValue(1.f);
-            }
-        }
 
         // Update
         for (auto v : vehicles)
@@ -102,4 +95,4 @@ void ReportResults_Aero()
 
 }
 
-#endif //FRAMEWORK_REPORTRESULTS_AERO_H
+#endif //FRAMEWORK_REPORTRESULTS_RR_H

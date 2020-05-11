@@ -87,12 +87,12 @@ namespace Models {
 
     VehicleDynamics::VehicleDynamics() : m_AeroDrag("Drag"), m_Gravity("Gravity"), m_Vectorise("Vehicle Force Input"), m_StateSpace("Vehicle Dynamics"), m_Mask("Vehicle Dynamics") {};
 
-    void VehicleDynamics::SetParameters(float initialPosition, float initialVelocity, float mass, float Cd, float A, float rho, float rollingResistance) {
+    void VehicleDynamics::SetParameters(float initialPosition, float initialVelocity, float mass, float Cd, float A, float rho, float rollingResistance, float g) {
 
         this->m_AeroDrag.SetParameters(Cd, A, rho);
         this->m_Gravity.SetParameters(mass);
         this->m_RollingResistance.SetParameters(rollingResistance);
-        this->m_ConstWeight.Configure(mass * 9.81);
+        this->m_ConstWeight.Configure(mass * g);
 
         // Set up state matrices
         Eigen::Matrix<float, 2, 2> matA;

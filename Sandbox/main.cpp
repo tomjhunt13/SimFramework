@@ -4,13 +4,15 @@
 
 #include "ReportResults_Mass.h"
 #include "ReportResults_Aero.h"
+#include "ReportResults_RR.h"
 #include "ReportResults_TransmissionAndClutch.h"
 
 
 int main() {
 
     ReportResults_Mass();
-//    ReportResults_Aero();
+    ReportResults_Aero();
+    ReportResults_RR();
 //    ReportResults_TransmissionAndClutch();
 
 

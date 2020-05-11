@@ -60,7 +60,7 @@ namespace Models {
     public:
         VehicleDynamics();
 
-        void SetParameters(float initialPosition=0.f, float initialVelocity=0.f, float mass=1000.f, float Cd=0.3, float A=2.5, float rho=1.225, float rollingResistance=0.015);
+        void SetParameters(float initialPosition=0.f, float initialVelocity=0.f, float mass=1000.f, float Cd=0.3, float A=2.5, float rho=1.225, float rollingResistance=0.015, float g=9.81);
 
         void Configure(
                 const SimFramework::Signal<float>* inTyreForce,

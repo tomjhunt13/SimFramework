@@ -19,6 +19,7 @@ namespace Report {
         float rho;
         float rollingResistance;
         float PeakBrakeForce;
+        float g=9.81;
 
         // Logging
         std::string LogOutputFile = "../Sandbox/Data/Results/ReportResults_Powertrain.csv";
@@ -58,7 +59,7 @@ namespace Report {
         };
 
         void SetParameters(TestVehicleDynamicsParameters p) {
-            this->m_VehicleDynamics.SetParameters(p.initialPosition, p.initialVelocity, p.mass, p.Cd, p.A, p.rho, p.rollingResistance);
+            this->m_VehicleDynamics.SetParameters(p.initialPosition, p.initialVelocity, p.mass, p.Cd, p.A, p.rho, p.rollingResistance, p.g);
             this->m_Brake.SetParameters(p.PeakBrakeForce);
             this->SetLogOutputFile(p.LogOutputFile, p.LogFrequency);
         }
