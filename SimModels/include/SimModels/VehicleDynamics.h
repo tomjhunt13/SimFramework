@@ -37,7 +37,7 @@ namespace Models {
     public:
         Gravity(std::string name="Gravity");
 
-        void SetParameters(float mass=1000.f);
+        void SetParameters(float mass=1000.f, float g=9.81);
         void Configure(const SimFramework::Signal<float>* inGradient);
         const SimFramework::Signal<float>* OutForce() const;
 
@@ -48,7 +48,7 @@ namespace Models {
     private:
         // Parameters
         float mass;
-        const float g=9.81;
+        float g;
 
         // Signals
         const SimFramework::Signal<float>* m_Gradient;

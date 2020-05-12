@@ -53,9 +53,10 @@ namespace Models {
 
     Gravity::Gravity(std::string name) : Function(name) {};
 
-    void Gravity::SetParameters(float mass)
+    void Gravity::SetParameters(float mass, float g)
     {
         this->mass = mass;
+        this->g = g;
     };
 
     void Gravity::Configure(const SimFramework::Signal<float>* inGradient)
@@ -90,7 +91,7 @@ namespace Models {
     void VehicleDynamics::SetParameters(float initialPosition, float initialVelocity, float mass, float Cd, float A, float rho, float rollingResistance, float g) {
 
         this->m_AeroDrag.SetParameters(Cd, A, rho);
-        this->m_Gravity.SetParameters(mass);
+        this->m_Gravity.SetParameters(mass, g);
         this->m_RollingResistance.SetParameters(rollingResistance);
         this->m_ConstWeight.Configure(mass * g);
 
