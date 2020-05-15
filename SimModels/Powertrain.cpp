@@ -330,7 +330,8 @@ namespace Models {
                 {"Clutch Speed Cross", this->m_CrossingDetect.OutCrossing()},
                 {"Clutch Engine Speed", this->OutEngineSpeed()},
                 {"Clutch Transmission Speed", this->OutClutchSpeed()},
-                {"Clutch Wheel Speed", this->OutWheelSpeed()}};
+                {"Clutch Wheel Speed", this->OutWheelSpeed()},
+                {"Gear Index", this->OutGearIndex()}};
     };
 
 

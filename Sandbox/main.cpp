@@ -15,9 +15,9 @@ int main() {
 //    ReportResults_Mass();
 //    ReportResults_Aero();
 //    ReportResults_RR();
-    ReportResults_Gradient();
+//    ReportResults_Gradient();
 //    ReportResults_TransmissionAndClutch();
-//    ReportResults_Ratios();
+    ReportResults_Ratios();
 
 
 

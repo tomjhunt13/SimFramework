@@ -87,7 +87,7 @@ void ReportResults_Ratios()
 
     float dt = 0.1;
     int counter = 1;
-    for (float t = 0.f; t <= 200.f; t += dt) {
+    for (float t = 0.f; t <= 400.f; t += dt) {
 
         if (counter == 200)
         {
@@ -121,29 +121,54 @@ void ReportResults_Ratios()
             }
         }
 
-//        if (counter == 1000)
+//        if (counter == 2000)
 //        {
+//            for (auto b : blocks)
+//            {
+//                b->InThrottle->WriteValue(0.25);
+//            }
 //            for (auto v : vehicles)
 //            {
+////                b->InThrottle->WriteValue(0.);
 //                v->ShiftDown();
 //            }
 //        }
-//
-//        if (counter == 1200)
-//        {
-//            for (auto v : vehicles)
-//            {
-//                v->ShiftDown();
-//            }
-//        }
-//
-//        if (counter == 1400)
-//        {
-//            for (auto v : vehicles)
-//            {
-//                v->ShiftDown();
-//            }
-//        }
+
+        if (counter == 2200)
+        {
+            for (auto b : blocks)
+            {
+                b->InThrottle->WriteValue(0.25);
+            }
+            for (auto v : vehicles)
+            {
+                v->ShiftDown();
+            }
+        }
+
+        if (counter == 2600)
+        {
+            for (auto v : vehicles)
+            {
+                v->ShiftDown();
+            }
+        }
+
+        if (counter == 3000)
+        {
+            for (auto v : vehicles)
+            {
+                v->ShiftDown();
+            }
+        }
+
+        if (counter == 3400)
+        {
+            for (auto v : vehicles)
+            {
+                v->ShiftDown();
+            }
+        }
 
         // Update
         for (auto v : vehicles)
