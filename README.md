@@ -1,4 +1,4 @@
 # SimFramework
 
 ## Overview
-SimFramework is a block diagram framework library created for my final year engineering project.
+SimFramework is a standalone C++ block diagram framework library created for my masters final year engineering project. 
