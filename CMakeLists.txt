@@ -35,7 +35,7 @@ include_directories(SimModels/include)
 
 
 # Sandbox
-add_executable(Sandbox Sandbox/main.cpp Sandbox/SandboxMassSpringDamper.h Sandbox/SandboxFullModel.h Sandbox/SandboxLockupClutch.h)
+add_executable(Sandbox Sandbox/main.cpp Sandbox/SandboxMassSpringDamper.h Sandbox/SandboxFullModel.h Sandbox/SandboxLockupClutch.h Sandbox/ReportResults_Mass.h Sandbox/ReportResults_Aero.h Sandbox/ReportResults_TransmissionAndClutch.h Sandbox/ReportResults_VehicleDynamics.h Sandbox/ReportResults_RR.h Sandbox/ReportResults_Gradient.h Sandbox/ReportResults_Ratios.h)
 target_link_libraries(Sandbox Framework SimModels)
 
 

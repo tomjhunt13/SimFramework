@@ -53,9 +53,10 @@ namespace Models {
 
     Gravity::Gravity(std::string name) : Function(name) {};
 
-    void Gravity::SetParameters(float mass)
+    void Gravity::SetParameters(float mass, float g)
     {
         this->mass = mass;
+        this->g = g;
     };
 
     void Gravity::Configure(const SimFramework::Signal<float>* inGradient)
@@ -87,12 +88,12 @@ namespace Models {
 
     VehicleDynamics::VehicleDynamics() : m_AeroDrag("Drag"), m_Gravity("Gravity"), m_Vectorise("Vehicle Force Input"), m_StateSpace("Vehicle Dynamics"), m_Mask("Vehicle Dynamics") {};
 
-    void VehicleDynamics::SetParameters(float initialPosition, float initialVelocity, float mass, float Cd, float A, float rho, float rollingResistance) {
+    void VehicleDynamics::SetParameters(float initialPosition, float initialVelocity, float mass, float Cd, float A, float rho, float rollingResistance, float g) {
 
         this->m_AeroDrag.SetParameters(Cd, A, rho);
-        this->m_Gravity.SetParameters(mass);
+        this->m_Gravity.SetParameters(mass, g);
         this->m_RollingResistance.SetParameters(rollingResistance);
-        this->m_ConstWeight.Configure(mass * 9.81);
+        this->m_ConstWeight.Configure(mass * g);
 
         // Set up state matrices
         Eigen::Matrix<float, 2, 2> matA;
@@ -115,8 +116,7 @@ namespace Models {
 
     void VehicleDynamics::Configure(
             const SimFramework::Signal<float>* inTyreForce,
-            const SimFramework::Signal<float>* inGradient,
-            const SimFramework::Signal<float>* inBrakePedal)
+            const SimFramework::Signal<float>* inGradient)
     {
         // Configure blocks
         this->m_AeroDrag.Configure(this->OutVehicleVelocity());

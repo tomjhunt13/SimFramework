@@ -37,7 +37,7 @@ namespace Models {
     public:
         Gravity(std::string name="Gravity");
 
-        void SetParameters(float mass=1000.f);
+        void SetParameters(float mass=1000.f, float g=9.81);
         void Configure(const SimFramework::Signal<float>* inGradient);
         const SimFramework::Signal<float>* OutForce() const;
 
@@ -48,7 +48,7 @@ namespace Models {
     private:
         // Parameters
         float mass;
-        const float g=9.81;
+        float g;
 
         // Signals
         const SimFramework::Signal<float>* m_Gradient;
@@ -60,12 +60,11 @@ namespace Models {
     public:
         VehicleDynamics();
 
-        void SetParameters(float initialPosition=0.f, float initialVelocity=0.f, float mass=1000.f, float Cd=0.3, float A=2.5, float rho=1.225, float rollingResistance=0.015);
+        void SetParameters(float initialPosition=0.f, float initialVelocity=0.f, float mass=1000.f, float Cd=0.3, float A=2.5, float rho=1.225, float rollingResistance=0.015, float g=9.81);
 
         void Configure(
                 const SimFramework::Signal<float>* inTyreForce,
-                const SimFramework::Signal<float>* inGradient,
-                const SimFramework::Signal<float>* inBrakePedal);
+                const SimFramework::Signal<float>* inGradient);
 
         const SimFramework::Signal<float>* OutVehiclePosition() const;
         const SimFramework::Signal<float>* OutVehicleVelocity() const;
