@@ -3,6 +3,7 @@
 
 #include "SimFramework/Framework.h"
 #include "SimFramework/Components.h"
+#include "SimFramework/Interpolation.h"
 
 namespace Models {
 

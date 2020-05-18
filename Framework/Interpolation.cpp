@@ -1,5 +1,9 @@
 #include "SimFramework/Interpolation.h"
 
+// Private includes
+#include <fstream>
+#include "nlohmann/json.hpp"
+
 namespace SimFramework {
 
 
@@ -52,5 +56,19 @@ namespace SimFramework {
 
         return BilinearInterp(x, P11, P21, P12, P22);
     }
+
+    Table3D ReadTableJSON(std::string JSONFilePath, std::string xName, std::string yName, std::string zName)
+    {
+        // Read JSON and extract data
+        std::ifstream fileObject;
+        fileObject.open (JSONFilePath);
+        nlohmann::json js = nlohmann::json::parse(fileObject);
+        std::vector<float> x = js[xName];
+        std::vector<float> y = js[yName];
+        std::vector<std::vector<float>> z = js[zName];
+        fileObject.close();
+
+        return {x, y, z};
+    };
 
 } // namespace SimFramework

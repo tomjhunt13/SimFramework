@@ -2,6 +2,7 @@
 #define SIMFRAMEWORK_INTERPOLATION_H
 
 #include <vector>
+#include <string>
 
 namespace SimFramework {
 
@@ -54,6 +55,8 @@ namespace SimFramework {
      * @return Interpolation result
      */
     float InterpTable3D(Table3D& table, Coord2D x);
+
+    Table3D ReadTableJSON(std::string JSONFilePath, std::string xName, std::string yName, std::string zName);
 
     namespace Internal
     {

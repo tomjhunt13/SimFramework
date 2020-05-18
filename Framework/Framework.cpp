@@ -60,7 +60,7 @@ namespace SimFramework {
     {
 
         // Get steps
-        std::vector<float> timeSteps = TimeSteps(this->m_t_n, t_np1, this->m_dtMax);
+        std::vector<float> timeSteps = Internal::TimeSteps(this->m_t_n, t_np1, this->m_dtMax);
 
         for (float dt: timeSteps) {
 
@@ -157,6 +157,29 @@ namespace SimFramework {
 
 
     namespace Internal {
+
+        std::vector<float> TimeSteps(float tMin, float tMax, float dtMax) {
+
+            float tRange = tMax - tMin;
+
+            std::vector<float> timesteps;
+
+            if (tRange > 0.f) {
+
+                if (dtMax >= tRange) {
+                    timesteps.push_back(tRange);
+                } else {
+                    int nt = std::ceilf(tRange / dtMax);
+                    float dtNew = tRange / (float) nt;
+
+                    for (int i = 0; i < nt; i++) {
+                        timesteps.push_back(dtNew);
+                    }
+                }
+            }
+
+            return timesteps;
+        };
 
 
 

@@ -63,45 +63,6 @@ namespace SimFramework {
     };
 
 
-    Table3D ReadTableJSON(std::string JSONFilePath, std::string xName, std::string yName, std::string zName)
-    {
-        // Read JSON and extract data
-        std::ifstream fileObject;
-        fileObject.open (JSONFilePath);
-        nlohmann::json js = nlohmann::json::parse(fileObject);
-        std::vector<float> x = js[xName];
-        std::vector<float> y = js[yName];
-        std::vector<std::vector<float>> z = js[zName];
-        fileObject.close();
-
-        return {x, y, z};
-    };
-
-
-    std::vector<float> TimeSteps(float tMin, float tMax, float dtMax) {
-
-        float tRange = tMax - tMin;
-
-        std::vector<float> timesteps;
-
-        if (tRange > 0.f) {
-
-            if (dtMax >= tRange) {
-                timesteps.push_back(tRange);
-            } else {
-                int nt = std::ceilf(tRange / dtMax);
-                float dtNew = tRange / (float) nt;
-
-                for (int i = 0; i < nt; i++) {
-                    timesteps.push_back(dtNew);
-                }
-            }
-        }
-
-        return timesteps;
-    };
-
-
     template<typename ElementaryType>
     static const std::string InternalToString(const ElementaryType &value) {
         std::stringstream ss;

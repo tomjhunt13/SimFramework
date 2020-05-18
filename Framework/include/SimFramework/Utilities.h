@@ -6,16 +6,14 @@
 
 #include "Eigen/Dense"
 
-#include "Interpolation.h"
+//#include "Interpolation.h"
 
 
 namespace SimFramework {
 
-
     // Unit conversions
     float RadiansPerSecondToRPM(float radiansPerSecond);
     float RPMToRadiansPerSecond(float RPM);
-
     float MetresToMiles(float metres);
     float MetresToKilometers(float metres);
     float SecondsToHours(float seconds);
@@ -27,10 +25,6 @@ namespace SimFramework {
 
     // Constants
     const float pi();
-
-    // TODO: Probably put these in files where they are used
-    Table3D ReadTableJSON(std::string JSONFilePath, std::string xName, std::string yName, std::string zName);
-    std::vector<float> TimeSteps(float tMin, float tMax, float dt);
 
     // String conversion
     const std::string ToString(const Eigen::VectorXf& vector);

@@ -209,7 +209,10 @@ namespace SimFramework {
 
 
     namespace Internal {
+        // Integer timesteps
+        std::vector<float> TimeSteps(float tMin, float tMax, float dt);
 
+        // Block sorting
         std::map<const SignalBase*, std::vector<Function*>> FunctionInputs(std::vector<Function*> functions);
         std::vector<std::vector<int>> AdjacencyList(std::vector<Function*> functions);
         std::vector<int> TopologicalSort(std::vector<std::vector<int>> adjacencyList);
