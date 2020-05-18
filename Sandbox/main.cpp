@@ -17,13 +17,13 @@ int main() {
 //    ReportResults_RR();
 //    ReportResults_Gradient();
 //    ReportResults_TransmissionAndClutch();
-    ReportResults_Ratios();
+//    ReportResults_Ratios();
 
 
 
 //    SandboxMassSpringDamper();
 //    SandboxLockupClutch();
-//    SandboxFullModel();
+    SandboxFullModel();
 
 
 

@@ -13,9 +13,9 @@
 #include "SimModels/Engine.h"
 #include "SimModels/VehicleDynamics.h"
 #include "SimModels/VehicleController.h"
-#include "SimModels/Transmission.h"
 #include "SimModels/Road.h"
 #include "SimModels/Powertrain.h"
+#include "SimModels/Wheel.h"
 
 
 namespace Models {
@@ -131,10 +131,8 @@ namespace Models {
         SimFramework::Output<int> m_OutClutchLockState;
 
         // Blocks - System
-        Tyre m_Tyre;
+        Wheel m_Wheel;
         UnitConversions m_UnitConversions;
-        SimFramework::SummingJunction<float> m_BrakeTyreSum;
-        CoulombFriction m_Brake;
         Road m_Road;
 
         // Subsystems
