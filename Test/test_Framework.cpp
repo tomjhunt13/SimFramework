@@ -41,10 +41,10 @@ TEST(FunctionInputs, TwoParallelTrees) {
     SimFramework::Gain<float, float> c;
     SimFramework::Gain<float, float> d;
 
-    a.Configure(&s1, 1);
-    b.Configure(a.OutSignal(), 1);
-    c.Configure(&s4, 1);
-    d.Configure(c.OutSignal(), 1);
+    a.Configure(&s1);
+    b.Configure(a.OutSignal());
+    c.Configure(&s4);
+    d.Configure(c.OutSignal());
 
     std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d};
 
@@ -79,10 +79,10 @@ TEST(FunctionInputs, SummingJunction) {
     SimFramework::SummingJunction<float> c;
     SimFramework::Gain<float, float> d;
 
-    a.Configure(&s1, 1);
-    b.Configure(&s3, 1);
+    a.Configure(&s1);
+    b.Configure(&s3);
     c.Configure({a.OutSignal(), b.OutSignal(), &s5}, {1.f, 1.f, 1.f});
-    d.Configure(c.OutSignal(), 1);
+    d.Configure(c.OutSignal());
 
     std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d};
 
@@ -124,11 +124,11 @@ TEST(FunctionInputs, Mask) {
     SimFramework::Gain<float, float> d;
     SimFramework::Gain<float, float> e;
 
-    a.Configure(&s1, 1);
+    a.Configure(&s1);
     b.Configure(a.OutSignal());
-    c.Configure(b.OutSignal(0), 1);
-    d.Configure(b.OutSignal(1), 1);
-    e.Configure(b.OutSignal(2), 1);
+    c.Configure(b.OutSignal(0));
+    d.Configure(b.OutSignal(1));
+    e.Configure(b.OutSignal(2));
 
     std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d, &e};
 
@@ -170,13 +170,13 @@ TEST(FunctionInputs, MultipleDependants) {
     SimFramework::Gain<float, float> f;
     SimFramework::Gain<float, float> g;
 
-    a.Configure(&s1, 1);
-    b.Configure(a.OutSignal(), 1);
-    c.Configure(a.OutSignal(), 1);
+    a.Configure(&s1);
+    b.Configure(a.OutSignal());
+    c.Configure(a.OutSignal());
     d.Configure({b.OutSignal(), c.OutSignal(), a.OutSignal()}, {1, 1, 1});
     e.Configure(d.OutSignal());
-    f.Configure(e.OutSignal(0), 1);
-    g.Configure(e.OutSignal(1), 1);
+    f.Configure(e.OutSignal(0));
+    g.Configure(e.OutSignal(1));
 
     std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d, &e, &f, &g};
 
@@ -223,10 +223,10 @@ TEST(AdjacenyList, TwoParallelTrees) {
     SimFramework::Gain<float, float> c;
     SimFramework::Gain<float, float> d;
 
-    a.Configure(&s1, 1);
-    b.Configure(a.OutSignal(), 1);
-    c.Configure(&s4, 1);
-    d.Configure(c.OutSignal(), 1);
+    a.Configure(&s1);
+    b.Configure(a.OutSignal());
+    c.Configure(&s4);
+    d.Configure(c.OutSignal());
 
     std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d};
 
@@ -260,10 +260,10 @@ TEST(AdjacencyList, SummingJunction) {
     SimFramework::SummingJunction<float> c;
     SimFramework::Gain<float, float> d;
 
-    a.Configure(&s1, 1);
-    b.Configure(&s3, 1);
+    a.Configure(&s1);
+    b.Configure(&s3);
     c.Configure({a.OutSignal(), b.OutSignal(), &s5}, {1.f, 1.f, 1.f});
-    d.Configure(c.OutSignal(), 1);
+    d.Configure(c.OutSignal());
 
     std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d};
 
@@ -301,11 +301,11 @@ TEST(AdjacencyList, Mask) {
     SimFramework::Gain<float, float> d;
     SimFramework::Gain<float, float> e;
 
-    a.Configure(&s1, 1);
+    a.Configure(&s1);
     b.Configure(a.OutSignal());
-    c.Configure(b.OutSignal(0), 1);
-    d.Configure(b.OutSignal(1), 1);
-    e.Configure(b.OutSignal(2), 1);
+    c.Configure(b.OutSignal(0));
+    d.Configure(b.OutSignal(1));
+    e.Configure(b.OutSignal(2));
 
     std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d, &e};
 
@@ -348,13 +348,13 @@ TEST(AdjacencyList, MultipleDependants) {
     SimFramework::Gain<float, float> f;
     SimFramework::Gain<float, float> g;
 
-    a.Configure(&s1, 1);
-    b.Configure(a.OutSignal(), 1);
-    c.Configure(a.OutSignal(), 1);
+    a.Configure(&s1);
+    b.Configure(a.OutSignal());
+    c.Configure(a.OutSignal());
     d.Configure({b.OutSignal(), c.OutSignal(), a.OutSignal()}, {1, 1, 1});
     e.Configure(d.OutSignal());
-    f.Configure(e.OutSignal(0), 1);
-    g.Configure(e.OutSignal(1), 1);
+    f.Configure(e.OutSignal(0));
+    g.Configure(e.OutSignal(1));
 
     std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d, &e, &f, &g};
 
@@ -514,10 +514,10 @@ TEST(SortFunctions, TwoParallelTrees) {
     SimFramework::Gain<float, float> c;
     SimFramework::Gain<float, float> d;
 
-    a.Configure(&s1, 1);
-    b.Configure(a.OutSignal(), 1);
-    c.Configure(&s4, 1);
-    d.Configure(c.OutSignal(), 1);
+    a.Configure(&s1);
+    b.Configure(a.OutSignal());
+    c.Configure(&s4);
+    d.Configure(c.OutSignal());
 
     std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d};
     std::vector<SimFramework::Function*> sortedFuncs = SimFramework::Internal::SortFunctions(funcs);
@@ -544,10 +544,10 @@ TEST(SortFunctions, SummingJunction) {
     SimFramework::SummingJunction<float> c;
     SimFramework::Gain<float, float> d;
 
-    a.Configure(&s1, 1);
-    b.Configure(&s3, 1);
+    a.Configure(&s1);
+    b.Configure(&s3);
     c.Configure({a.OutSignal(), b.OutSignal(), &s5}, {1.f, 1.f, 1.f});
-    d.Configure(c.OutSignal(), 1);
+    d.Configure(c.OutSignal());
 
     std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d};
     std::vector<SimFramework::Function*> sortedFuncs = SimFramework::Internal::SortFunctions(funcs);
@@ -577,11 +577,11 @@ TEST(SortFunctions, Mask) {
     SimFramework::Gain<float, float> d;
     SimFramework::Gain<float, float> e;
 
-    a.Configure(&s1, 1);
+    a.Configure(&s1);
     b.Configure(a.OutSignal());
-    c.Configure(b.OutSignal(0), 1);
-    d.Configure(b.OutSignal(1), 1);
-    e.Configure(b.OutSignal(2), 1);
+    c.Configure(b.OutSignal(0));
+    d.Configure(b.OutSignal(1));
+    e.Configure(b.OutSignal(2));
 
     std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d, &e};
     std::vector<SimFramework::Function*> sortedFuncs = SimFramework::Internal::SortFunctions(funcs);
@@ -626,13 +626,13 @@ TEST(SortFunctions, MultipleDependants) {
     SimFramework::Gain<float, float> f;
     SimFramework::Gain<float, float> g;
 
-    a.Configure(&s1, 1);
-    b.Configure(a.OutSignal(), 1);
-    c.Configure(a.OutSignal(), 1);
+    a.Configure(&s1);
+    b.Configure(a.OutSignal());
+    c.Configure(a.OutSignal());
     d.Configure({b.OutSignal(), c.OutSignal(), a.OutSignal()}, {1, 1, 1});
     e.Configure(d.OutSignal());
-    f.Configure(e.OutSignal(0), 1);
-    g.Configure(e.OutSignal(1), 1);
+    f.Configure(e.OutSignal(0));
+    g.Configure(e.OutSignal(1));
 
     std::vector<SimFramework::Function*> funcs = {&a, &b, &c, &d, &e, &f, &g};
     std::vector<SimFramework::Function*> sortedFuncs = SimFramework::Internal::SortFunctions(funcs);
@@ -661,10 +661,13 @@ public:
         // Configure blocks
         this->In1.Configure(0.f);
         this->In2.Configure(0.f);
-        this->G1.Configure(this->In1.OutSignal(), 2.f);
-        this->G2.Configure(this->In2.OutSignal(), 3.f);
+        this->G1.Configure(this->In1.OutSignal());
+        this->G1.SetGain(2.f);
+        this->G2.Configure(this->In2.OutSignal());
+        this->G2.SetGain(3.f);
         this->Sum.Configure({this->G1.OutSignal(), this->G2.OutSignal()},  {1.f, -1.f});
-        this->G3.Configure(this->Sum.OutSignal(), 4.f);
+        this->G3.Configure(this->Sum.OutSignal());
+        this->G3.SetGain(4.f);
         this->Out.Configure(this->G3.OutSignal(), 0.f);
 
         SimFramework::BlockList list = {{&(this->In1), &(this->In2)},

@@ -516,7 +516,8 @@ TEST(Gain, Float_X_Vec) {
     const SimFramework::Signal<Eigen::Vector3f>* out = gain.OutSignal();
 
     // Configure gain
-    gain.Configure(&in, 2.f);
+    gain.Configure(&in);
+    gain.SetGain(2.f);
 
     // Write input values
     in.Write({1.5, 3.5, 5.5});
@@ -540,7 +541,8 @@ TEST(Gain, Mat2x2_X_Vec2) {
     // Configure gain
     Eigen::Matrix<float, 2, 2> gainMatrix;
     gainMatrix << 2.f, 2.f, 2.f, 2.f;
-    gain.Configure(&in, gainMatrix);
+    gain.Configure(&in);
+    gain.SetGain(gainMatrix);
 
     // Write input values
     in.Write({1.5, 2.5});
@@ -564,7 +566,8 @@ TEST(Gain, Mat1x2_X_Vec2) {
     // Configure gain
     Eigen::Matrix<float, 1, 2> gainMatrix;
     gainMatrix << 2.f, 2.f;
-    gain.Configure(&in, gainMatrix);
+    gain.Configure(&in);
+    gain.SetGain(gainMatrix);
 
     // Write input values
     in.Write({1.5, 2.5});

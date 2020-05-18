@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "SimFramework/Framework.h"
-#include "SimModels/VehicleComponents.h"
+#include "SimModels/Wheel.h"
 
 
 
